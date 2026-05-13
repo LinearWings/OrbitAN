@@ -1,14 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 export default function LangSwitch({ currentLang }: { currentLang: string }) {
-  const router = useRouter();
-
   const toggle = () => {
     const next = currentLang === "zh" ? "en" : "zh";
     document.cookie = `orbit_lang=${next};path=/;max-age=31536000`;
-    router.refresh();
+    window.location.reload();
   };
 
   return (
