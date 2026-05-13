@@ -1,0 +1,270 @@
+@import "tailwindcss";
+
+/* ===== Design Tokens ===== */
+:root {
+  /* Void palette — refined */
+  --color-void-black: #0A0A0F;
+  --color-void-deep: #08080C;
+  --color-surface: rgba(255, 255, 255, 0.03);
+  --color-surface-hover: rgba(255, 255, 255, 0.06);
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-active: rgba(255, 255, 255, 0.12);
+  --color-cosmic-white: #F0EFEC;
+  --color-text-muted: rgba(255, 255, 255, 0.28);
+  --color-text-dim: rgba(255, 255, 255, 0.16);
+
+  /* Task type colors */
+  --color-work: #3B82F6;
+  --color-study: #EAB308;
+  --color-meeting: #4B5563;
+  --color-personal: #78716C;
+
+  /* Orbit Mode accent */
+  --color-cosmic-violet: #8B5CF6;
+
+  /* Glass morphism tokens */
+  --glass-bg: rgba(12, 12, 18, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 16px;
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Radius tokens */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Transition tokens */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* Layout */
+  --clock-size: min(45vw, 55vh);
+}
+
+@theme inline {
+  --color-background: var(--color-void-black);
+  --color-foreground: var(--color-cosmic-white);
+  --color-work: var(--color-work);
+  --color-study: var(--color-study);
+  --color-meeting: var(--color-meeting);
+  --color-personal: var(--color-personal);
+  --color-cosmic-violet: var(--color-cosmic-violet);
+
+  --font-clash: "Clash Display", sans-serif;
+  --font-satoshi: "Satoshi", sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+}
+
+/* ===== Base Reset ===== */
+/* Wrapped in @layer base so Tailwind v4 utilities (in @layer utilities)
+   can override these resets. Unlayered styles take highest CSS cascade
+   priority and would silently nullify all Tailwind spacing classes. */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  color: var(--color-cosmic-white);
+  font-family: var(--font-satoshi);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #080808;
+  /*
+   * Constructivist composition — dark base with yellow/blue geometric forms.
+   * High-contrast elements (circles, diagonals) are positioned on the left &
+   * bottom periphery, away from right-side text content.
+   * Film grain is composited on the canvas layer via drawFilmGrain.
+   */
+  background-image:
+    /* ── Large constructivist circle (yellow) at bottom-left ── */
+     radial-gradient(circle at 8% 85%, rgba(234, 179, 8, 0.15) 0%, rgba(234, 179, 8, 0.04) 35%, transparent 60%),
+    /* ── Offset geometric circle (blue) at left-center ── */
+    radial-gradient(circle at 22% 55%, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.03) 35%, transparent 55%),
+    /* ── Bold diagonal band (yellow) from top-left to bottom ── */
+    linear-gradient(150deg, transparent 20%, rgba(234, 179, 8, 0.08) 22%, rgba(234, 179, 8, 0.01) 24%, transparent 26%),
+    /* ── Intersecting diagonal band (blue) from lower-left up ── */
+    linear-gradient(65deg, transparent 52%, rgba(37, 99, 235, 0.07) 54%, rgba(37, 99, 235, 0.01) 56%, transparent 58%),
+    /* ── Dark gradient base ── */
+    linear-gradient(180deg, #080808 0%, #0C0C0E 40%, #0A0A0A 100%);
+  background-attachment: fixed;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ===== Animations ===== */
+@keyframes chromatic-aberration {
+  0% {
+    text-shadow:
+      2px 0 0 rgba(41, 98, 255, 0),
+      -2px 0 0 rgba(245, 197, 24, 0);
+  }
+  60% {
+    text-shadow:
+      4px 0 0 rgba(41, 98, 255, 0.5),
+      -3px 0 0 rgba(245, 197, 24, 0.4);
+  }
+  100% {
+    text-shadow:
+      2px 0 0 rgba(41, 98, 255, 0.4),
+      -2px 0 0 rgba(245, 197, 24, 0.3);
+  }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slide-out-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(41, 98, 255, 0.3)); }
+  50% { filter: drop-shadow(0 0 12px rgba(41, 98, 255, 0.6)); }
+}
+
+@keyframes orbit-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    backdrop-filter: blur(20px);
+  }
+}
+
+@keyframes orbit-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    backdrop-filter: blur(20px);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+    backdrop-filter: blur(0px);
+  }
+}
+
+.animate-orbit-enter {
+  animation: orbit-enter 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-orbit-exit {
+  animation: orbit-exit 250ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes floatCard {
+  0%, 100% {
+    transform: translateY(0px) rotateX(4deg) rotateY(-2deg);
+  }
+  33% {
+    transform: translateY(-6px) rotateX(3deg) rotateY(-1deg);
+  }
+  66% {
+    transform: translateY(-3px) rotateX(5deg) rotateY(-3deg);
+  }
+}
+
+@keyframes fadeInLegend {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.floating-card {
+  animation: floatCard 6s ease-in-out infinite;
+  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.5));
+  transform-origin: center center;
+}
+
+.floating-card:hover {
+  animation-play-state: paused;
+}
+
+/* ===== Glass utility ===== */
+.glass-surface {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
+}
+
+/* ===== Smooth transition utility ===== */
+.transition-smooth {
+  transition: all var(--duration-normal) var(--ease-out-expo);
+}
+
+/* ===== Hover lift ===== */
+.hover-lift {
+  transition: transform var(--duration-fast) var(--ease-out-expo),
+              box-shadow var(--duration-fast) var(--ease-out-expo);
+}
+.hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== Focus ring glow (Orbit Mode) ===== */
+@keyframes method-glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--glow-color, rgba(234,179,8,0.2)); }
+  50%      { box-shadow: 0 0 18px var(--glow-color, rgba(234,179,8,0.4)); }
+}
+.method-glow {
+  animation: method-glow-pulse 2.5s ease-in-out infinite;
+}
