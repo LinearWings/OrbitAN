@@ -57,11 +57,13 @@ export default function FocusTimelineOverlay({
     return null;
   }, [selectedBlockId, week, getBlocksForDate]);
 
-  const handleColumnMouseDown = useCallback((e: React.MouseEvent, date: string) => {
+  const handleColumnPointerDown = useCallback((e: React.PointerEvent, date: string) => {
     if (!isOrbitMode || !onDrawFocus || disableDrag) return;
+    if (e.button !== 0) return;
     const target = e.target as HTMLElement;
     if (target.closest("button")) return;
     const col = e.currentTarget as HTMLElement;
+    col.setPointerCapture(e.pointerId);
     const rect = col.getBoundingClientRect();
     const startY = e.clientY - rect.top;
     // Get scroll offset for accurate time positioning
@@ -74,31 +76,30 @@ export default function FocusTimelineOverlay({
     const startTime = `${String(Math.min(23, hh)).padStart(2, "0")}:${String(mm >= 60 ? 0 : mm).padStart(2, "0")}`;
 
     dragRef.current = { date, startY, hasMoved: false, columnTop: rect.top, columnHeight: rect.height };
-    // Don't show preview until actual drag movement
 
-    const handleMove = (ev: MouseEvent) => {
+    const handleMove = (ev: PointerEvent) => {
       if (!dragRef.current) return;
       const currentY = ev.clientY - dragRef.current.columnTop;
       const dy = Math.abs(currentY - dragRef.current.startY);
-      if (dy < 4 && !dragRef.current.hasMoved) return; // minimum drag threshold
-      if (!dragRef.current.hasMoved) { ev.preventDefault(); } // prevent text selection on actual drag
+      if (dy < 4 && !dragRef.current.hasMoved) return;
+      if (!dragRef.current.hasMoved) { ev.preventDefault(); }
       dragRef.current.hasMoved = true;
       const topPct = (Math.min(currentY, dragRef.current.startY) / dragRef.current.columnHeight) * 100;
       const heightPct = Math.max(2, (Math.abs(currentY - dragRef.current.startY) / dragRef.current.columnHeight) * 100);
       setDragPreview({ date, topPct: Math.max(0, topPct), heightPct: Math.min(100 - topPct, heightPct) });
     };
 
-    const handleUp = (ev: MouseEvent) => {
+    const handleUp = (ev: PointerEvent) => {
+      col.releasePointerCapture(e.pointerId);
       if (!dragRef.current) return;
       if (!dragRef.current.hasMoved) {
         dragRef.current = null;
         setDragPreview(null);
-        window.removeEventListener("mousemove", handleMove);
-        window.removeEventListener("mouseup", handleUp);
+        col.removeEventListener("pointermove", handleMove);
+        col.removeEventListener("pointerup", handleUp);
         return;
       }
       const endY = ev.clientY - dragRef.current.columnTop;
-      // Use scroll-aware time computation
       const sTop = scrollable?.scrollTop ?? 0;
       const zPx = getZoomPx();
       const endMin = ((endY + sTop) / zPx) * 60;
@@ -118,14 +119,13 @@ export default function FocusTimelineOverlay({
       }
 
       onDrawFocus(dragRef.current.date, st, et, ev.clientX, ev.clientY);
-      // Lock preview as solid (don't clear)
       setDragPreview(prev => prev ? { ...prev, locked: true } : null);
-      window.removeEventListener("mousemove", handleMove);
-      window.removeEventListener("mouseup", handleUp);
+      col.removeEventListener("pointermove", handleMove);
+      col.removeEventListener("pointerup", handleUp);
     };
 
-    window.addEventListener("mousemove", handleMove);
-    window.addEventListener("mouseup", handleUp);
+    col.addEventListener("pointermove", handleMove);
+    col.addEventListener("pointerup", handleUp);
   }, [isOrbitMode, onDrawFocus, getZoomPx, disableDrag]);
 
   // Clear locked drag preview when method is picked or cancelled
@@ -182,7 +182,7 @@ export default function FocusTimelineOverlay({
                 borderRight: di < 6 ? "1px solid transparent" : "none",
                 pointerEvents: "none",
               }}
-              onMouseDown={(e) => handleColumnMouseDown(e, date)}
+              onPointerDown={(e) => handleColumnPointerDown(e, date)}
             >
 
               {/* Drag-draw preview block */}

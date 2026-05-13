@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CloseIcon, ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/Icons";
 import type { GTDItem } from "@/types";
 import { loadMethodologyData, saveMethodologyData } from "@/utils/storage";
@@ -24,9 +24,10 @@ function initialState(): GTDState {
   return { items: seed };
 }
 
-function Column({ title, count, dragOver, children, onDragOver, onDrop }: { title: string; count: number; dragOver?: boolean; children: React.ReactNode; onDragOver?: (e: React.DragEvent) => void; onDrop?: (e: React.DragEvent) => void }) {
+function Column({ title, count, dragOver, children, onDragOver, onDrop, columnKey }: { title: string; count: number; dragOver?: boolean; children: React.ReactNode; onDragOver?: (e: React.DragEvent) => void; onDrop?: (e: React.DragEvent) => void; columnKey?: string }) {
   return (
     <div
+      data-gtd-column={columnKey}
       className={"flex-1 min-w-0 p-2" + (dragOver ? " border border-white/40 bg-white/10" : "")}
       onDragOver={onDragOver}
       onDrop={onDrop}
@@ -39,20 +40,22 @@ function Column({ title, count, dragOver, children, onDragOver, onDrop }: { titl
     </div>
   );
 }
-function Card({ item, onMove, onDelete, onDragStart, onDragEnd, isDragging }: { item: GTDItem; onMove: (id: string, dir: -1 | 1) => void; onDelete: (id: string) => void; onDragStart?: (id: string) => void; onDragEnd?: () => void; isDragging?: boolean }) {
+function Card({ item, onMove, onDelete, onDragStart, onDragEnd, isDragging, onTouchStart, onTouchMove, onTouchEnd }: { item: GTDItem; onMove: (id: string, dir: -1 | 1) => void; onDelete: (id: string) => void; onDragStart?: (id: string) => void; onDragEnd?: () => void; isDragging?: boolean; onTouchStart?: (e: React.TouchEvent) => void; onTouchMove?: (e: React.TouchEvent) => void; onTouchEnd?: (e: React.TouchEvent) => void }) {
   return (
     <div
       className="rounded-lg border border-white/6 bg-white/10 p-3 text-sm text-white/90 shadow-glass"
       draggable
       onDragStart={(e) => {
-        // Ensure we carry the item id for drop handling
         e.dataTransfer.setData("text/plain", item.id);
         if (onDragStart) onDragStart(item.id);
       }}
       onDragEnd={() => {
         if (onDragEnd) onDragEnd();
       }}
-      style={isDragging ? { opacity: 0.5 } : undefined}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      style={isDragging ? { opacity: 0.5, touchAction: "none" } : undefined}
     >
       <div className="flex items-start justify-between mb-2">
         <div className="whitespace-pre-wrap flex-1">{item.content}</div>
@@ -84,9 +87,59 @@ export default function GTDPanel() {
     return initialState();
   });
 
-  // Drag-and-drop state
+  // Drag-and-drop state (HTML5 + touch)
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<GTDColumn | null>(null);
+  const touchDragRef = useRef<{ id: string; startX: number; startY: number; moved: boolean } | null>(null);
+
+  // Touch drag handlers — fallback for iOS/iPadOS where HTML5 drag-and-drop is unsupported
+  const handleTouchStart = (id: string) => (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    const t = e.touches[0]!;
+    touchDragRef.current = { id, startX: t.clientX, startY: t.clientY, moved: false };
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchDragRef.current) return;
+    const t = e.touches[0]!;
+    const dx = t.clientX - touchDragRef.current.startX;
+    const dy = t.clientY - touchDragRef.current.startY;
+    if (!touchDragRef.current.moved && Math.abs(dx) + Math.abs(dy) < 8) return;
+    if (!touchDragRef.current.moved) {
+      touchDragRef.current.moved = true;
+      setDraggedId(touchDragRef.current.id);
+    }
+    e.preventDefault();
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    const colEl = el?.closest("[data-gtd-column]");
+    setDragOverColumn(colEl ? (colEl.getAttribute("data-gtd-column") as GTDColumn) : null);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchDragRef.current) return;
+    const t = e.changedTouches[0]!;
+    const el = document.elementFromPoint(t.clientX, t.clientY);
+    const colEl = el?.closest("[data-gtd-column]");
+    if (colEl && touchDragRef.current.moved) {
+      const targetColumn = colEl.getAttribute("data-gtd-column") as GTDColumn;
+      if (targetColumn) {
+        const itemId = touchDragRef.current.id;
+        setState((s) => {
+          const idx = s.items.findIndex((i) => i.id === itemId);
+          if (idx === -1) return s;
+          const item = s.items[idx];
+          const order: GTDColumn[] = ["inbox", "next", "waiting", "someday", "done"];
+          if (order.indexOf(item.stage) === order.indexOf(targetColumn)) return s;
+          const updated = [...s.items];
+          updated[idx] = { ...item, stage: targetColumn };
+          return { items: updated };
+        });
+      }
+    }
+    setDraggedId(null);
+    setDragOverColumn(null);
+    touchDragRef.current = null;
+  };
 
   useEffect(() => {
     saveMethodologyData(METHODOLOGY_KEY, state);
@@ -193,7 +246,7 @@ export default function GTDPanel() {
         <Column
           title="收集"
           count={state.items.filter((i) => i.stage === "inbox").length}
-          
+          columnKey="inbox"
           dragOver={dragOverColumn === "inbox"}
           onDragOver={handleDragOverColumn("inbox")}
           onDrop={handleDropOnColumn("inbox")}
@@ -215,6 +268,9 @@ export default function GTDPanel() {
                 onDragStart={handleDragStartForItem}
                 onDragEnd={handleDragEndAll}
                 isDragging={draggedId === it.id}
+                onTouchStart={handleTouchStart(it.id)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               />
             ))}
           </div>
@@ -222,7 +278,7 @@ export default function GTDPanel() {
         <Column
           title="整理"
           count={state.items.filter((i) => i.stage === "next").length}
-          
+          columnKey="next"
           dragOver={dragOverColumn === "next"}
           onDragOver={handleDragOverColumn("next")}
           onDrop={handleDropOnColumn("next")}
@@ -237,6 +293,9 @@ export default function GTDPanel() {
                 onDragStart={handleDragStartForItem}
                 onDragEnd={handleDragEndAll}
                 isDragging={draggedId === it.id}
+                onTouchStart={handleTouchStart(it.id)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               />
             ))}
           </div>
@@ -244,7 +303,7 @@ export default function GTDPanel() {
         <Column
           title="组织"
           count={state.items.filter((i) => i.stage === "waiting").length}
-          
+          columnKey="waiting"
           dragOver={dragOverColumn === "waiting"}
           onDragOver={handleDragOverColumn("waiting")}
           onDrop={handleDropOnColumn("waiting")}
@@ -259,6 +318,9 @@ export default function GTDPanel() {
                 onDragStart={handleDragStartForItem}
                 onDragEnd={handleDragEndAll}
                 isDragging={draggedId === it.id}
+                onTouchStart={handleTouchStart(it.id)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               />
             ))}
           </div>
@@ -266,7 +328,7 @@ export default function GTDPanel() {
         <Column
           title="回顾"
           count={state.items.filter((i) => i.stage === "someday").length}
-          
+          columnKey="someday"
           dragOver={dragOverColumn === "someday"}
           onDragOver={handleDragOverColumn("someday")}
           onDrop={handleDropOnColumn("someday")}
@@ -281,6 +343,9 @@ export default function GTDPanel() {
                 onDragStart={handleDragStartForItem}
                 onDragEnd={handleDragEndAll}
                 isDragging={draggedId === it.id}
+                onTouchStart={handleTouchStart(it.id)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               />
             ))}
           </div>
@@ -288,7 +353,7 @@ export default function GTDPanel() {
         <Column
           title="执行"
           count={state.items.filter((i) => i.stage === "done").length}
-          
+          columnKey="done"
           dragOver={dragOverColumn === "done"}
           onDragOver={handleDragOverColumn("done")}
           onDrop={handleDropOnColumn("done")}
@@ -303,6 +368,9 @@ export default function GTDPanel() {
                 onDragStart={handleDragStartForItem}
                 onDragEnd={handleDragEndAll}
                 isDragging={draggedId === it.id}
+                onTouchStart={handleTouchStart(it.id)}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               />
             ))}
           </div>

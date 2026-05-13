@@ -2,13 +2,11 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getT } from "@/lib/i18n";
 
 export default function LandingPage() {
   const lang = useLanguage();
   const t = getT(lang);
-  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <>

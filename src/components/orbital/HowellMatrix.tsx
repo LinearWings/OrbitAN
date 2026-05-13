@@ -43,6 +43,7 @@ function QuadrantCard({
 
   return (
     <div
+      data-howell-quadrant={keyName}
       className="rounded-xl overflow-hidden"
       style={{
         ...glassStyle,
@@ -103,10 +104,51 @@ function QuadrantCard({
                   JSON.stringify({ id: it.id, from: keyName })
                 );
               }}
+              onTouchStart={(e) => {
+                if (e.touches.length !== 1) return;
+                const t = e.touches[0]!;
+                (e.currentTarget as HTMLElement).dataset.touchDragId = it.id;
+                (e.currentTarget as HTMLElement).dataset.touchDragFrom = keyName;
+                (e.currentTarget as HTMLElement).dataset.touchStartX = String(t.clientX);
+                (e.currentTarget as HTMLElement).dataset.touchStartY = String(t.clientY);
+                (e.currentTarget as HTMLElement).dataset.touchMoved = "false";
+              }}
+              onTouchMove={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                if (!el.dataset.touchDragId) return;
+                const sx = Number(el.dataset.touchStartX);
+                const sy = Number(el.dataset.touchStartY);
+                const t = e.touches[0]!;
+                if (el.dataset.touchMoved === "false" && Math.abs(t.clientX - sx) + Math.abs(t.clientY - sy) < 8) return;
+                el.dataset.touchMoved = "true";
+                e.preventDefault();
+              }}
+              onTouchEnd={(e) => {
+                const el = e.currentTarget as HTMLElement;
+                const id = el.dataset.touchDragId;
+                const from = el.dataset.touchDragFrom;
+                const moved = el.dataset.touchMoved === "true";
+                delete el.dataset.touchDragId;
+                delete el.dataset.touchDragFrom;
+                delete el.dataset.touchStartX;
+                delete el.dataset.touchStartY;
+                delete el.dataset.touchMoved;
+                if (!id || !from || !moved) return;
+                const t = e.changedTouches[0]!;
+                const targetEl = document.elementFromPoint(t.clientX, t.clientY);
+                const quadrantEl = targetEl?.closest("[data-howell-quadrant]");
+                if (quadrantEl) {
+                  const to = quadrantEl.getAttribute("data-howell-quadrant");
+                  if (to && to !== from) {
+                    onMove({ id, from, to });
+                  }
+                }
+              }}
               style={{
                 background: "rgba(255,255,255,0.03)",
                 border: "1px solid rgba(255,255,255,0.06)",
                 borderLeft: `3px solid ${color}40`,
+                touchAction: "none",
               }}
             >
               <div className="flex items-center gap-2 min-w-0 flex-1">

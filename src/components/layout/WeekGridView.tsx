@@ -245,7 +245,7 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
               data-task-id={t.taskId}
               title={`${t.name}  ${t.startTime}–${t.endTime}`}
               onPointerDown={onDeleteStart ? (e) => {
-                if (e.pointerType !== "mouse" || e.button !== 0 || e.shiftKey) return;
+                if (e.button !== 0 || e.shiftKey) return;
                 const el = e.currentTarget as HTMLElement;
                 const timer = setTimeout(() => onDeleteStart(t.taskId, "task", e.clientX, e.clientY), 600);
                 const clear = () => { clearTimeout(timer); el.removeEventListener("pointerup", clear); el.removeEventListener("pointerleave", clear); };
@@ -299,7 +299,7 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
             <div
               key={f.block.id}
               onPointerDown={onDeleteStart ? (e) => {
-                if (e.pointerType !== "mouse" || e.button !== 0 || e.shiftKey) return;
+                if (e.button !== 0 || e.shiftKey) return;
                 const el = e.currentTarget as HTMLElement;
                 const timer = setTimeout(() => onDeleteStart(f.block.id, "focus", e.clientX, e.clientY), 600);
                 const clear = () => { clearTimeout(timer); el.removeEventListener("pointerup", clear); el.removeEventListener("pointerleave", clear); };

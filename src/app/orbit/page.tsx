@@ -725,7 +725,7 @@ export default function Home() {
     <>
     <main className="relative flex h-dvh w-full flex-col overflow-hidden">
       {!isTouchDevice && <OrbitalCursor />}
-      {viewMode === "day" && !isMobile && <ConnectorArrows />}
+      {viewMode === "day" && !isMobile && !isTouchDevice && <ConnectorArrows />}
       {!isTouchDevice && <NoiseOverlay />}
       <TitleHeader onOpenDocs={() => setIsDocsOverlayOpen(true)} />
       <DateNav />
@@ -1015,7 +1015,7 @@ export default function Home() {
       </div>
       )}
 
-      {!isMobile && (
+      {!isMobile && !isTouchDevice && (
       <div className="pointer-events-none fixed bottom-[0.4rem] left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-3 py-1 rounded-lg"
         style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.04)" }}>
         {/* Minimal hint bar */}
