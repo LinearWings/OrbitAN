@@ -250,7 +250,7 @@ export default function Home() {
   const { filteredTasks, tasksForDate, addTask, updateTask, updateProgress, deleteTask } = useTasks();
   const { selectedTaskId, selectTask } = useSelectedTask();
   const { activeFilter } = useFilter();
-  const { viewMode, navigateToDay, setViewMode } = useViewNavigation();
+  const { viewMode, navigateToDay, setViewMode, goToPrevious, goToNext } = useViewNavigation();
   const { focusBlocksForDate, addFocusBlock, deleteFocusBlock } = useFocusBlocks();
 
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -445,6 +445,34 @@ export default function Home() {
   useEffect(() => {
     if (viewMode !== "day") handleCancelFocusCreate();
   }, [viewMode, handleCancelFocusCreate]);
+
+  // Touch swipe gesture — left/right to navigate days (mobile only)
+  useEffect(() => {
+    if (!isMobile) return;
+    let startX = 0;
+    let startY = 0;
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0]!.clientX;
+      startY = e.touches[0]!.clientY;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (e.changedTouches.length !== 1) return;
+      const dx = e.changedTouches[0]!.clientX - startX;
+      const dy = e.changedTouches[0]!.clientY - startY;
+      // Only trigger if horizontal swipe > 60px and dominates vertical
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (dx > 0) goToPrevious();
+        else goToNext();
+      }
+    };
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [isMobile, goToPrevious, goToNext]);
 
   const handleFocusTimeSelect = useCallback((time: string) => {
     if (focusCreatePhase === "start") {
@@ -683,6 +711,15 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Swipe indicator dots — mobile only */}
+      {isMobile && viewMode === "day" && (
+        <div className="flex items-center justify-center gap-1.5 mt-1.5 z-20">
+          <div className="swipe-indicator active" />
+          <div className="swipe-indicator" />
+          <div className="swipe-indicator" />
+        </div>
+      )}
+
       {viewMode === "day" ? (
         <div className="relative z-10 mx-auto flex items-center justify-center"
           style={{
@@ -788,10 +825,33 @@ export default function Home() {
                 : task.method ? FOCUS_METHOD_COLORS[task.method] : undefined;
               const isDelTarget = deleteTarget?.type === "task" && deleteTarget.id === task.id;
 
+              // Touch swipe state per card
+              let swipeStartX = 0;
+              let swipeStartY = 0;
+
               return (
                 <div
                   key={task.id}
-                  {...(!isMobile ? {
+                  className={isMobile ? "swipe-delete-target" : undefined}
+                  {...(isMobile ? {
+                    onTouchStart: (e: React.TouchEvent) => {
+                      if (e.touches.length !== 1) return;
+                      swipeStartX = e.touches[0]!.clientX;
+                      swipeStartY = e.touches[0]!.clientY;
+                    },
+                    onTouchEnd: (e: React.TouchEvent) => {
+                      if (e.changedTouches.length !== 1) return;
+                      const dx = e.changedTouches[0]!.clientX - swipeStartX;
+                      const dy = e.changedTouches[0]!.clientY - swipeStartY;
+                      // Swipe left: trigger delete
+                      if (dx < -70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                        const el = e.currentTarget as HTMLElement;
+                        const rect = el.getBoundingClientRect();
+                        navigator.vibrate?.(10);
+                        handleDeleteStart(task.id, "task", rect.left + rect.width, rect.top + rect.height / 2);
+                      }
+                    },
+                  } : {
                     onPointerDown: (e: React.PointerEvent) => {
                       if (e.pointerType !== "mouse" || e.button !== 0 || e.shiftKey) return;
                       const el = e.currentTarget;
@@ -800,7 +860,7 @@ export default function Home() {
                       el.addEventListener("pointerup", clear);
                       el.addEventListener("pointerleave", clear);
                     },
-                  } : {})}
+                  })}
                   style={!isMobile ? { zIndex: isDelTarget ? 96 : undefined } : undefined}
                 >
                   <ScheduleCardWrapper

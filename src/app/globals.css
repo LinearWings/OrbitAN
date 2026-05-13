@@ -272,3 +272,60 @@ body {
 /* ===== No scrollbar utility (mobile scroll containers) ===== */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ===== Touch & Gesture Optimizations ===== */
+
+/* Prevent double-tap zoom on interactive elements */
+button, a, [role="button"], [data-task-id], input, select, kbd {
+  touch-action: manipulation;
+}
+
+/* Prevent pull-to-refresh and overscroll bouncing */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* iOS smooth scrolling for scrollable containers */
+.ios-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* Swipe hint indicator dot */
+.swipe-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transition: all 0.3s ease;
+}
+.swipe-indicator.active {
+  background: rgba(255,255,255,0.6);
+  box-shadow: 0 0 6px rgba(255,255,255,0.3);
+}
+
+/* Swipe-to-delete card transition */
+.swipe-delete-target {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.swipe-delete-dismissing {
+  transform: translateX(-110%);
+  opacity: 0;
+  transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+}
+
+/* Swipe day navigation transition */
+.swipe-day-transition {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Haptic-triggered pulse */
+@keyframes haptic-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+.haptic-pulse {
+  animation: haptic-pulse 0.15s ease-out;
+}
