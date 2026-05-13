@@ -604,9 +604,12 @@ export default function Home() {
     selectTask(null);
   }, [selectTask]);
 
-  // Card repositioning:
-  // Desktop: Shift + mouse drag
-  // Touch: long-press (400ms) to activate drag mode, then move to reposition
+  // Card repositioning — day view only (desktop + touch), NOT in week/month.
+  // Desktop: Shift + mouse drag. Touch: long-press (400ms) to activate drag.
+  // Disabled on mobile (narrow screen uses swipe-to-delete via touch events).
+  const dragEnabledRef = useRef(false);
+  useEffect(() => { dragEnabledRef.current = !isMobile && viewMode === "day"; }, [isMobile, viewMode]);
+
   useEffect(() => {
     let targetEl: HTMLElement | null = null;
     let taskId: string | null = null;
@@ -616,16 +619,18 @@ export default function Home() {
     let dragActivated = false;
 
     const onDown = (e: PointerEvent) => {
+      if (!dragEnabledRef.current) return;
       // Mouse: Shift+drag only
       if (e.pointerType === "mouse") {
         if (e.button !== 0) return;
         if (!e.shiftKey) return;
       }
-      // Touch: always allow drag activation via long-press
       const el = (e.target as HTMLElement).closest('[data-task-id]') as HTMLElement | null;
       if (!el) return;
       if ((e.target as HTMLElement).tagName === "INPUT") return;
       if ((e.target as HTMLElement).closest('[role="slider"]')) return;
+      // Only allow dragging main day-view cards (not week view mini-blocks)
+      if (el.closest('[data-week-scroll]')) return;
       taskId = el.dataset.taskId!;
       targetEl = el;
       startX = e.clientX;
@@ -634,10 +639,8 @@ export default function Home() {
       dragActivated = false;
 
       if (e.pointerType === "mouse") {
-        // Mouse: drag activates on first movement (Shift already checked)
         dragActivated = true;
       } else {
-        // Touch: long-press 400ms to activate drag
         longPressTimer = setTimeout(() => {
           dragActivated = true;
           navigator.vibrate?.(8);
@@ -678,7 +681,6 @@ export default function Home() {
       const origTop = ((cardRect.top + cardRect.height / 2 - dy - mainRect.top) / mainRect.height) * 100;
       const newLeft = origLeft + (dx / mainRect.width) * 100;
       const newTop = origTop + (dy / mainRect.height) * 100;
-      // IMMEDIATELY apply final position via DOM to avoid the frame gap
       targetEl.style.left = newLeft + "%";
       targetEl.style.top = newTop + "%";
       targetEl.style.transform = "translate(-50%, -50%)";
@@ -686,7 +688,6 @@ export default function Home() {
       targetEl.classList.add("card-drop");
       setTimeout(() => targetEl?.classList.remove("card-drop"), 350);
       targetEl.style.zIndex = "";
-      // Then persist to state (no visible change since DOM already updated)
       const newMap = new Map(manualOverridesRef.current);
       newMap.set(taskId, { left: newLeft, top: newTop });
       manualOverridesRef.current = newMap;

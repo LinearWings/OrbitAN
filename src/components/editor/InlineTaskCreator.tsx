@@ -59,18 +59,25 @@ function WheelColumn({
   return (
     <div
       ref={ref}
-      className="flex flex-col items-center select-none cursor-pointer py-1 px-1.5 rounded-lg hover:bg-white/[0.04] transition-colors"
-      onClick={() => onChange(next)}
+      className="flex flex-col items-center select-none py-1 px-1.5 rounded-lg"
     >
-      <span className="text-[0.65rem] leading-none font-mono text-white/20">
+      <button
+        onClick={(e) => { e.stopPropagation(); onChange(prev); }}
+        className="text-[0.65rem] leading-none font-mono text-white/20 hover:text-white/50 active:text-white/70 transition-colors min-h-[20px] min-w-[28px]"
+        aria-label="Decrease"
+      >
         {String(prev).padStart(2, "0")}
-      </span>
-      <span className="text-lg font-semibold font-mono tabular-nums leading-tight text-white/90 my-0.5">
+      </button>
+      <span className="text-lg font-semibold font-mono tabular-nums leading-tight text-white/90 my-0.5 pointer-events-none">
         {String(value).padStart(2, "0")}
       </span>
-      <span className="text-[0.65rem] leading-none font-mono text-white/20">
+      <button
+        onClick={(e) => { e.stopPropagation(); onChange(next); }}
+        className="text-[0.65rem] leading-none font-mono text-white/20 hover:text-white/50 active:text-white/70 transition-colors min-h-[20px] min-w-[28px]"
+        aria-label="Increase"
+      >
         {String(next).padStart(2, "0")}
-      </span>
+      </button>
     </div>
   );
 }
