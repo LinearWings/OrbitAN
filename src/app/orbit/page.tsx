@@ -603,16 +603,24 @@ export default function Home() {
     selectTask(null);
   }, [selectTask]);
 
-  // Card repositioning: drag to reposition (clicks still work for edit/select)
+  // Card repositioning:
+  // Desktop: Shift + mouse drag
+  // Touch: long-press (400ms) to activate drag mode, then move to reposition
   useEffect(() => {
     let targetEl: HTMLElement | null = null;
     let taskId: string | null = null;
     let startX = 0, startY = 0;
     let dragging = false;
+    let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+    let dragActivated = false;
 
     const onDown = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse" || e.button !== 0) return;
-      if (!e.shiftKey) return; // Shift+drag to reposition, normal click for edit
+      // Mouse: Shift+drag only
+      if (e.pointerType === "mouse") {
+        if (e.button !== 0) return;
+        if (!e.shiftKey) return;
+      }
+      // Touch: always allow drag activation via long-press
       const el = (e.target as HTMLElement).closest('[data-task-id]') as HTMLElement | null;
       if (!el) return;
       if ((e.target as HTMLElement).tagName === "INPUT") return;
@@ -622,23 +630,42 @@ export default function Home() {
       startX = e.clientX;
       startY = e.clientY;
       dragging = false;
+      dragActivated = false;
+
+      if (e.pointerType === "mouse") {
+        // Mouse: drag activates on first movement (Shift already checked)
+        dragActivated = true;
+      } else {
+        // Touch: long-press 400ms to activate drag
+        longPressTimer = setTimeout(() => {
+          dragActivated = true;
+          navigator.vibrate?.(8);
+          if (targetEl) {
+            targetEl.style.transition = "transform 0.15s ease";
+            targetEl.style.transform = "translate(-50%, -50%) scale(1.05)";
+            targetEl.style.zIndex = "50";
+            targetEl.style.filter = "drop-shadow(0 4px 16px rgba(255,255,255,0.15))";
+          }
+        }, 400);
+      }
     };
 
     const onMove = (e: PointerEvent) => {
-      if (!targetEl || !taskId) return;
+      if (!targetEl || !taskId || !dragActivated) return;
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
       if (!dragging && Math.abs(dx) + Math.abs(dy) < 4) return;
       if (!dragging) {
         dragging = true;
         targetEl.style.transition = "none";
-        targetEl.style.zIndex = "50";
+        targetEl.style.filter = "drop-shadow(0 8px 24px rgba(0,0,0,0.6))";
         targetEl.setPointerCapture(e.pointerId);
       }
       targetEl.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
     };
 
     const onUp = (e: PointerEvent) => {
+      if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
       if (!targetEl || !taskId) { dragging = false; return; }
       if (!dragging) { targetEl = null; taskId = null; return; }
       const dx = e.clientX - startX;

@@ -3,6 +3,7 @@
 import { memo, useState, useRef, useCallback, useEffect } from "react";
 import type { Task } from "@/types";
 import { getTaskColor, getTaskLabel } from "@/utils/colors";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getTaskDuration } from "@/utils/time";
 import { FOCUS_METHOD_COLORS } from "@/data/focus-defaults";
 import { METHODOLOGIES } from "@/data/defaults";
@@ -101,6 +102,7 @@ interface ScheduleItemProps {
 function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect, onProgressChange, onUpdate, linkedFocusColor, isOrbitMode, onSetOrbitPlan, dimmed, isDeleteTarget }: ScheduleItemProps) {
   const color = getTaskColor(task.type);
   const duration = getTaskDuration(task);
+  const isTouchDevice = useMediaQuery("(hover: none) and (pointer: coarse)");
 
   // Inline editing state
   const [editing, setEditing] = useState<"name" | "start" | "end" | null>(null);
@@ -157,7 +159,7 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
         WebkitUserSelect: "none",
         zIndex: isFiltered ? 10 : zIndex,
         width: "fit-content",
-        maxWidth: "min(36vw, 300px)",
+        maxWidth: isTouchDevice ? "min(26vw, 200px)" : "min(36vw, 300px)",
         minHeight: "80px",
       } : {
         // mobile: natural flow layout
