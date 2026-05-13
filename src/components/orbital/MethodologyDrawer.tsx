@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import MethodSelector from "./MethodSelector";
 import GTDPanel from "./GTDPanel";
 import PomodoroPanel from "./PomodoroPanel";
@@ -34,6 +35,7 @@ export default function MethodologyDrawer({
 }: MethodologyDrawerProps) {
   const [visible, setVisible] = useState(false);
   const [animating, setAnimating] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     if (isOpen) {
@@ -61,8 +63,19 @@ export default function MethodologyDrawer({
         onClick={onClose}
       />
       <div
-        className="fixed top-0 right-0 h-full z-[91] transition-transform duration-300 ease-out overflow-hidden"
-        style={{
+        className={isMobile
+          ? "fixed bottom-0 inset-x-0 z-[91] transition-transform duration-300 ease-out overflow-hidden rounded-t-3xl"
+          : "fixed top-0 right-0 h-full z-[91] transition-transform duration-300 ease-out overflow-hidden"
+        }
+        style={isMobile ? {
+          height: "85vh",
+          transform: animating ? "translateY(0)" : "translateY(100%)",
+          background: "rgba(10,10,15,0.96)",
+          borderTop: "1px solid rgba(255,255,255,0.08)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          boxShadow: "0 -8px 32px rgba(0,0,0,0.4)",
+        } : {
           width: "min(480px, 85vw)",
           transform: animating ? "translateX(0)" : "translateX(100%)",
           background: "rgba(10,10,15,0.96)",
@@ -72,6 +85,11 @@ export default function MethodologyDrawer({
           boxShadow: "-8px 0 32px rgba(0,0,0,0.4)",
         }}
       >
+        {isMobile && (
+          <div className="flex justify-center pt-3 pb-1">
+            <div className="w-10 h-1 rounded-full bg-white/15" />
+          </div>
+        )}
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] shrink-0">
             <h2 className="font-clash text-lg font-semibold text-white/90">
