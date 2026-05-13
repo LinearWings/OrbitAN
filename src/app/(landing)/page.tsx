@@ -1,10 +1,11 @@
-import { cookies, headers } from "next/headers";
-import { detectLang, getT, type Lang } from "@/lib/i18n";
+"use client";
 
-export default async function LandingPage() {
-  const cookieStore = await cookies();
-  const headersList = await headers();
-  const lang = (cookieStore.get("orbit_lang")?.value as Lang) || detectLang(headersList.get("accept-language"));
+import Link from "next/link";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
+
+export default function LandingPage() {
+  const lang = useLanguage();
   const t = getT(lang);
 
   return (
@@ -29,7 +30,7 @@ export default async function LandingPage() {
             {t.hero_desc}
           </p>
           <div className="flex items-center justify-center gap-4">
-            <a
+            <Link
               href="/orbit"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-white text-base font-semibold transition-all hover:scale-105"
               style={{
@@ -42,10 +43,10 @@ export default async function LandingPage() {
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
-            </a>
-            <a href="/docs" className="px-8 py-4 rounded-full text-white/25 text-base font-medium hover:text-white/50 transition-colors">
+            </Link>
+            <Link href="/docs" className="px-8 py-4 rounded-full text-white/25 text-base font-medium hover:text-white/50 transition-colors">
               {t.learn_more}
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -112,7 +113,7 @@ export default async function LandingPage() {
           <p className="text-white/30 mb-8">
             {lang === "zh" ? "免费、开源、为深度工作者打造。" : "Free, open-source, built for deep work."}
           </p>
-          <a
+          <Link
             href="/orbit"
             className="inline-flex items-center gap-2 px-10 py-4 rounded-full text-white text-base font-semibold transition-all hover:scale-105"
             style={{
@@ -125,7 +126,7 @@ export default async function LandingPage() {
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M3 8h10M9 4l4 4-4 4" />
             </svg>
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -134,8 +135,8 @@ export default async function LandingPage() {
         <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-white/15">
           <span>{t.footer_text}</span>
           <div className="flex gap-6">
-            <a href="/docs" className="hover:text-white/35 transition-colors">{t.footer_docs}</a>
-            <a href="/orbit" className="hover:text-white/35 transition-colors">{t.footer_launch}</a>
+            <Link href="/docs" className="hover:text-white/35 transition-colors">{t.footer_docs}</Link>
+            <Link href="/orbit" className="hover:text-white/35 transition-colors">{t.footer_launch}</Link>
           </div>
         </div>
       </footer>
