@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface DeleteBubbleProps {
   fromX: number;
@@ -18,6 +19,7 @@ export default function DeleteBubble({ fromX, fromY, targetRect, onDelete, onCan
   const holdRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const holdStartRef = useRef(0);
   const bubbleRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // Compute final position: outside the target card/bar
   const finalPos = useRef({ x: fromX, y: fromY });
@@ -85,6 +87,36 @@ export default function DeleteBubble({ fromX, fromY, targetRect, onDelete, onCan
       if (holdRef.current) clearInterval(holdRef.current);
     };
   }, []);
+
+  if (isMobile) {
+    return (
+      <div className="fixed bottom-0 inset-x-0 z-[100] flex items-center justify-between px-4 py-4"
+        style={{
+          background: "rgba(10,8,8,0.98)",
+          borderTop: "1px solid rgba(239,68,68,0.15)",
+          paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+        }}
+      >
+        <button
+          onClick={onCancel}
+          className="text-white/40 text-sm px-4 py-2 rounded-lg"
+          style={{ background: "rgba(255,255,255,0.04)" }}
+        >
+          取消
+        </button>
+        <span className="text-white/60 text-sm font-medium">确认删除？</span>
+        <button
+          onClick={onDelete}
+          className="text-red-400 text-sm font-semibold px-4 py-2 rounded-lg"
+          style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.2)" }}
+        >
+          删除
+        </button>
+      </div>
+    );
+  }
 
   const isRed = hovered;
   const { x: finalX, y: finalY } = finalPos.current;
