@@ -87,7 +87,7 @@ interface ScheduleItemProps {
   isSelected: boolean;
   isFiltered: boolean;
   zIndex: number;
-  position: CardPosition;
+  position?: CardPosition;
   onSelect: () => void;
   onProgressChange: (progress: number) => void;
   onUpdate?: (id: string, fields: Partial<Task>) => void;
@@ -144,8 +144,8 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
   return (
     <div
       data-task-id={task.id}
-      className="group absolute z-20"
-      style={{
+      className={position ? "group absolute z-20" : "group relative z-20"}
+      style={position ? {
         left: `${position.left}%`,
         top: `${position.top}%`,
         transform: isDeleteTarget ? "translate(-50%, -50%) scale(1.08)" : "translate(-50%, -50%)",
@@ -159,6 +159,14 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
         width: "fit-content",
         maxWidth: "min(36vw, 300px)",
         minHeight: "80px",
+      } : {
+        // mobile: natural flow layout
+        opacity: dimmed ? 0.3 : (isFiltered ? 0.15 : 1),
+        filter: dimmed ? "blur(3px)" : undefined,
+        pointerEvents: (isFiltered || dimmed) ? "none" : "auto",
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        zIndex: isFiltered ? 10 : zIndex,
       }}
       onClick={onSelect}
     >
