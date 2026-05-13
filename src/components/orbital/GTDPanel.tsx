@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { CloseIcon, ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/Icons";
 import type { GTDItem } from "@/types";
 import { loadMethodologyData, saveMethodologyData } from "@/utils/storage";
 import { uid } from "@/utils/uid";
@@ -61,15 +62,15 @@ function Card({ item, onMove, onDelete, onDragStart, onDragEnd, isDragging }: { 
           className="ml-2 text-white/40 hover:text-red-400 transition-colors shrink-0"
           type="button"
         >
-          ✕
+          <CloseIcon size={14} />
         </button>
       </div>
       <div className="flex items-center justify-between text-xs text-white/60">
         <span>{new Date(item.createdAt).toLocaleDateString()}</span>
         <div className="flex items-center gap-2">
-          <button aria-label="move left" onClick={() => onMove(item.id, -1)} className="rounded bg-white/10 px-2 py-0.5" type="button">◀</button>
+          <button aria-label="move left" onClick={() => onMove(item.id, -1)} className="rounded bg-white/10 px-2 py-0.5" type="button"><ChevronLeftIcon size={12} /></button>
           <span className="px-2">{item.stage}</span>
-          <button aria-label="move right" onClick={() => onMove(item.id, 1)} className="rounded bg-white/10 px-2 py-0.5" type="button">▶</button>
+          <button aria-label="move right" onClick={() => onMove(item.id, 1)} className="rounded bg-white/10 px-2 py-0.5" type="button"><ChevronRightIcon size={12} /></button>
         </div>
       </div>
     </div>

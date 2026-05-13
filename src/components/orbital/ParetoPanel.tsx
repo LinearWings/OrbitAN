@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { CloseIcon } from "@/components/ui/Icons";
 import type { ParetoItem } from "@/types";
 import { calculateParetoScores } from "@/utils/pareto";
 import { loadMethodologyData, saveMethodologyData } from "@/utils/storage";
@@ -236,7 +237,7 @@ export default function ParetoPanel() {
                   className="ml-2 text-white/30 hover:text-white/80 transition-colors shrink-0"
                   onClick={() => removeItem(it.id)}
                 >
-                  ✕
+                  <CloseIcon size={14} />
                 </button>
               </div>
             ))}
@@ -272,7 +273,7 @@ export default function ParetoPanel() {
                   className="ml-2 text-white/30 hover:text-white/80 transition-colors shrink-0"
                   onClick={() => removeItem(it.id)}
                 >
-                  ✕
+                  <CloseIcon size={14} />
                 </button>
               </div>
             ))}

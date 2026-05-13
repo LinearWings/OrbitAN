@@ -1,5 +1,6 @@
 "use client";
 
+import { CloseIcon } from "@/components/ui/Icons";
 import DocsPage from "./DocsPage";
 
 interface DocsOverlayProps {
@@ -28,7 +29,7 @@ export default function DocsOverlay({ onClose }: DocsOverlayProps) {
             onClick={onClose}
             className="text-white/40 hover:text-white/70 text-sm"
           >
-            ✕ 关闭
+            <CloseIcon size={14} /> 关闭
           </button>
         </div>
         <div className="flex-1 overflow-hidden">

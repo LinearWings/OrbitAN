@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useEffect, useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/components/ui/Icons";
 
 interface ProgressBarProps {
   progress: number;
@@ -83,8 +84,8 @@ export default function ProgressBar({
           style={{ width: `${progress}%`, background: fillGradient, boxShadow: glowShadow }} />
       </div>
       <div className="flex items-center gap-1 select-none">
-        <button onClick={() => handleNudge(-5)} className="w-5 h-5 text-[0.55rem] text-white/25 hover:text-white/60" title="减少 5%">◀</button>
-        <button onClick={() => handleNudge(5)} className="w-5 h-5 text-[0.55rem] text-white/25 hover:text-white/60" title="增加 5%">▶</button>
+        <button onClick={() => handleNudge(-5)} className="w-5 h-5 text-[0.55rem] text-white/25 hover:text-white/60" title="减少 5%"><ChevronLeftIcon size={10} /></button>
+        <button onClick={() => handleNudge(5)} className="w-5 h-5 text-[0.55rem] text-white/25 hover:text-white/60" title="增加 5%"><ChevronRightIcon size={10} /></button>
         <span className="text-[0.55rem] font-mono tabular-nums text-white/30 w-8 text-center">{progress}%</span>
         <div className="w-px h-3 bg-white/8 mx-1" />
         {status === "idle" || status === "completed" ? (

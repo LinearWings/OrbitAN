@@ -6,6 +6,7 @@ import type { FocusMethodId } from "@/types/focus";
 import { FOCUS_METHOD_COLORS, FOCUS_METHOD_LABELS } from "@/data/focus-defaults";
 import { METHODOLOGIES } from "@/data/defaults";
 import { useFocusBlocks } from "@/hooks/useFocusBlocks";
+import { CloseIcon, ArrowRightIcon } from "@/components/ui/Icons";
 import "./focus-animations.css";
 
 interface FocusBlockMiniPanelProps {
@@ -40,7 +41,7 @@ export default function FocusBlockMiniPanel({ block, onClose, onOpenMethodology 
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: methodColor }} />
             <span className="font-clash text-sm font-semibold text-white">{label.zh}</span>
           </div>
-          <button onClick={onClose} className="text-white/30 hover:text-white/70 text-sm">✕</button>
+          <button onClick={onClose} className="text-white/30 hover:text-white/70 text-sm"><CloseIcon size={14} /></button>
         </div>
         <div className="mt-1 text-[0.65rem] text-white/50">{block.name}</div>
         <div className="mt-0.5 text-[0.55rem] text-white/30 font-mono">{block.startTime} – {block.endTime}</div>
@@ -135,7 +136,7 @@ export default function FocusBlockMiniPanel({ block, onClose, onOpenMethodology 
           onClick={() => onOpenMethodology?.(block.method)}
           className="text-[0.5rem] text-white/30 hover:text-white/70 transition-colors"
         >
-          查看完整面板 →
+          查看完整面板 <ArrowRightIcon size={12} />
         </button>
       </div>
     </div>

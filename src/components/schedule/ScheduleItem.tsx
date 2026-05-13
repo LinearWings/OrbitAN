@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useState, useRef, useCallback, useEffect } from "react";
+import { CaretUpIcon, CaretDownIcon } from "@/components/ui/Icons";
 import type { Task } from "@/types";
 import { getTaskColor, getTaskLabel } from "@/utils/colors";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -47,18 +48,18 @@ function TimePicker({
       <div className="flex items-center gap-3 px-4 py-3">
         {/* Hours */}
         <div className="flex flex-col items-center gap-0.5">
-          <button onClick={() => adjust("h", 1)} className="text-white/20 hover:text-white/60 transition-colors leading-none text-[0.5rem]">▲</button>
+          <button onClick={() => adjust("h", 1)} className="text-white/20 hover:text-white/60 transition-colors leading-none text-[0.5rem]"><CaretUpIcon size={10} /></button>
           <span className="font-clash text-xl font-semibold tabular-nums text-white/90 w-7 text-center">{String(h ?? 0).padStart(2, "0")}</span>
-          <button onClick={() => adjust("h", -1)} className="text-white/20 hover:text-white/60 transition-colors leading-none text-[0.5rem]">▼</button>
+          <button onClick={() => adjust("h", -1)} className="text-white/20 hover:text-white/60 transition-colors leading-none text-[0.5rem]"><CaretDownIcon size={10} /></button>
         </div>
 
         <span className="text-white/30 text-lg font-mono mt-[-4px]">:</span>
 
         {/* Minutes */}
         <div className="flex flex-col items-center gap-0.5">
-          <button onClick={() => adjust("m", 1)} className="text-white/20 hover:text-white/60 transition-colors leading-none text-[0.5rem]">▲</button>
+          <button onClick={() => adjust("m", 1)} className="text-white/20 hover:text-white/60 transition-colors leading-none text-[0.5rem]"><CaretUpIcon size={10} /></button>
           <span className="font-clash text-xl font-semibold tabular-nums text-white/90 w-7 text-center">{String(m ?? 0).padStart(2, "0")}</span>
-          <button onClick={() => adjust("m", -1)} className="text-white/20 hover:text-white/60 transition-colors leading-none text-[0.5rem]">▼</button>
+          <button onClick={() => adjust("m", -1)} className="text-white/20 hover:text-white/60 transition-colors leading-none text-[0.5rem]"><CaretDownIcon size={10} /></button>
         </div>
       </div>
 

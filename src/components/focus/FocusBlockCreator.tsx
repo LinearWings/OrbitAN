@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { CaretUpIcon, CaretDownIcon, ArrowRightIcon } from "@/components/ui/Icons";
 import { useFocusBlocks } from "@/hooks/useFocusBlocks";
 import { useAppContext } from "@/context/AppContext";
 import { FOCUS_METHOD_LABELS } from "@/data/focus-defaults";
@@ -70,27 +71,27 @@ export default function FocusBlockCreator({ date, onClose, onCreate }: FocusBloc
       {/* Time pickers */}
       <div className="flex items-center gap-2 mb-2">
         <div className="flex items-center gap-0.5">
-          <button onClick={() => nudge(setStartH, startH, 23)(-1)} className="text-white/20 hover:text-white/60 text-[0.5rem]">▼</button>
+          <button onClick={() => nudge(setStartH, startH, 23)(-1)} className="text-white/20 hover:text-white/60 text-[0.5rem]"><CaretDownIcon size={10} /></button>
           <span className="font-mono text-sm text-white/80 w-6 text-center">{String(startH).padStart(2, "0")}</span>
-          <button onClick={() => nudge(setStartH, startH, 23)(1)} className="text-white/20 hover:text-white/60 text-[0.5rem]">▲</button>
+          <button onClick={() => nudge(setStartH, startH, 23)(1)} className="text-white/20 hover:text-white/60 text-[0.5rem]"><CaretUpIcon size={10} /></button>
         </div>
         <span className="text-white/30">:</span>
         <div className="flex items-center gap-0.5">
-          <button onClick={() => nudge(setStartM, startM, 55)(-5)} className="text-white/20 hover:text-white/60 text-[0.5rem]">▼</button>
+          <button onClick={() => nudge(setStartM, startM, 55)(-5)} className="text-white/20 hover:text-white/60 text-[0.5rem]"><CaretDownIcon size={10} /></button>
           <span className="font-mono text-sm text-white/80 w-6 text-center">{String(startM).padStart(2, "0")}</span>
-          <button onClick={() => nudge(setStartM, startM, 55)(5)} className="text-white/20 hover:text-white/60 text-[0.5rem]">▲</button>
+          <button onClick={() => nudge(setStartM, startM, 55)(5)} className="text-white/20 hover:text-white/60 text-[0.5rem]"><CaretUpIcon size={10} /></button>
         </div>
-        <span className="text-white/20 mx-1">→</span>
+        <span className="text-white/20 mx-1"><ArrowRightIcon size={12} /></span>
         <div className="flex items-center gap-0.5">
-          <button onClick={() => nudge(setEndH, endH, 23)(-1)} className="text-white/20 hover:text-white/60 text-[0.5rem]">▼</button>
+          <button onClick={() => nudge(setEndH, endH, 23)(-1)} className="text-white/20 hover:text-white/60 text-[0.5rem]"><CaretDownIcon size={10} /></button>
           <span className="font-mono text-sm text-white/80 w-6 text-center">{String(endH).padStart(2, "0")}</span>
-          <button onClick={() => nudge(setEndH, endH, 23)(1)} className="text-white/20 hover:text-white/60 text-[0.5rem]">▲</button>
+          <button onClick={() => nudge(setEndH, endH, 23)(1)} className="text-white/20 hover:text-white/60 text-[0.5rem]"><CaretUpIcon size={10} /></button>
         </div>
         <span className="text-white/30">:</span>
         <div className="flex items-center gap-0.5">
-          <button onClick={() => nudge(setEndM, endM, 55)(-5)} className="text-white/20 hover:text-white/60 text-[0.5rem]">▼</button>
+          <button onClick={() => nudge(setEndM, endM, 55)(-5)} className="text-white/20 hover:text-white/60 text-[0.5rem]"><CaretDownIcon size={10} /></button>
           <span className="font-mono text-sm text-white/80 w-6 text-center">{String(endM).padStart(2, "0")}</span>
-          <button onClick={() => nudge(setEndM, endM, 55)(5)} className="text-white/20 hover:text-white/60 text-[0.5rem]">▲</button>
+          <button onClick={() => nudge(setEndM, endM, 55)(5)} className="text-white/20 hover:text-white/60 text-[0.5rem]"><CaretUpIcon size={10} /></button>
         </div>
       </div>
       {/* Method selector */}

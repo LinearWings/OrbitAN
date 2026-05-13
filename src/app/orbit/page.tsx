@@ -658,6 +658,7 @@ export default function Home() {
       if (!dragging && Math.abs(dx) + Math.abs(dy) < 4) return;
       if (!dragging) {
         dragging = true;
+        targetEl.classList.add("dragging");
         targetEl.style.transition = "none";
         targetEl.style.filter = "drop-shadow(0 8px 24px rgba(0,0,0,0.6))";
         targetEl.setPointerCapture(e.pointerId);
@@ -681,6 +682,9 @@ export default function Home() {
       targetEl.style.left = newLeft + "%";
       targetEl.style.top = newTop + "%";
       targetEl.style.transform = "translate(-50%, -50%)";
+      targetEl.classList.remove("dragging");
+      targetEl.classList.add("card-drop");
+      setTimeout(() => targetEl?.classList.remove("card-drop"), 350);
       targetEl.style.zIndex = "";
       // Then persist to state (no visible change since DOM already updated)
       const newMap = new Map(manualOverridesRef.current);

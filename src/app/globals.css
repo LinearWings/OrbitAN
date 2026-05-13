@@ -387,3 +387,56 @@ button:active, a:active, [role="button"]:active {
     /* Neutralize hover effects — touch uses active states instead */
   }
 }
+
+/* Drag state glow */
+[data-task-id].dragging {
+  filter: drop-shadow(0 0 24px rgba(255,255,255,0.2)) drop-shadow(0 8px 32px rgba(0,0,0,0.6));
+}
+
+/* Card drag grip indicator — shown on hover/touch */
+[data-task-id]::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 40%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  [data-task-id]::after {
+    opacity: 0.15;
+  }
+}
+
+/* Orbit Mode card glow enhancement */
+@keyframes orbit-card-pulse {
+  0%, 100% { box-shadow: 0 0 12px var(--method-glow, rgba(234,179,8,0.2)); }
+  50% { box-shadow: 0 0 24px var(--method-glow, rgba(234,179,8,0.4)); }
+}
+
+/* Card drop spring animation */
+@keyframes card-drop-spring {
+  0% { transform: translate(-50%, -50%) scale(1.08); }
+  60% { transform: translate(-50%, -50%) scale(0.96); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.card-drop {
+  animation: card-drop-spring 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Selection pulse for mobile touch */
+@keyframes select-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.15); }
+  100% { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+}
+
+.select-flash {
+  animation: select-pulse 0.4s ease-out;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { ArrowRightIcon } from "@/components/ui/Icons";
 import type { CustomTypeDef } from "@/types";
 import { getTaskColor, getTaskLabel, CUSTOM_TYPE_PALETTE } from "@/utils/colors";
 import { timeToMinutes } from "@/utils/time";
@@ -440,7 +441,7 @@ export default function InlineTaskCreator({
                   />
                   <div className="flex flex-col items-center gap-0.5">
                     <span className="text-white/20 text-[0.4rem]">&nbsp;</span>
-                    <span className="text-white/25 text-xs mt-[-6px]">→</span>
+                    <span className="text-white/25 text-xs mt-[-6px]"><ArrowRightIcon size={12} /></span>
                     <span className="text-white/25 text-[0.55rem] font-mono">{duration}min</span>
                   </div>
                   <TimeWheelPicker

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, type CSSProperties } from "react";
+import { CloseIcon } from "@/components/ui/Icons";
 import type { HowellMatrixData, QuadrantItem } from "@/types";
 import { loadMethodologyData, saveMethodologyData } from "@/utils/storage";
 import { uid } from "@/utils/uid";
@@ -123,7 +124,7 @@ function QuadrantCard({
                   className="invisible group-hover:visible text-white/30 hover:text-white/80 transition-colors"
                   onClick={() => onDelete(it.id)}
                 >
-                  ✕
+                  <CloseIcon size={14} />
                 </button>
               </div>
             </div>
