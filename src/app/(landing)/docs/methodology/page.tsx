@@ -1,5 +1,8 @@
-import { cookies, headers } from "next/headers";
-import { detectLang, getT, type Lang } from "@/lib/i18n";
+"use client";
+
+import Link from "next/link";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
 
 const METHODS = [
   { nameEn: "GTD — Getting Things Done", nameZh: "GTD — 搞定", color: "#22C55E", descEn: "Five-stage kanban: Inbox → Next Actions → Waiting → Someday → Done. Capture everything, clarify next steps, and organize by context.", descZh: "五阶段看板：收集箱 → 下一步行动 → 等待 → 将来/也许 → 已完成。捕获一切、理清下一步、按情境组织。" },
@@ -10,15 +13,13 @@ const METHODS = [
   { nameEn: "SWOT Analysis", nameZh: "SWOT 分析", color: "#EAB308", descEn: "Strengths, Weaknesses, Opportunities, Threats. Strategic planning tool for project-level thinking integrated into daily scheduling.", descZh: "优势、劣势、机会、威胁。项目级战略规划工具，集成到日常计划中。" },
 ];
 
-export default async function MethodologyPage() {
-  const cookieStore = await cookies();
-  const headersList = await headers();
-  const lang = (cookieStore.get("orbit_lang")?.value as Lang) || detectLang(headersList.get("accept-language"));
+export default function MethodologyPage() {
+  const lang = useLanguage();
   const t = getT(lang);
 
   return (
     <div className="max-w-3xl mx-auto px-8 py-16">
-      <a href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors mb-8 inline-block">{t.back_docs}</a>
+      <Link href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors mb-8 inline-block">{t.back_docs}</Link>
       <h1 className="text-4xl font-semibold tracking-tight mb-2 text-white/85" style={{ fontFamily: "'Clash Display', sans-serif" }}>{t.methodology_title}</h1>
       <p className="text-white/30 mb-12">{t.methodology_desc}</p>
 

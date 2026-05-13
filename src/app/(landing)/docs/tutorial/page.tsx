@@ -1,15 +1,16 @@
-import { cookies, headers } from "next/headers";
-import { detectLang, getT, type Lang } from "@/lib/i18n";
+"use client";
 
-export default async function TutorialPage() {
-  const cookieStore = await cookies();
-  const headersList = await headers();
-  const lang = (cookieStore.get("orbit_lang")?.value as Lang) || detectLang(headersList.get("accept-language"));
+import Link from "next/link";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
+
+export default function TutorialPage() {
+  const lang = useLanguage();
   const t = getT(lang);
 
   return (
     <div className="max-w-3xl mx-auto px-8 py-16">
-      <a href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors mb-8 inline-block">{t.back_docs}</a>
+      <Link href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors mb-8 inline-block">{t.back_docs}</Link>
       <h1 className="text-4xl font-semibold tracking-tight mb-2 text-white/85" style={{ fontFamily: "'Clash Display', sans-serif" }}>{t.tutorial_title}</h1>
       <p className="text-white/30 mb-12">{t.tutorial_desc}</p>
 

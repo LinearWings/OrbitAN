@@ -1,5 +1,8 @@
-import { cookies, headers } from "next/headers";
-import { detectLang, getT, type Lang } from "@/lib/i18n";
+"use client";
+
+import Link from "next/link";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
 
 const SHORTCUTS = [
   ["N", "New Task / 新建任务"], ["O", "Toggle Orbit Mode / 切换轨道模式"], ["T", "Go to Today / 回到今天"],
@@ -32,16 +35,14 @@ const INTERACTIONS_ZH = [
   ["点击聚焦块 (周视图)", "打开方法论面板"],
 ];
 
-export default async function UsagePage() {
-  const cookieStore = await cookies();
-  const headersList = await headers();
-  const lang = (cookieStore.get("orbit_lang")?.value as Lang) || detectLang(headersList.get("accept-language"));
+export default function UsagePage() {
+  const lang = useLanguage();
   const t = getT(lang);
   const interactions = lang === "zh" ? INTERACTIONS_ZH : INTERACTIONS_EN;
 
   return (
     <div className="max-w-3xl mx-auto px-8 py-16">
-      <a href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors mb-8 inline-block">{t.back_docs}</a>
+      <Link href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors mb-8 inline-block">{t.back_docs}</Link>
       <h1 className="text-4xl font-semibold tracking-tight mb-2 text-white/85" style={{ fontFamily: "'Clash Display', sans-serif" }}>{t.usage_title}</h1>
       <p className="text-white/30 mb-12">{t.usage_desc}</p>
 

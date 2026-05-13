@@ -1,10 +1,11 @@
-import { cookies, headers } from "next/headers";
-import { detectLang, getT, type Lang } from "@/lib/i18n";
+"use client";
 
-export default async function DocsPage() {
-  const cookieStore = await cookies();
-  const headersList = await headers();
-  const lang = (cookieStore.get("orbit_lang")?.value as Lang) || detectLang(headersList.get("accept-language"));
+import Link from "next/link";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
+
+export default function DocsPage() {
+  const lang = useLanguage();
   const t = getT(lang);
 
   return (
@@ -21,7 +22,7 @@ export default async function DocsPage() {
           { href: "/docs/usage", title: t.doc_usage, desc: t.doc_usage_desc, color: "#EAB308" },
           { href: "/docs/changelog", title: t.doc_changelog, desc: t.doc_changelog_desc, color: "#22C55E" },
         ].map((doc) => (
-          <a
+          <Link
             key={doc.href}
             href={doc.href}
             className="block rounded-xl p-6 transition-all hover:-translate-y-0.5"
@@ -34,7 +35,7 @@ export default async function DocsPage() {
               </h3>
             </div>
             <p className="text-sm text-white/30 pl-5">{doc.desc}</p>
-          </a>
+          </Link>
         ))}
       </div>
     </div>
