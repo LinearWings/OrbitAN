@@ -2,16 +2,18 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getT } from "@/lib/i18n";
 
 export default function LandingPage() {
   const lang = useLanguage();
   const t = getT(lang);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <>
       {/* Hero */}
-      <section className="relative px-8 pt-24 pb-36 overflow-hidden">
+      <section className="relative px-4 md:px-8 pt-16 md:pt-24 pb-24 md:pb-36 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-10 left-[12%] w-[600px] h-[600px] rounded-full bg-[#EAB308]/[0.05]" />
           <div className="absolute top-32 right-[8%] w-[450px] h-[450px] rounded-full bg-[#3B82F6]/[0.05]" />
@@ -21,7 +23,7 @@ export default function LandingPage() {
           <p className="text-xs tracking-[0.2em] uppercase text-white/20 mb-8" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
             {t.hero_tagline}
           </p>
-          <h1 className="text-5xl md:text-7xl font-semibold leading-[1.05] tracking-tight mb-6 text-white/90" style={{ fontFamily: "'Clash Display', sans-serif" }}>
+          <h1 className="text-3xl md:text-7xl font-semibold leading-[1.05] tracking-tight mb-6 text-white/90" style={{ fontFamily: "'Clash Display', sans-serif" }}>
             {t.hero_title_1}
             <br />
             <span className="text-[#3B82F6]">{t.hero_title_2}</span> {t.hero_title_3}
@@ -52,7 +54,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="px-8 pb-32 max-w-5xl mx-auto">
+      <section className="px-4 md:px-8 pb-32 max-w-5xl mx-auto">
         <p className="text-xs tracking-[0.15em] uppercase text-white/15 mb-4 text-center" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
           {t.how_title}
         </p>
@@ -78,7 +80,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="px-8 pb-32 max-w-5xl mx-auto">
+      <section className="px-4 md:px-8 pb-32 max-w-5xl mx-auto">
         <p className="text-xs tracking-[0.15em] uppercase text-white/15 mb-8 text-center" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
           {t.features_title}
         </p>
@@ -102,7 +104,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="px-8 pb-32 max-w-2xl mx-auto text-center">
+      <section className="px-4 md:px-8 pb-32 max-w-2xl mx-auto text-center">
         <div
           className="rounded-3xl p-12"
           style={{ background: "linear-gradient(135deg, rgba(37,99,235,0.08), rgba(124,58,237,0.06))", border: "1px solid rgba(37,99,235,0.1)" }}
@@ -132,7 +134,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="px-8 py-12 border-t border-white/[0.05]">
-        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-white/15">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/15">
           <span>{t.footer_text}</span>
           <div className="flex gap-6">
             <Link href="/docs" className="hover:text-white/35 transition-colors">{t.footer_docs}</Link>
