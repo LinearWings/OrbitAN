@@ -168,17 +168,6 @@ export default function InlineTaskCreator({
     }
   }, [isOpen]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && name.trim() && pendingStartTime && pendingEndTime) {
-      onCreate({ name: name.trim(), type, startTime: pendingStartTime, endTime: pendingEndTime });
-    }
-    if (e.key === "Escape") onClose();
-  }, [name, type, pendingStartTime, pendingEndTime, onCreate, onClose]);
-
-  const duration = (pendingStartTime && pendingEndTime)
-    ? (timeToMinutes(pendingEndTime) - timeToMinutes(pendingStartTime) + 1440) % 1440
-    : 0;
-
   const effectiveStartTime = isMobile
     ? (pendingStartTime ?? "09:00")
     : pendingStartTime;
@@ -186,13 +175,28 @@ export default function InlineTaskCreator({
     ? (pendingEndTime ?? "10:00")
     : pendingEndTime;
 
-  const canConfirm = name.trim().length > 0 && pendingStartTime && pendingEndTime;
+  const timeForCreate = isMobile
+    ? { start: effectiveStartTime, end: effectiveEndTime }
+    : { start: pendingStartTime, end: pendingEndTime };
+
+  const duration = (effectiveStartTime && effectiveEndTime)
+    ? (timeToMinutes(effectiveEndTime) - timeToMinutes(effectiveStartTime) + 1440) % 1440
+    : 0;
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && name.trim() && effectiveStartTime && effectiveEndTime) {
+      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime });
+    }
+    if (e.key === "Escape") onClose();
+  }, [name, type, effectiveStartTime, effectiveEndTime, onCreate, onClose]);
+
+  const canConfirm = name.trim().length > 0 && effectiveStartTime && effectiveEndTime;
 
   const handleConfirm = useCallback(() => {
     if (canConfirm) {
-      onCreate({ name: name.trim(), type, startTime: pendingStartTime!, endTime: pendingEndTime! });
+      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime });
     }
-  }, [canConfirm, name, type, pendingStartTime, pendingEndTime, onCreate]);
+  }, [canConfirm, name, type, effectiveStartTime, effectiveEndTime, onCreate]);
 
   // All available types: built-in + custom
   const allTypes = [...BUILT_IN_TYPES, ...customTypes.map((ct) => ct.name)];

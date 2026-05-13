@@ -375,8 +375,10 @@ export default function Home() {
   }, [addTask]);
 
   const handleNudgeTime = useCallback((field: "start" | "end", delta: number) => {
-    const time = field === "start" ? pendingStartTime : pendingEndTime;
-    if (!time) return;
+    // Auto-initialize with defaults on mobile (clock not interactive)
+    if (!pendingStartTime) setPendingStartTime("09:00");
+    if (!pendingEndTime) setPendingEndTime("10:00");
+    const time = field === "start" ? (pendingStartTime ?? "09:00") : (pendingEndTime ?? "10:00");
     const [h, m] = time.split(":").map(Number);
     const total = (((h ?? 0) * 60 + (m ?? 0) + delta) % 1440 + 1440) % 1440;
     const hh = Math.floor(total / 60);
@@ -694,9 +696,9 @@ export default function Home() {
       <TitleHeader onOpenDocs={() => setIsDocsOverlayOpen(true)} />
       <DateNav />
 
-      {/* Top stats bar — above the clock */}
+      {/* Top stats bar — above the clock. On mobile push below title header */}
       <div className="relative z-20 mx-auto flex items-center justify-center"
-        style={{ marginTop: isMobile ? "0.25rem" : (viewMode === "day" ? "max(5rem, 8vh)" : "1rem") }}
+        style={{ marginTop: isMobile ? "3.75rem" : (viewMode === "day" ? "max(5rem, 8vh)" : "1rem") }}
       >
         <div className="flex items-center gap-6 px-5 py-2 rounded-2xl border border-white/[0.06] bg-black/30 backdrop-blur-xl">
           <div className="flex items-center gap-2">
@@ -799,7 +801,7 @@ export default function Home() {
 
       {viewMode === "day" && (
         <div className={isMobile
-          ? "relative z-10 w-full px-4 flex flex-col gap-3 mt-4 pb-32"
+          ? "relative z-10 w-full px-4 flex flex-col gap-3 mt-3 flex-1 min-h-0 overflow-y-auto ios-scroll pb-32"
           : undefined
         }>
           {tasksForDate.length === 0 ? (

@@ -149,138 +149,12 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#0A0A0D" }}>
-      {isMobile ? (
-        /* MOBILE: vertically stacked day cards */
-        <div style={{ flex: 1, overflowY: "auto", padding: "6px 10px" }}>
-          {week.map((date, di) => {
-            const dayNum = parseInt(date.split("-")[2] ?? "0", 10);
-            const isToday = date === today;
-            const dayTasks = state.tasks[date] ?? [];
-            const dayBlocks = isOrbitMode ? (state.focusBlocks[date] ?? []) : [];
-            const types = [...new Set(dayTasks.map(t => t.type))];
-            return (
-              <div key={date} style={{
-                marginBottom: 10, borderRadius: 8,
-                background: isToday ? "rgba(37,99,235,0.04)" : "rgba(255,255,255,0.02)",
-                border: "1px solid rgba(255,255,255,0.06)",
-                overflow: "hidden",
-              }}>
-                {/* Day header — min 44px touch target */}
-                <button onClick={() => onDayClick(date)} style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  width: "100%", padding: "10px 12px", border: "none",
-                  background: "transparent", cursor: "pointer",
-                  minHeight: 44,
-                }}>
-                  <span style={{
-                    fontSize: 13, fontFamily: "'Inter','Microsoft YaHei',sans-serif",
-                    color: "rgba(255,255,255,0.45)", lineHeight: 1,
-                  }}>
-                    周{DAY_LABELS_ZH[di]}
-                  </span>
-                  <span style={{
-                    width: 30, height: 30, borderRadius: "50%",
-                    display: "inline-flex", alignItems: "center", justifyContent: "center",
-                    background: isToday ? "#2563EB" : "transparent",
-                    color: isToday ? "#fff" : "rgba(255,255,255,0.65)",
-                    fontSize: 15, fontFamily: "'Clash Display',sans-serif", fontWeight: 600, lineHeight: 1,
-                  }}>
-                    {dayNum}
-                  </span>
-                  {types.length > 0 && (
-                    <div style={{ display: "flex", gap: 2 }}>
-                      {types.slice(0, 4).map(t => (
-                        <div key={t} style={{ width: 6, height: 6, borderRadius: "50%", background: getTaskColor(t) }} />
-                      ))}
-                    </div>
-                  )}
-                  <span style={{
-                    marginLeft: "auto", fontSize: 12,
-                    fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace",
-                    color: "rgba(255,255,255,0.25)",
-                  }}>
-                    {dayTasks.length > 0 ? `${dayTasks.length}项` : ""}
-                  </span>
-                </button>
-
-                {/* Task rows */}
-                {dayTasks.length > 0 && (
-                  <div style={{ padding: "0 12px 8px", display: "flex", flexDirection: "column", gap: 4 }}>
-                    {dayTasks.map(task => (
-                      <div key={task.id} style={{
-                        display: "flex", alignItems: "center", gap: 6,
-                        padding: "8px 8px", borderRadius: 6,
-                        background: `${getTaskColor(task.type)}0d`,
-                        borderLeft: `2px solid ${getTaskColor(task.type)}`,
-                        minHeight: 44,
-                      }}>
-                        <span style={{
-                          fontSize: 11,
-                          fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace",
-                          color: `${getTaskColor(task.type)}cc`,
-                          whiteSpace: "nowrap", flexShrink: 0,
-                        }}>
-                          {task.startTime}
-                        </span>
-                        <span style={{
-                          fontSize: 13, color: "rgba(255,255,255,0.85)",
-                          fontFamily: "'Inter','Microsoft YaHei',sans-serif", lineHeight: 1.3,
-                        }}>
-                          {task.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Focus block rows (mobile) */}
-                {dayBlocks.length > 0 && (
-                  <div style={{ padding: "0 12px 8px", display: "flex", flexDirection: "column", gap: 4 }}>
-                    {dayBlocks.slice(0, 3).map(block => {
-                      const fbColor = FOCUS_METHOD_COLORS[block.method];
-                      return (
-                        <div key={block.id} style={{
-                          display: "flex", alignItems: "center", gap: 6,
-                          padding: "8px 8px", borderRadius: 6,
-                          background: `${fbColor}0d`,
-                          borderLeft: `2px solid ${fbColor}`,
-                          minHeight: 44,
-                        }}>
-                          <span style={{
-                            fontSize: 11,
-                            fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace",
-                            color: `${fbColor}cc`,
-                            whiteSpace: "nowrap", flexShrink: 0,
-                          }}>
-                            {block.startTime}
-                          </span>
-                          <span style={{
-                            fontSize: 13, color: "rgba(255,255,255,0.85)",
-                            fontFamily: "'Inter','Microsoft YaHei',sans-serif", lineHeight: 1.3,
-                          }}>
-                            {block.name}
-                          </span>
-                        </div>
-                      );
-                    })}
-                    {dayBlocks.length > 3 && (
-                      <span style={{
-                        fontSize: 11, color: "rgba(255,255,255,0.3)",
-                        fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace",
-                        padding: "2px 4px",
-                      }}>
-                        +{dayBlocks.length - 3} 项
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        /* DESKTOP: 7-column grid */
-        <>
+      {/*
+        7-column timeline grid — on mobile, horizontally scrollable.
+        On desktop, full width with time labels on the left.
+      */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflowX: isMobile ? "auto" : "hidden" }}>
+        <div style={isMobile ? { minWidth: 700 } : undefined}>
       {/* HEADER */}
       <div style={{
         display: "grid", gridTemplateColumns: "36px repeat(7, 1fr)",
@@ -460,9 +334,8 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
         )}
       </div>
       </div>
-
-      </>
-      )}
+      </div>
+      </div>
 
       {/* LEGEND */}
       {allTypes.length > 0 && (
