@@ -689,7 +689,7 @@ export default function Home() {
 
   return (
     <>
-    <main className="relative flex min-h-screen w-full flex-col overflow-hidden">
+    <main className="relative flex h-dvh w-full flex-col overflow-hidden">
       {!isMobile && <OrbitalCursor />}
       {viewMode === "day" && !isMobile && <ConnectorArrows />}
       {!isMobile && <NoiseOverlay />}
@@ -698,7 +698,7 @@ export default function Home() {
 
       {/* Top stats bar — above the clock. On mobile push below title header */}
       <div className="relative z-20 mx-auto flex items-center justify-center"
-        style={{ marginTop: isMobile ? "3.75rem" : (viewMode === "day" ? "max(5rem, 8vh)" : "1rem") }}
+        style={{ marginTop: isMobile ? "4rem" : (viewMode === "day" ? "max(5rem, 8vh)" : "1rem") }}
       >
         <div className="flex items-center gap-6 px-5 py-2 rounded-2xl border border-white/[0.06] bg-black/30 backdrop-blur-xl">
           <div className="flex items-center gap-2">
