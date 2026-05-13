@@ -25,6 +25,7 @@ export function useViewNavigation() {
       dispatch({ type: "SET_DATE", payload: startOfPrevWeek });
     } else if (viewMode === "month") {
       const d = new Date(currentDate + "T00:00:00");
+      d.setDate(1); // Prevent month overflow (e.g. Jan 31 → setMonth(+0) → Mar 3)
       d.setMonth(d.getMonth() - 1);
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -43,6 +44,7 @@ export function useViewNavigation() {
       dispatch({ type: "SET_DATE", payload: startOfNextWeek });
     } else if (viewMode === "month") {
       const d = new Date(currentDate + "T00:00:00");
+      d.setDate(1); // Prevent month overflow (e.g. Jan 31 → setMonth(+1) → Mar 3)
       d.setMonth(d.getMonth() + 1);
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, "0");

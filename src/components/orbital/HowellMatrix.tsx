@@ -52,11 +52,13 @@ function QuadrantCard({
       }}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
-        const payload = e.dataTransfer.getData("application/json");
-        if (payload) {
-          const data = JSON.parse(payload);
-          onMove({ id: data.id, from: data.from, to: keyName as string });
-        }
+        try {
+          const payload = e.dataTransfer.getData("application/json");
+          if (payload) {
+            const data = JSON.parse(payload);
+            onMove({ id: data.id, from: data.from, to: keyName as string });
+          }
+        } catch { /* invalid drag data — ignore */ }
       }}
     >
       <div className="p-3">

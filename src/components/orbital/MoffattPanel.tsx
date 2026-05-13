@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { MOFFATT_DEFAULTS } from "@/data/constants";
 import type { MoffattSession } from "@/types";
 import { loadMethodologyData, saveMethodologyData } from "@/utils/storage";
@@ -59,6 +59,7 @@ export default function MoffattPanel() {
         if (curIndex === -1) return prev;
         const next = prev.map((s) => ({ ...s }));
         const cur = next[curIndex];
+        cur.remaining = Math.max(0, cur.remaining - 1);
         if (cur.remaining <= 0) {
           cur.isCompleted = true;
           cur.isActive = false;
@@ -67,19 +68,26 @@ export default function MoffattPanel() {
           if (nextIndex < next.length) {
             next[nextIndex].isActive = true;
           }
-          return next;
         }
-        cur.remaining = Math.max(0, cur.remaining - 1);
         return next;
       });
     }, 1000);
     return () => clearInterval(id);
   }, [isRunning]);
 
-  // persist
+  // persist — skip per-second writes while timer is running
+  const isRunningRef = useRef(isRunning);
+  isRunningRef.current = isRunning;
   useEffect(() => {
+    if (isRunningRef.current) return; // Don't save every second; save on stop
     saveMethodologyData(METHODOLOGY_KEY, sessions);
   }, [sessions]);
+
+  // Save immediately when timer stops
+  useEffect(() => {
+    if (!isRunning) saveMethodologyData(METHODOLOGY_KEY, sessions);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRunning]);
 
   const allCompleted = sessions.length > 0 && sessions.every((s) => s.isCompleted);
   const showCompleted = allCompleted;

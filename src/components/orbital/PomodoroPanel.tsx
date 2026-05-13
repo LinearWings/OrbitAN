@@ -2,8 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { POMODORO_DEFAULTS } from "@/data/constants";
+import { loadMethodologyData, saveMethodologyData } from "@/utils/storage";
 
+const METHODOLOGY_KEY = "pomodoro";
 type Phase = "focus" | "shortBreak" | "longBreak";
+
+interface PomodoroState {
+  phase: Phase;
+  focusCount: number;
+  remaining: number;
+}
 
 const PHASE_LABEL: Record<Phase, string> = {
   focus: "专注",
@@ -46,10 +54,19 @@ function useBeep() {
 
 export default function PomodoroPanel() {
   const beeper = useBeep();
-  const [phase, setPhase] = useState<Phase>("focus");
+  const [phase, setPhase] = useState<Phase>(() => {
+    const saved = loadMethodologyData<PomodoroState>(METHODOLOGY_KEY);
+    return saved?.phase ?? "focus";
+  });
   const [running, setRunning] = useState(false);
-  const [focusCount, setFocusCount] = useState(0);
-  const [remaining, setRemaining] = useState(POMODORO_DEFAULTS.focusDuration);
+  const [focusCount, setFocusCount] = useState(() => {
+    const saved = loadMethodologyData<PomodoroState>(METHODOLOGY_KEY);
+    return saved?.focusCount ?? 0;
+  });
+  const [remaining, setRemaining] = useState(() => {
+    const saved = loadMethodologyData<PomodoroState>(METHODOLOGY_KEY);
+    return saved?.remaining ?? POMODORO_DEFAULTS.focusDuration;
+  });
 
   const phaseRef = useRef(phase);
   const focusCountRef = useRef(focusCount);
@@ -68,7 +85,7 @@ export default function PomodoroPanel() {
     const id = window.setInterval(() => {
       if (transitioning.current) return;
       setRemaining((prev) => {
-        if (prev <= 1) return 0;
+        if (prev <= 0) return 0;
         return prev - 1;
       });
     }, 1000);
@@ -90,20 +107,24 @@ export default function PomodoroPanel() {
       if (needLongBreak) {
         setPhase("longBreak");
         setRemaining(longBreakDuration);
+        setFocusCount(0); // Reset cycle after long break
       } else {
         setPhase("shortBreak");
         setRemaining(shortBreakDuration);
+        setFocusCount((f) => f + 1);
       }
     } else {
       setPhase("focus");
       setRemaining(focusDuration);
-      if (curPhase === "shortBreak") {
-        setFocusCount((f) => f + 1);
-      }
     }
 
     transitioning.current = false;
   }, [remaining, running, beeper]);
+
+  // Persist state (not running — always start paused on reload)
+  useEffect(() => {
+    saveMethodologyData(METHODOLOGY_KEY, { phase, focusCount, remaining });
+  }, [phase, focusCount, remaining]);
 
   function reset() {
     setPhase("focus");

@@ -72,7 +72,8 @@ function loadAll(): StoredData {
     }
 
     return { ...parsed, version: CURRENT_VERSION, tasks };
-  } catch {
+  } catch (e) {
+    console.error("[OrbitAN] Failed to load/parse stored data, resetting:", e);
     return { version: CURRENT_VERSION, tasks: {} };
   }
 }
@@ -112,6 +113,8 @@ export function saveMethodologyData<T>(key: string, value: T): void {
 export function clearStorage(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(FOCUS_STORAGE_KEY);
+  localStorage.removeItem(CUSTOM_TYPES_KEY);
 }
 
 const CUSTOM_TYPES_KEY = "orbital_custom_types_v1";
@@ -142,5 +145,5 @@ export function loadFocusBlocks(): FocusBlocksByDate {
 export function saveFocusBlocks(blocks: FocusBlocksByDate): void {
   if (typeof window === "undefined") return;
   try { localStorage.setItem(FOCUS_STORAGE_KEY, JSON.stringify(blocks)); }
-  catch { /* quota exceeded */ }
+  catch (e) { console.error("[OrbitAN] Failed to save focus blocks (quota exceeded?):", e); }
 }

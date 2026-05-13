@@ -320,6 +320,7 @@ export default function Home() {
   const [manualOverrides, setManualOverrides] = useState<Map<string, { left: number; top: number }>>(new Map());
   const manualOverridesRef = useRef(manualOverrides);
   manualOverridesRef.current = manualOverrides;
+  const swipeStartRef = useRef<Map<string, { x: number; y: number }>>(new Map());
 
   // Inline creation state
   const [isCreating, setIsCreating] = useState(false);
@@ -462,6 +463,9 @@ export default function Home() {
     };
     const onTouchEnd = (e: TouchEvent) => {
       if (e.changedTouches.length !== 1) return;
+      // Skip if the swipe was on a task card (handled by card-level swipe-to-delete)
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-task-id]")) return;
       const dx = e.changedTouches[0]!.clientX - startX;
       const dy = e.changedTouches[0]!.clientY - startY;
       // Only trigger if horizontal swipe > 60px and dominates vertical
@@ -861,10 +865,6 @@ export default function Home() {
                 : task.method ? FOCUS_METHOD_COLORS[task.method] : undefined;
               const isDelTarget = deleteTarget?.type === "task" && deleteTarget.id === task.id;
 
-              // Touch swipe state per card
-              let swipeStartX = 0;
-              let swipeStartY = 0;
-
               return (
                 <div
                   key={task.id}
@@ -872,13 +872,18 @@ export default function Home() {
                   {...(isMobile ? {
                     onTouchStart: (e: React.TouchEvent) => {
                       if (e.touches.length !== 1) return;
-                      swipeStartX = e.touches[0]!.clientX;
-                      swipeStartY = e.touches[0]!.clientY;
+                      swipeStartRef.current.set(task.id, {
+                        x: e.touches[0]!.clientX,
+                        y: e.touches[0]!.clientY,
+                      });
                     },
                     onTouchEnd: (e: React.TouchEvent) => {
                       if (e.changedTouches.length !== 1) return;
-                      const dx = e.changedTouches[0]!.clientX - swipeStartX;
-                      const dy = e.changedTouches[0]!.clientY - swipeStartY;
+                      const start = swipeStartRef.current.get(task.id);
+                      if (!start) return;
+                      swipeStartRef.current.delete(task.id);
+                      const dx = e.changedTouches[0]!.clientX - start.x;
+                      const dy = e.changedTouches[0]!.clientY - start.y;
                       // Swipe left: trigger delete
                       if (dx < -70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
                         const el = e.currentTarget as HTMLElement;

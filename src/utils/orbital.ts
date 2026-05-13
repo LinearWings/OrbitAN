@@ -61,8 +61,10 @@ export function computeOverlapAwareCometPositions(
       const conflicts = ringOccupants[ring].some((occ) =>
         // Check against occupant's original range
         timeRangesOverlap(taskStart, adjustedEnd, occ.start, occ.end) ||
-        // Also check occupant shifted +24h (handles overnight wraparound)
-        timeRangesOverlap(taskStart, adjustedEnd, occ.start + 24 * 60, occ.end + 24 * 60),
+        // Check occupant shifted +24h (handles this task wrapping overnight past occupant)
+        timeRangesOverlap(taskStart, adjustedEnd, occ.start + 24 * 60, occ.end + 24 * 60) ||
+        // Check this task shifted +24h (handles occupant wrapping overnight past this task)
+        timeRangesOverlap(taskStart + 24 * 60, adjustedEnd + 24 * 60, occ.start, occ.end),
       );
       if (!conflicts) {
         assignedRing = ring;

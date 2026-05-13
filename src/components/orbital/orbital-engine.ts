@@ -68,13 +68,15 @@ function ensureFilmGrainTexture() {
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext('2d')!;
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const v = Math.floor(Math.random() * 255);
-      ctx.fillStyle = `rgb(${v},${v},${v})`;
-      ctx.fillRect(x, y, 1, 1);
-    }
+  const imageData = ctx.createImageData(size, size);
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const v = Math.floor(Math.random() * 255);
+    imageData.data[i] = v;
+    imageData.data[i + 1] = v;
+    imageData.data[i + 2] = v;
+    imageData.data[i + 3] = 255;
   }
+  ctx.putImageData(imageData, 0, 0);
   FILM_GRAIN_CANVAS = canvas;
 }
 

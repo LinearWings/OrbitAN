@@ -104,8 +104,6 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
   const color = getTaskColor(task.type);
   const duration = getTaskDuration(task);
   const isTouchDevice = useMediaQuery("(hover: none) and (pointer: coarse)");
-
-  // Inline editing state
   const [editing, setEditing] = useState<"name" | "start" | "end" | null>(null);
   const [editValue, setEditValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -141,8 +139,6 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
     : isSelected
       ? "text-white/85"
       : "text-white/55 group-hover:text-white/75";
-
-  const entryDelay = `${((zIndex - 20) * 30)}ms`;
 
   return (
     <div

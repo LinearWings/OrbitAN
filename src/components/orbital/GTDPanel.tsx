@@ -83,7 +83,7 @@ function Card({ item, onMove, onDelete, onDragStart, onDragEnd, isDragging, onTo
 export default function GTDPanel() {
   const [state, setState] = useState<GTDState>(() => {
     const saved = loadMethodologyData<GTDState>(METHODOLOGY_KEY);
-    if (saved?.items?.length) return saved;
+    if (saved?.items) return saved;
     return initialState();
   });
 
@@ -154,7 +154,9 @@ export default function GTDPanel() {
       done: [],
     };
     state.items.forEach((it) => {
-      byStage[it.stage].push(it);
+      const col = byStage[it.stage];
+      if (col) col.push(it);
+      else byStage.inbox.push(it); // Fallback for unknown stage
     });
     return {
       inbox: byStage.inbox,

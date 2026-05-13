@@ -48,7 +48,12 @@ function appReducer(state: AppState, action: AppAction): AppState {
       const tasks = { ...state.tasks };
       const dateTasks = [...(tasks[action.payload.date] ?? [])];
       const idx = dateTasks.findIndex((t) => t.id === action.payload.task.id);
-      if (idx !== -1) dateTasks[idx] = action.payload.task;
+      if (idx !== -1) {
+        dateTasks[idx] = action.payload.task;
+      } else {
+        console.warn("[OrbitAN] UPDATE: task not found", action.payload.task.id, "on", action.payload.date);
+        return state;
+      }
       dateTasks.sort((a, b) => a.startTime.localeCompare(b.startTime));
       tasks[action.payload.date] = dateTasks;
       return {
@@ -166,7 +171,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     saveTasks(state.tasks);
   }, [state.tasks]);
 
+  const isFirstFocusRender = useRef(true);
   useEffect(() => {
+    if (isFirstFocusRender.current) { isFirstFocusRender.current = false; return; }
     saveFocusBlocks(state.focusBlocks);
   }, [state.focusBlocks]);
 

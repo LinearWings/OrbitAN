@@ -15,6 +15,14 @@ export function minutesToTime(minutes: number): string {
   return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
 }
 
+function hexToRgba(hex: string, alpha: number): string {
+  const h = hex.replace("#", "");
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
 /* Canvas orbit clock for step 2 — simplified from orbital-engine.ts */
 
 function drawOrbitClock(
@@ -168,7 +176,7 @@ function drawOrbitClock(
     ctx.strokeStyle =
       s === segments - 1
         ? typeColor
-        : typeColor.replace(")", `, ${alpha})`).replace("rgb", "rgba");
+        : hexToRgba(typeColor, alpha);
     ctx.lineWidth = 6;
     ctx.lineCap = "round";
     ctx.beginPath();

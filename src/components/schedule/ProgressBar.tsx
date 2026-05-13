@@ -27,6 +27,8 @@ export default function ProgressBar({
     progress >= 100 ? "completed" : progress > 0 ? "paused" : "idle",
   );
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const progressRef = useRef(progress);
+  progressRef.current = progress;
   const rgb = hexToRgb(color);
 
   useEffect(() => {
@@ -35,12 +37,12 @@ export default function ProgressBar({
       return;
     }
     intervalRef.current = setInterval(() => {
-      onProgressChange(Math.min(100, progress + 1));
+      onProgressChange(Math.min(100, progressRef.current + 1));
     }, 60000);
     return () => {
       if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
     };
-  }, [status, progress, onProgressChange]);
+  }, [status, onProgressChange]);
 
   useEffect(() => {
     if (progress >= 100 && status !== "completed") {

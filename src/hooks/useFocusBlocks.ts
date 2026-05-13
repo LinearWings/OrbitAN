@@ -17,7 +17,7 @@ export function useFocusBlocks(date?: string) {
     (block: Omit<FocusBlock, "id" | "createdAt">) => {
       const newBlock: FocusBlock = {
         ...block,
-        id: `fb-${crypto.randomUUID()}`,
+        id: `fb-${typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36)}`,
         createdAt: new Date().toISOString(),
       };
       dispatch({ type: "ADD_FOCUS_BLOCK", payload: { date: block.date ?? targetDate, block: newBlock } });
