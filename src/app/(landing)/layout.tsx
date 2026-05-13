@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
+import { CloseIcon, MenuIcon } from "@/components/ui/Icons";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { getT } from "@/lib/i18n";
 import LangSwitch from "@/components/landing/LangSwitch";
@@ -26,7 +27,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
           <div className="flex items-center gap-3">
             <LangSwitch currentLang={lang} />
             <button onClick={() => setMenuOpen(!menuOpen)} className="text-white/50 text-xl leading-none">
-              {menuOpen ? "✕" : "☰"}
+              {menuOpen ? <CloseIcon size={16} /> : <MenuIcon size={18} />}
             </button>
             {menuOpen && (
               <div className="absolute top-full right-4 mt-2 rounded-xl py-2 px-4 flex flex-col gap-2"

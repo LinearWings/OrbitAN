@@ -1,5 +1,7 @@
 "use client";
 
+import { OrbitIcon, PlusIcon, GridIcon, ArrangeIcon } from "@/components/ui/Icons";
+
 const FILTER_OPTIONS = [
   { key: "all", label: "全部", color: "#ffffff" },
   { key: "work", label: "工作", color: "#3B82F6" },
@@ -72,10 +74,7 @@ export default function MobileBottomBar({
             color: "#60A5FA",
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <line x1="7" y1="1" x2="7" y2="13" />
-            <line x1="1" y1="7" x2="13" y2="7" />
-          </svg>
+          <PlusIcon size={14} />
           新建
         </button>
 
@@ -96,7 +95,7 @@ export default function MobileBottomBar({
                 }
           }
         >
-          <span className="text-sm">🪐</span>
+          <OrbitIcon size={15} />
           Orbit
         </button>
 
@@ -109,12 +108,7 @@ export default function MobileBottomBar({
             color: "rgba(255,255,255,0.7)",
           }}
         >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-            <rect x="1" y="1" width="5" height="5" rx="1" />
-            <rect x="8" y="1" width="5" height="5" rx="1" />
-            <rect x="1" y="8" width="5" height="5" rx="1" />
-            <rect x="8" y="8" width="5" height="5" rx="1" />
-          </svg>
+          <GridIcon size={14} />
           {viewLabel}
         </button>
 
@@ -128,11 +122,7 @@ export default function MobileBottomBar({
           }}
           title="整理"
         >
-          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-            <line x1="3.5" y1="1" x2="3.5" y2="13" />
-            <line x1="7" y1="4" x2="7" y2="13" />
-            <line x1="10.5" y1="1" x2="10.5" y2="13" />
-          </svg>
+          <ArrangeIcon size={12} />
         </button>
       </div>
     </div>

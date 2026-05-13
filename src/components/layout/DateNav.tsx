@@ -2,6 +2,7 @@
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useViewNavigation } from "@/hooks/useViewNavigation";
+import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/Icons";
 
 const VIEW_LABELS: Record<string, string> = {
   day: "日",
@@ -43,7 +44,7 @@ export default function DateNav() {
         onClick={goToPrevious}
         className={`flex items-center justify-center rounded-full border border-white/15 bg-white/[0.03] font-mono text-white/50 transition-all hover:border-white/30 hover:bg-white/[0.08] hover:text-white/80 ${isMobile ? 'h-6 w-6 text-xs' : 'h-8 w-8 text-sm'}`}
       >
-        ←
+        <ArrowLeftIcon size={14} />
       </button>
 
       <div className="text-center">
@@ -59,7 +60,7 @@ export default function DateNav() {
         onClick={goToNext}
         className={`flex items-center justify-center rounded-full border border-white/15 bg-white/[0.03] font-mono text-white/50 transition-all hover:border-white/30 hover:bg-white/[0.08] hover:text-white/80 ${isMobile ? 'h-6 w-6 text-xs' : 'h-8 w-8 text-sm'}`}
       >
-        →
+        <ArrowRightIcon size={14} />
       </button>
 
       <button

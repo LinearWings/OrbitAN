@@ -33,6 +33,7 @@ import { useAppContext } from "@/context/AppContext";
 import { useViewNavigation } from "@/hooks/useViewNavigation";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import MobileBottomBar from "@/components/layout/MobileBottomBar";
+import { CrosshairIcon, OrbitIcon, MouseScrollIcon, PlusIcon, ArrowRightIcon } from "@/components/ui/Icons";
 import WeekGridView from "@/components/layout/WeekGridView";
 import MonthGridView from "@/components/layout/MonthGridView";
 import { timeToMinutes, timeToAngle } from "@/utils/time";
@@ -950,7 +951,7 @@ export default function Home() {
               >
                 {isFocusCreating ? (
                   <>
-                    <span className="text-sm">🎯</span>
+                    <CrosshairIcon size={15} />
                     <span>{focusCreatePhase === "idle" ? "取消" : focusCreatePhase === "end" ? "点击表盘选择终点" : "点击表盘选择起点"}</span>
                   </>
                 ) : (
@@ -976,7 +977,7 @@ export default function Home() {
                 : "text-white/50 hover:text-white/80"
             }`}
           >
-            <span className="text-sm">🪐</span>
+            <OrbitIcon size={15} />
             <span>Orbit Mode</span>
             <kbd className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[0.55rem] text-white/25">O</kbd>
           </button>
@@ -1026,7 +1027,7 @@ export default function Home() {
           </span>
         ) : viewMode === "week" ? (
           <span className="text-[0.55rem] text-white/20">
-            🖱 滚轮<span className="text-white/8 mx-0.5">·</span>
+            <MouseScrollIcon size={13} className="inline-block opacity-40" /> 滚轮<span className="text-white/8 mx-0.5">·</span>
             <HintKbd>Z</HintKbd>+滚轮 缩放<span className="text-white/8 mx-0.5">·</span>
             <HintKbd>O</HintKbd> Orbit
           </span>
