@@ -6,6 +6,7 @@ import { getTaskColor, getTaskLabel, CUSTOM_TYPE_PALETTE } from "@/utils/colors"
 import { timeToMinutes } from "@/utils/time";
 import { loadCustomTypes, saveCustomTypes } from "@/utils/storage";
 import { uid } from "@/utils/uid";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface InlineTaskCreatorProps {
   isOpen: boolean;
@@ -144,6 +145,15 @@ export default function InlineTaskCreator({
   const inputRef = useRef<HTMLInputElement>(null);
   const customNameRef = useRef<HTMLInputElement>(null);
   const typeColor = getTaskColor(type);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const effectiveOnNudge = useCallback((field: "start" | "end", delta: number) => {
+    if (isMobile && !pendingStartTime) {
+      onNudgeTime?.("start", 0);
+      onNudgeTime?.("end", 0);
+    }
+    onNudgeTime?.(field, delta);
+  }, [isMobile, pendingStartTime, onNudgeTime]);
 
   // Load custom types from storage
   useEffect(() => {
@@ -168,6 +178,13 @@ export default function InlineTaskCreator({
   const duration = (pendingStartTime && pendingEndTime)
     ? (timeToMinutes(pendingEndTime) - timeToMinutes(pendingStartTime) + 1440) % 1440
     : 0;
+
+  const effectiveStartTime = isMobile
+    ? (pendingStartTime ?? "09:00")
+    : pendingStartTime;
+  const effectiveEndTime = isMobile
+    ? (pendingEndTime ?? "10:00")
+    : pendingEndTime;
 
   const canConfirm = name.trim().length > 0 && pendingStartTime && pendingEndTime;
 
@@ -223,10 +240,10 @@ export default function InlineTaskCreator({
       <div
         className="fixed z-50"
         style={{
-          left: "18%",
+          left: isMobile ? "50%" : "18%",
           top: "50%",
           transform: "translate(-50%, -50%)",
-          width: "min(36vw, 340px)",
+          width: isMobile ? "min(90vw, 380px)" : "min(36vw, 340px)",
         }}
       >
         <div
@@ -410,12 +427,12 @@ export default function InlineTaskCreator({
                 border: "1px solid rgba(255,255,255,0.05)",
               }}
             >
-              {pendingStartTime && pendingEndTime ? (
+              {(effectiveStartTime && effectiveEndTime) ? (
                 <div className="flex items-center justify-center gap-3">
                   <TimeWheelPicker
                     label="开始"
-                    time={pendingStartTime}
-                    onNudge={(d) => onNudgeTime?.("start", d)}
+                    time={effectiveStartTime}
+                    onNudge={(d) => effectiveOnNudge("start", d)}
                   />
                   <div className="flex flex-col items-center gap-0.5">
                     <span className="text-white/20 text-[0.4rem]">&nbsp;</span>
@@ -424,8 +441,8 @@ export default function InlineTaskCreator({
                   </div>
                   <TimeWheelPicker
                     label="结束"
-                    time={pendingEndTime}
-                    onNudge={(d) => onNudgeTime?.("end", d)}
+                    time={effectiveEndTime}
+                    onNudge={(d) => effectiveOnNudge("end", d)}
                   />
                 </div>
             ) : (
