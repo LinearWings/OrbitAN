@@ -22,7 +22,29 @@
 
 # misc
 .DS_Store
+Thumbs.db
+Desktop.ini
 *.pem
+
+# editor
+.vscode/
+.idea/
+*.swp
+*~
+*.sublime-workspace
+*.sublime-project
+
+# claude
+.claude/settings.local.json
+
+# archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# logs
+*.log
 
 # debug
 npm-debug.log*
