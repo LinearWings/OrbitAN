@@ -254,6 +254,7 @@ export default function Home() {
   const { focusBlocksForDate, addFocusBlock, deleteFocusBlock } = useFocusBlocks();
 
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const isTouchDevice = useMediaQuery("(hover: none) and (pointer: coarse)");
 
   // Focus Mode overlay state
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -690,9 +691,9 @@ export default function Home() {
   return (
     <>
     <main className="relative flex h-dvh w-full flex-col overflow-hidden">
-      {!isMobile && <OrbitalCursor />}
+      {!isTouchDevice && <OrbitalCursor />}
       {viewMode === "day" && !isMobile && <ConnectorArrows />}
-      {!isMobile && <NoiseOverlay />}
+      {!isTouchDevice && <NoiseOverlay />}
       <TitleHeader onOpenDocs={() => setIsDocsOverlayOpen(true)} />
       <DateNav />
 
