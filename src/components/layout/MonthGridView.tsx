@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { getToday } from "@/utils/time";
 import { getTaskColor } from "@/utils/colors";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface MonthGridViewProps {
   onDayClick: (date: string) => void;
@@ -55,6 +56,7 @@ function getMonthGrid(currentDate: string) {
 export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
   const { state } = useAppContext();
   const today = getToday();
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const weeks = useMemo(() => getMonthGrid(state.currentDate), [state.currentDate]);
 
   const title = useMemo(() => {
@@ -65,14 +67,14 @@ export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
   return (
     <div className="h-full flex flex-col" style={{ background: "#08090C" }}>
       {/* Month/Year header */}
-      <div style={{ textAlign: "center", padding: "12px 0", borderBottom: `1px solid ${C.line}` }}>
-        <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: 20, fontWeight: 600, color: "rgba(255,255,255,0.85)", letterSpacing: "0.02em" }}>{title}</span>
+      <div style={{ textAlign: "center", padding: isMobile ? "8px 0" : "12px 0", borderBottom: `1px solid ${C.line}` }}>
+        <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? 16 : 20, fontWeight: 600, color: "rgba(255,255,255,0.85)", letterSpacing: "0.02em" }}>{title}</span>
       </div>
 
       {/* Day-of-week labels */}
       <div className="grid grid-cols-7" style={{ borderBottom: `1px solid ${C.line}` }}>
         {DAY_LABELS.map((label, i) => (
-          <div key={label} style={{ textAlign: "center", padding: "8px 0", fontSize: 13, fontFamily: "'Inter','Microsoft YaHei',sans-serif", fontWeight: 500, color: i === 0 || i === 6 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.35)" }}>
+          <div key={label} style={{ textAlign: "center", padding: isMobile ? "4px 0" : "8px 0", fontSize: isMobile ? 11 : 13, fontFamily: "'Inter','Microsoft YaHei',sans-serif", fontWeight: 500, color: i === 0 || i === 6 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.35)" }}>
             {label}
           </div>
         ))}
@@ -96,15 +98,15 @@ export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
                       display: "flex", flexDirection: "column", alignItems: "center",
                       justifyContent: "flex-start", cursor: "pointer", border: "none",
                       background: isToday ? C.todayBg : isWeekend ? "rgba(255,255,255,0.015)" : "transparent",
-                      paddingTop: 8, opacity: isCurrentMonth ? 1 : 0.3,
+                      paddingTop: isMobile ? 4 : 8, opacity: isCurrentMonth ? 1 : 0.3,
                       position: "relative",
                     }}
                   >
                     {/* Day number */}
                     <span style={{
                       display: "inline-flex", alignItems: "center", justifyContent: "center",
-                      width: 32, height: 32, borderRadius: "50%",
-                      fontFamily: "'Clash Display', sans-serif", fontSize: 16, fontWeight: isToday ? 600 : 400,
+                      width: isMobile ? 26 : 32, height: isMobile ? 26 : 32, borderRadius: "50%",
+                      fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? 13 : 16, fontWeight: isToday ? 600 : 400,
                       background: isToday ? "rgba(37,99,235,0.25)" : "transparent",
                       color: isToday ? "#FFFFFF" : isCurrentMonth ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.2)",
                       outline: isToday ? `1px solid ${C.todayRing}` : "none",
@@ -116,15 +118,15 @@ export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
 
                     {/* Task indicators */}
                     {count > 0 && (
-                      <div style={{ marginTop: 6, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
-                        {/* Color dots */}
-                        <div style={{ display: "flex", gap: 3 }}>
-                          {typeColors.map(type => (
-                            <div key={type} style={{ width: 6, height: 6, borderRadius: "50%", background: getTaskColor(type), boxShadow: `0 0 4px ${getTaskColor(type)}40` }} />
+                      <div style={{ marginTop: isMobile ? 3 : 6, display: "flex", flexDirection: "column", alignItems: "center", gap: isMobile ? 2 : 3 }}>
+                        {/* Color dots — max 2 on mobile */}
+                        <div style={{ display: "flex", gap: isMobile ? 2 : 3 }}>
+                          {typeColors.slice(0, isMobile ? 2 : 5).map(type => (
+                            <div key={type} style={{ width: isMobile ? 5 : 6, height: isMobile ? 5 : 6, borderRadius: "50%", background: getTaskColor(type), boxShadow: `0 0 4px ${getTaskColor(type)}40` }} />
                           ))}
                         </div>
                         {/* Count badge */}
-                        <span style={{ fontSize: 13, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 600, color: "rgba(255,255,255,0.4)", lineHeight: 1 }}>
+                        <span style={{ fontSize: isMobile ? 11 : 13, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 600, color: "rgba(255,255,255,0.4)", lineHeight: 1 }}>
                           {count}
                         </span>
                       </div>
@@ -132,7 +134,7 @@ export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
 
                     {/* Empty cell hover indicator */}
                     {count === 0 && isCurrentMonth && (
-                      <div style={{ marginTop: 6, fontSize: 13, color: "rgba(255,255,255,0.06)", fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", lineHeight: 1 }}>·</div>
+                      <div style={{ marginTop: isMobile ? 3 : 6, fontSize: isMobile ? 11 : 13, color: "rgba(255,255,255,0.06)", fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", lineHeight: 1 }}>·</div>
                     )}
                   </button>
                 );
