@@ -826,8 +826,8 @@ export default function Home() {
       )}
 
       {!isMobile && (
-      {/* Bottom controls */}
       <div className="pointer-events-auto fixed bottom-[max(1.5rem,3vh)] left-1/2 z-30 -translate-x-1/2 flex flex-col items-center gap-2">
+        {/* Bottom controls */}
         {viewMode === "day" && <LegendBar />}
 
         <div className="flex items-center gap-2 rounded-2xl border border-white/8 bg-black/50 px-3 py-2 backdrop-blur-xl">
@@ -920,9 +920,9 @@ export default function Home() {
       )}
 
       {!isMobile && (
-      {/* Minimal hint bar */}
       <div className="pointer-events-none fixed bottom-[0.4rem] left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-3 py-1 rounded-lg"
         style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.04)" }}>
+        {/* Minimal hint bar */}
         {isOrbitModeOpen ? (
           <span className="text-[0.55rem] text-white/20">
             点击表盘创建聚焦<span className="text-white/8 mx-0.5">·</span><HintKbd>O</HintKbd> 退出聚焦视野
