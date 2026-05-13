@@ -268,3 +268,7 @@ body {
 .method-glow {
   animation: method-glow-pulse 2.5s ease-in-out infinite;
 }
+
+/* ===== No scrollbar utility (mobile scroll containers) ===== */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
