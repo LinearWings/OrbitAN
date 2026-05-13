@@ -688,9 +688,9 @@ export default function Home() {
   return (
     <>
     <main className="relative flex min-h-screen w-full flex-col overflow-hidden">
-      <OrbitalCursor />
+      {!isMobile && <OrbitalCursor />}
       {viewMode === "day" && !isMobile && <ConnectorArrows />}
-      <NoiseOverlay />
+      {!isMobile && <NoiseOverlay />}
       <TitleHeader onOpenDocs={() => setIsDocsOverlayOpen(true)} />
       <DateNav />
 
