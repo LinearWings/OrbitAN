@@ -31,6 +31,8 @@ import { useOrbital } from "@/hooks/useOrbital";
 import { useFilter } from "@/hooks/useFilter";
 import { useAppContext } from "@/context/AppContext";
 import { useViewNavigation } from "@/hooks/useViewNavigation";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import MobileBottomBar from "@/components/layout/MobileBottomBar";
 import WeekGridView from "@/components/layout/WeekGridView";
 import MonthGridView from "@/components/layout/MonthGridView";
 import { timeToMinutes, timeToAngle } from "@/utils/time";
@@ -173,7 +175,7 @@ function computeCardPositions(tasks: Task[]): CardPosition[] {
 interface ScheduleCardWrapperProps {
   task: Task;
   index: number;
-  position: CardPosition;
+  position?: CardPosition;
   selectedTaskId: string | null;
   activeFilter: string;
   onSelectTask: (id: string | null) => void;
@@ -243,13 +245,15 @@ const ScheduleCardWrapper = memo(function ScheduleCardWrapper({
 });
 
 export default function Home() {
-  const { state } = useAppContext();
+  const { state, dispatch } = useAppContext();
   const { isOrbitModeOpen, toggleOrbitMode } = useOrbital();
   const { filteredTasks, tasksForDate, addTask, updateTask, updateProgress, deleteTask } = useTasks();
   const { selectedTaskId, selectTask } = useSelectedTask();
   const { activeFilter } = useFilter();
-  const { viewMode, navigateToDay } = useViewNavigation();
+  const { viewMode, navigateToDay, setViewMode } = useViewNavigation();
   const { focusBlocksForDate, addFocusBlock, deleteFocusBlock } = useFocusBlocks();
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // Focus Mode overlay state
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -657,14 +661,14 @@ export default function Home() {
     <>
     <main className="relative flex min-h-screen w-full flex-col overflow-hidden">
       <OrbitalCursor />
-      {viewMode === "day" && <ConnectorArrows />}
+      {viewMode === "day" && !isMobile && <ConnectorArrows />}
       <NoiseOverlay />
       <TitleHeader onOpenDocs={() => setIsDocsOverlayOpen(true)} />
       <DateNav />
 
       {/* Top stats bar — above the clock */}
       <div className="relative z-20 mx-auto flex items-center justify-center"
-        style={{ marginTop: viewMode === "day" ? "max(5rem, 8vh)" : "1rem" }}
+        style={{ marginTop: isMobile ? "0.25rem" : (viewMode === "day" ? "max(5rem, 8vh)" : "1rem") }}
       >
         <div className="flex items-center gap-6 px-5 py-2 rounded-2xl border border-white/[0.06] bg-black/30 backdrop-blur-xl">
           <div className="flex items-center gap-2">
@@ -682,13 +686,13 @@ export default function Home() {
       {viewMode === "day" ? (
         <div className="relative z-10 mx-auto flex items-center justify-center"
           style={{
-            width: "min(62vw, 68vh)",
-            height: "min(62vw, 68vh)",
-            marginTop: "max(1rem, 2vh)",
+            width: isMobile ? "220px" : "min(62vw, 68vh)",
+            height: isMobile ? "220px" : "min(62vw, 68vh)",
+            marginTop: isMobile ? "0.5rem" : "max(1rem, 2vh)",
           }}
         >
           <HybridClock
-            interactive={isCreating || isFocusCreating}
+            interactive={!isMobile && (isCreating || isFocusCreating)}
             clickPhase={
               isCreating ? clickPhase :
               isFocusCreating ? focusCreatePhase :
@@ -757,53 +761,71 @@ export default function Home() {
       )}
 
       {viewMode === "day" && (
-        <>
-        {tasksForDate.length === 0 ? null : (
-          tasksForDate.map((task, index) => {
-            const linkedFb = focusBlocksForDate.find(fb => fb.linkedTaskId === task.id);
-            const linkedFocusColor = linkedFb
-              ? FOCUS_METHOD_COLORS[linkedFb.method]
-              : task.method ? FOCUS_METHOD_COLORS[task.method] : undefined;
-
-            const isDelTarget = deleteTarget?.type === "task" && deleteTarget.id === task.id;
-            return (
-              <div
-                key={task.id}
-                onPointerDown={(e) => {
-                  if (e.pointerType !== "mouse" || e.button !== 0 || e.shiftKey) return;
-                  const el = e.currentTarget;
-                  const timer = setTimeout(() => handleDeleteStart(task.id, "task", e.clientX, e.clientY), 600);
-                  const clear = () => { clearTimeout(timer); el.removeEventListener("pointerup", clear); el.removeEventListener("pointerleave", clear); };
-                  el.addEventListener("pointerup", clear);
-                  el.addEventListener("pointerleave", clear);
-                }}
-                style={{
-                  zIndex: isDelTarget ? 96 : undefined,
-                }}
-              >
-                <ScheduleCardWrapper
-                  task={task}
-                  index={index}
-                  position={positions[index]!}
-                  selectedTaskId={selectedTaskId}
-                  activeFilter={activeFilter}
-                  onSelectTask={handleSelectTask}
-                  onProgress={handleProgress}
-                  onUpdateTask={handleUpdateTask}
-                  linkedFocusColor={linkedFocusColor}
-                  isOrbitMode={isOrbitModeOpen}
-                  onSetOrbitPlan={handleSetOrbitPlan}
-                  isDeleteTarget={isDelTarget}
-                  dimmed={!!deleteTarget && !isDelTarget}
-                />
+        <div className={isMobile
+          ? "relative z-10 w-full px-4 flex flex-col gap-3 mt-4 pb-32"
+          : undefined
+        }>
+          {tasksForDate.length === 0 ? (
+            isMobile ? (
+              <div className="flex flex-col items-center justify-center py-20 text-white/10">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.3">
+                  <circle cx="12" cy="12" r="10"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <p className="mt-4 text-sm text-white/15" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+                  暂无任务
+                </p>
+                <p className="mt-1 text-xs text-white/8" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+                  点击下方 + 创建第一个任务
+                </p>
               </div>
-            );
-          })
-        )}
+            ) : null
+          ) : (
+            tasksForDate.map((task, index) => {
+              const linkedFb = focusBlocksForDate.find(fb => fb.linkedTaskId === task.id);
+              const linkedFocusColor = linkedFb
+                ? FOCUS_METHOD_COLORS[linkedFb.method]
+                : task.method ? FOCUS_METHOD_COLORS[task.method] : undefined;
+              const isDelTarget = deleteTarget?.type === "task" && deleteTarget.id === task.id;
 
-        </>
+              return (
+                <div
+                  key={task.id}
+                  {...(!isMobile ? {
+                    onPointerDown: (e: React.PointerEvent) => {
+                      if (e.pointerType !== "mouse" || e.button !== 0 || e.shiftKey) return;
+                      const el = e.currentTarget;
+                      const timer = setTimeout(() => handleDeleteStart(task.id, "task", e.clientX, e.clientY), 600);
+                      const clear = () => { clearTimeout(timer); el.removeEventListener("pointerup", clear); el.removeEventListener("pointerleave", clear); };
+                      el.addEventListener("pointerup", clear);
+                      el.addEventListener("pointerleave", clear);
+                    },
+                  } : {})}
+                  style={!isMobile ? { zIndex: isDelTarget ? 96 : undefined } : undefined}
+                >
+                  <ScheduleCardWrapper
+                    task={task}
+                    index={index}
+                    position={isMobile ? undefined : positions[index]!}
+                    selectedTaskId={selectedTaskId}
+                    activeFilter={activeFilter}
+                    onSelectTask={handleSelectTask}
+                    onProgress={handleProgress}
+                    onUpdateTask={handleUpdateTask}
+                    linkedFocusColor={linkedFocusColor}
+                    isOrbitMode={isOrbitModeOpen}
+                    onSetOrbitPlan={handleSetOrbitPlan}
+                    isDeleteTarget={isDelTarget}
+                    dimmed={!!deleteTarget && !isDelTarget}
+                  />
+                </div>
+              );
+            })
+          )}
+        </div>
       )}
 
+      {!isMobile && (
       {/* Bottom controls */}
       <div className="pointer-events-auto fixed bottom-[max(1.5rem,3vh)] left-1/2 z-30 -translate-x-1/2 flex flex-col items-center gap-2">
         {viewMode === "day" && <LegendBar />}
@@ -895,7 +917,9 @@ export default function Home() {
           )}
         </div>
       </div>
+      )}
 
+      {!isMobile && (
       {/* Minimal hint bar */}
       <div className="pointer-events-none fixed bottom-[0.4rem] left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 px-3 py-1 rounded-lg"
         style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.04)" }}>
@@ -923,9 +947,28 @@ export default function Home() {
           </span>
         )}
       </div>
+      )}
 
       {/* Transient orbit mode edge glow — plays then auto-dismisses */}
       <OrbitModeTransition open={isOrbitModeOpen} />
+
+      {isMobile && (
+        <MobileBottomBar
+          activeFilter={activeFilter}
+          onFilterChange={(f) => dispatch({ type: "SET_FILTER", payload: f })}
+          isOrbitMode={isOrbitModeOpen}
+          onToggleOrbit={toggleOrbitMode}
+          viewMode={viewMode}
+          onCycleView={() => {
+            const modes = ["day", "week", "month"] as const;
+            const i = modes.indexOf(viewMode);
+            setViewMode(modes[(i + 1) % 3]!);
+          }}
+          onNewTask={handleStartCreate}
+          onAutoArrange={() => { setManualOverrides(new Map()); setLayoutKey((k) => k + 1); }}
+          onOpenDocs={() => setIsDocsOverlayOpen(true)}
+        />
+      )}
 
     </main>
 
