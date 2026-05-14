@@ -618,7 +618,7 @@ button:active, a:active, [role="button"]:active {
 
 /* ── Background Glow (radial glow behind elements, not on text) ── */
 @keyframes backgroundGlowPulse {
-  0%, 100% { opacity: 0.8; }
+  0%, 100% { opacity: 0.85; }
   50% { opacity: 1; }
 }
 .background-glow {
@@ -626,12 +626,12 @@ button:active, a:active, [role="button"]:active {
   inset: -30%;
   pointer-events: none;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(37,99,235,0.12) 0%, rgba(37,99,235,0.05) 30%, transparent 65%);
-  filter: blur(40px);
+  background: radial-gradient(ellipse at center, rgba(37,99,235,0.18) 0%, rgba(234,179,8,0.06) 25%, rgba(37,99,235,0.04) 45%, transparent 65%);
+  filter: blur(50px);
   animation: backgroundGlowPulse 3s ease-in-out infinite;
 }
 .background-glow--amber {
-  background: radial-gradient(ellipse at center, rgba(234,179,8,0.08) 0%, rgba(234,179,8,0.03) 30%, transparent 65%);
+  background: radial-gradient(ellipse at center, rgba(234,179,8,0.12) 0%, rgba(234,179,8,0.05) 30%, transparent 65%);
 }
 
 /* ── Bloom Text Utility (kept for non-critical uses, now subdued) ── */
@@ -877,25 +877,25 @@ button:active, a:active, [role="button"]:active {
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(37,99,235,0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37,99,235,0.08) 1px, transparent 1px);
+    linear-gradient(rgba(37,99,235,0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,0.16) 1px, transparent 1px);
   background-size: 48px 48px;
   background-position: center center;
-  mask-image: radial-gradient(ellipse at 50% 50%, black 35%, transparent 75%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 35%, transparent 75%);
+  mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 30%, transparent 70%);
 }
 .blueprint-grid-dense {
   background-size: 24px 24px;
   background-image:
-    linear-gradient(rgba(37,99,235,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37,99,235,0.06) 1px, transparent 1px);
+    linear-gradient(rgba(37,99,235,0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,0.12) 1px, transparent 1px);
   mask-image: none;
   -webkit-mask-image: none;
 }
 .blueprint-grid-amber {
   background-image:
-    linear-gradient(rgba(234,179,8,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(234,179,8,0.05) 1px, transparent 1px);
+    linear-gradient(rgba(234,179,8,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(234,179,8,0.10) 1px, transparent 1px);
 }
 
 /* ── Constructivist Diagonal Line Network ── */
@@ -1004,24 +1004,24 @@ button:active, a:active, [role="button"]:active {
 
 /* ── Time Fragment (floating deconstructed number) ── */
 @keyframes timeFragmentFloat {
-  0%, 100% { transform: translateY(0) rotate(var(--frag-rotate, 0deg)); opacity: var(--frag-opacity, 0.12); }
-  50% { transform: translateY(-30px) rotate(var(--frag-rotate, 0deg)); opacity: calc(var(--frag-opacity, 0.12) * 1.8); }
+  0%, 100% { transform: translateY(0) rotate(var(--frag-rotate, 0deg)); opacity: var(--frag-opacity, 0.22); }
+  50% { transform: translateY(-35px) rotate(var(--frag-rotate, 0deg)); opacity: calc(var(--frag-opacity, 0.22) * 1.6); }
 }
 .time-fragment {
   position: absolute;
   pointer-events: none;
   font-family: "Clash Display", sans-serif;
   font-weight: 700;
-  font-size: clamp(4rem, 12vw, 12rem);
-  color: rgba(37,99,235,0.10);
+  font-size: clamp(5rem, 14vw, 14rem);
+  color: rgba(37,99,235,0.18);
   line-height: 0.8;
   animation: timeFragmentFloat 12s ease-in-out infinite;
 }
 .time-fragment--amber {
-  color: rgba(234,179,8,0.08);
+  color: rgba(234,179,8,0.15);
 }
-.time-fragment--sm { font-size: clamp(2.5rem, 6vw, 6rem); }
-.time-fragment--lg { font-size: clamp(7rem, 18vw, 18rem); }
+.time-fragment--sm { font-size: clamp(3rem, 7vw, 7rem); }
+.time-fragment--lg { font-size: clamp(8rem, 20vw, 20rem); }
 
 /* ── Deconstructed Clock Ring ── */
 @keyframes deconstructedSpin {
@@ -1032,7 +1032,7 @@ button:active, a:active, [role="button"]:active {
   position: absolute;
   pointer-events: none;
   border-radius: 50%;
-  border: 1px solid rgba(37,99,235,0.15);
+  border: 2px solid rgba(37,99,235,0.22);
 }
 .deconstructed-ring--dashed {
   border-style: dashed;
@@ -1041,8 +1041,8 @@ button:active, a:active, [role="button"]:active {
 .deconstructed-tick {
   position: absolute;
   pointer-events: none;
-  width: 2px;
-  background: rgba(37,99,235,0.18);
+  width: 3px;
+  background: rgba(37,99,235,0.28);
   transform-origin: bottom center;
 }
 
@@ -1056,51 +1056,51 @@ button:active, a:active, [role="button"]:active {
     conic-gradient(
       from 0deg,
       transparent 0deg, transparent 14deg,
-      rgba(37,99,235,0.05) 15deg, transparent 16deg,
+      rgba(37,99,235,0.10) 15deg, transparent 16deg,
       transparent 29deg,
-      rgba(37,99,235,0.05) 30deg, transparent 31deg,
+      rgba(234,179,8,0.06) 30deg, transparent 31deg,
       transparent 44deg,
-      rgba(37,99,235,0.04) 45deg, transparent 46deg,
+      rgba(37,99,235,0.08) 45deg, transparent 46deg,
       transparent 59deg,
-      rgba(37,99,235,0.05) 60deg, transparent 61deg,
+      rgba(37,99,235,0.10) 60deg, transparent 61deg,
       transparent 74deg,
-      rgba(37,99,235,0.04) 75deg, transparent 76deg,
+      rgba(234,179,8,0.06) 75deg, transparent 76deg,
       transparent 89deg,
-      rgba(37,99,235,0.05) 90deg, transparent 91deg,
+      rgba(37,99,235,0.10) 90deg, transparent 91deg,
       transparent 104deg,
-      rgba(37,99,235,0.04) 105deg, transparent 106deg,
+      rgba(37,99,235,0.08) 105deg, transparent 106deg,
       transparent 119deg,
-      rgba(37,99,235,0.05) 120deg, transparent 121deg,
+      rgba(37,99,235,0.10) 120deg, transparent 121deg,
       transparent 134deg,
-      rgba(37,99,235,0.04) 135deg, transparent 136deg,
+      rgba(234,179,8,0.06) 135deg, transparent 136deg,
       transparent 149deg,
-      rgba(37,99,235,0.05) 150deg, transparent 151deg,
+      rgba(37,99,235,0.10) 150deg, transparent 151deg,
       transparent 164deg,
-      rgba(37,99,235,0.04) 165deg, transparent 166deg,
+      rgba(37,99,235,0.08) 165deg, transparent 166deg,
       transparent 179deg,
-      rgba(37,99,235,0.05) 180deg, transparent 181deg,
+      rgba(37,99,235,0.10) 180deg, transparent 181deg,
       transparent 194deg,
-      rgba(37,99,235,0.04) 195deg, transparent 196deg,
+      rgba(234,179,8,0.06) 195deg, transparent 196deg,
       transparent 209deg,
-      rgba(37,99,235,0.05) 210deg, transparent 211deg,
+      rgba(37,99,235,0.10) 210deg, transparent 211deg,
       transparent 224deg,
-      rgba(37,99,235,0.04) 225deg, transparent 226deg,
+      rgba(37,99,235,0.08) 225deg, transparent 226deg,
       transparent 239deg,
-      rgba(37,99,235,0.05) 240deg, transparent 241deg,
+      rgba(37,99,235,0.10) 240deg, transparent 241deg,
       transparent 254deg,
-      rgba(37,99,235,0.04) 255deg, transparent 256deg,
+      rgba(234,179,8,0.06) 255deg, transparent 256deg,
       transparent 269deg,
-      rgba(37,99,235,0.05) 270deg, transparent 271deg,
+      rgba(37,99,235,0.10) 270deg, transparent 271deg,
       transparent 284deg,
-      rgba(37,99,235,0.04) 285deg, transparent 286deg,
+      rgba(37,99,235,0.08) 285deg, transparent 286deg,
       transparent 299deg,
-      rgba(37,99,235,0.05) 300deg, transparent 301deg,
+      rgba(37,99,235,0.10) 300deg, transparent 301deg,
       transparent 314deg,
-      rgba(37,99,235,0.04) 315deg, transparent 316deg,
+      rgba(234,179,8,0.06) 315deg, transparent 316deg,
       transparent 329deg,
-      rgba(37,99,235,0.05) 330deg, transparent 331deg,
+      rgba(37,99,235,0.10) 330deg, transparent 331deg,
       transparent 344deg,
-      rgba(37,99,235,0.04) 345deg, transparent 346deg,
+      rgba(37,99,235,0.08) 345deg, transparent 346deg,
       transparent 359deg
     );
 }
@@ -1165,7 +1165,7 @@ button:active, a:active, [role="button"]:active {
   font-family: "Clash Display", sans-serif;
   font-size: clamp(7rem, 16vw, 18rem);
   font-weight: 700;
-  color: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.08);
   line-height: 0.55;
   user-select: none;
   position: relative;
@@ -1257,11 +1257,11 @@ button:active, a:active, [role="button"]:active {
 .constellation-dot {
   position: absolute;
   pointer-events: none;
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: rgba(37,99,235,0.7);
-  box-shadow: 0 0 6px rgba(37,99,235,0.3);
+  background: rgba(37,99,235,0.85);
+  box-shadow: 0 0 10px rgba(37,99,235,0.5), 0 0 20px rgba(37,99,235,0.2);
   animation: constellationPulse 4s ease-in-out infinite;
 }
 .constellation-line {
@@ -1305,33 +1305,33 @@ button:active, a:active, [role="button"]:active {
   height: 200vmax;
   background: conic-gradient(
     from 0deg,
-    transparent 0deg, transparent 2deg, rgba(37,99,235,0.04) 2.5deg, transparent 3deg,
-    transparent 5deg, transparent 6deg, rgba(234,179,8,0.025) 6.5deg, transparent 7deg,
-    transparent 10deg, transparent 11deg, rgba(37,99,235,0.035) 11.5deg, transparent 12deg,
-    transparent 14deg, rgba(37,99,235,0.03) 14.5deg, transparent 15deg,
-    transparent 19deg, transparent 20deg, rgba(37,99,235,0.04) 20.5deg, transparent 21deg,
-    transparent 24deg, transparent 25deg, rgba(234,179,8,0.025) 25.5deg, transparent 26deg,
-    transparent 29deg, rgba(37,99,235,0.035) 29.5deg, transparent 30deg,
-    transparent 34deg, transparent 35deg, rgba(37,99,235,0.04) 35.5deg, transparent 36deg,
-    transparent 39deg, rgba(37,99,235,0.03) 39.5deg, transparent 40deg,
-    transparent 44deg, transparent 45deg, rgba(37,99,235,0.035) 45.5deg, transparent 46deg,
-    transparent 49deg, rgba(234,179,8,0.025) 49.5deg, transparent 50deg,
-    transparent 54deg, transparent 55deg, rgba(37,99,235,0.04) 55.5deg, transparent 56deg,
-    transparent 59deg, rgba(37,99,235,0.03) 59.5deg, transparent 60deg,
-    transparent 64deg, transparent 65deg, rgba(37,99,235,0.035) 65.5deg, transparent 66deg,
-    transparent 69deg, rgba(37,99,235,0.03) 69.5deg, transparent 70deg,
-    transparent 74deg, transparent 75deg, rgba(37,99,235,0.04) 75.5deg, transparent 76deg,
-    transparent 79deg, rgba(234,179,8,0.025) 79.5deg, transparent 80deg,
-    transparent 84deg, transparent 85deg, rgba(37,99,235,0.035) 85.5deg, transparent 86deg,
-    transparent 89deg, rgba(37,99,235,0.03) 89.5deg, transparent 90deg,
-    transparent 94deg, transparent 95deg, rgba(37,99,235,0.04) 95.5deg, transparent 96deg,
-    transparent 99deg, rgba(37,99,235,0.03) 99.5deg, transparent 100deg,
-    transparent 104deg, transparent 105deg, rgba(37,99,235,0.035) 105.5deg, transparent 106deg,
-    transparent 109deg, rgba(37,99,235,0.03) 109.5deg, transparent 110deg,
-    transparent 114deg, transparent 115deg, rgba(37,99,235,0.04) 115.5deg, transparent 116deg,
-    transparent 119deg, rgba(234,179,8,0.025) 119.5deg, transparent 120deg,
-    transparent 124deg, transparent 125deg, rgba(37,99,235,0.035) 125.5deg, transparent 126deg,
-    transparent 129deg, rgba(37,99,235,0.03) 129.5deg, transparent 130deg,
+    transparent 0deg, transparent 2deg, rgba(37,99,235,0.08) 2.5deg, transparent 3deg,
+    transparent 5deg, transparent 6deg, rgba(234,179,8,0.05) 6.5deg, transparent 7deg,
+    transparent 10deg, transparent 11deg, rgba(37,99,235,0.07) 11.5deg, transparent 12deg,
+    transparent 14deg, rgba(37,99,235,0.06) 14.5deg, transparent 15deg,
+    transparent 19deg, transparent 20deg, rgba(37,99,235,0.08) 20.5deg, transparent 21deg,
+    transparent 24deg, transparent 25deg, rgba(234,179,8,0.05) 25.5deg, transparent 26deg,
+    transparent 29deg, rgba(37,99,235,0.07) 29.5deg, transparent 30deg,
+    transparent 34deg, transparent 35deg, rgba(37,99,235,0.08) 35.5deg, transparent 36deg,
+    transparent 39deg, rgba(37,99,235,0.06) 39.5deg, transparent 40deg,
+    transparent 44deg, transparent 45deg, rgba(37,99,235,0.07) 45.5deg, transparent 46deg,
+    transparent 49deg, rgba(234,179,8,0.05) 49.5deg, transparent 50deg,
+    transparent 54deg, transparent 55deg, rgba(37,99,235,0.08) 55.5deg, transparent 56deg,
+    transparent 59deg, rgba(37,99,235,0.06) 59.5deg, transparent 60deg,
+    transparent 64deg, transparent 65deg, rgba(37,99,235,0.07) 65.5deg, transparent 66deg,
+    transparent 69deg, rgba(37,99,235,0.06) 69.5deg, transparent 70deg,
+    transparent 74deg, transparent 75deg, rgba(37,99,235,0.08) 75.5deg, transparent 76deg,
+    transparent 79deg, rgba(234,179,8,0.05) 79.5deg, transparent 80deg,
+    transparent 84deg, transparent 85deg, rgba(37,99,235,0.07) 85.5deg, transparent 86deg,
+    transparent 89deg, rgba(37,99,235,0.06) 89.5deg, transparent 90deg,
+    transparent 94deg, transparent 95deg, rgba(37,99,235,0.08) 95.5deg, transparent 96deg,
+    transparent 99deg, rgba(37,99,235,0.06) 99.5deg, transparent 100deg,
+    transparent 104deg, transparent 105deg, rgba(37,99,235,0.07) 105.5deg, transparent 106deg,
+    transparent 109deg, rgba(37,99,235,0.06) 109.5deg, transparent 110deg,
+    transparent 114deg, transparent 115deg, rgba(37,99,235,0.08) 115.5deg, transparent 116deg,
+    transparent 119deg, rgba(234,179,8,0.05) 119.5deg, transparent 120deg,
+    transparent 124deg, transparent 125deg, rgba(37,99,235,0.07) 125.5deg, transparent 126deg,
+    transparent 129deg, rgba(37,99,235,0.06) 129.5deg, transparent 130deg,
     transparent 360deg
   );
 }
@@ -1369,33 +1369,33 @@ button:active, a:active, [role="button"]:active {
 /* ── Clock containment (brutalist clock housing) ── */
 .clock-housing {
   position: relative;
-  border: 8px solid rgba(255,255,255,0.08);
-  background: rgba(0,0,0,0.6);
+  border: 8px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.5);
   box-shadow:
-    inset 0 0 120px rgba(0,0,0,0.5),
-    0 0 0 2px rgba(37,99,235,0.10),
-    0 0 0 16px rgba(0,0,0,0.4);
+    inset 0 0 120px rgba(0,0,0,0.4),
+    0 0 0 2px rgba(37,99,235,0.15),
+    0 0 0 16px rgba(0,0,0,0.3);
   padding: clamp(2rem, 5vw, 4rem);
 }
 .clock-housing::after {
   content: "";
   position: absolute;
   inset: -16px;
-  border: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
   pointer-events: none;
 }
 
 /* ── Time-mark notches (clock-dial style edge markers) ── */
 @keyframes timeMarkPulse {
-  0%, 100% { opacity: 0.20; }
-  50% { opacity: 0.45; }
+  0%, 100% { opacity: 0.30; }
+  50% { opacity: 0.60; }
 }
 .time-mark {
   position: absolute;
   pointer-events: none;
-  width: 16px;
-  height: 2px;
-  background: rgba(37,99,235,0.7);
-  box-shadow: 0 0 6px rgba(37,99,235,0.3);
+  width: 20px;
+  height: 3px;
+  background: rgba(37,99,235,0.8);
+  box-shadow: 0 0 10px rgba(37,99,235,0.5);
   animation: timeMarkPulse 3s ease-in-out infinite;
 }
