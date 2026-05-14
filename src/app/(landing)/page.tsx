@@ -8,25 +8,21 @@ import LiveClock from "@/components/landing/LiveClock";
 
 function ParallaxGeometry() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollElRef = useRef<Element | null>(null);
-  const [, forceUpdate] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    // Find the scrollable container (layout's overflow-y-auto div)
     const el = document.querySelector("[data-scroll-container]");
     if (!el) return;
-    scrollElRef.current = el;
-
     const onScroll = () => {
-      forceUpdate((n) => n + 1);
+      setScrollY((el as HTMLElement).scrollTop);
     };
+    onScroll();
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollTop = scrollElRef.current ? (scrollElRef.current as HTMLElement).scrollTop : 0;
   const viewH = typeof window !== "undefined" ? window.innerHeight : 900;
-  const t = scrollTop / viewH;
+  const t = scrollY / viewH;
   return (
     <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
       {/* Large triangle — top right */}
