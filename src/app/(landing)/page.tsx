@@ -122,7 +122,7 @@ export default function LandingPage() {
         </div>
 
         {/* Center: Live clock */}
-        <div className="text-center" style={{ animation: "hardCutIn 0.3s steps(1) forwards" }}>
+        <div className="text-center" style={{ animation: "hardCutIn 0.3s steps(1) forwards", opacity: 0 }}>
           <LiveClock />
           <div
             className="mt-4 text-xs tracking-[0.25em] uppercase"
@@ -315,9 +315,8 @@ export default function LandingPage() {
               </div>
               {/* Dot on timeline */}
               <div
-                className="absolute rounded-full flex-shrink-0"
+                className="absolute rounded-full flex-shrink-0 left-[57px] md:left-[97px]"
                 style={{
-                  left: "calc(60px - 3px)",
                   top: 6,
                   width: 7,
                   height: 7,
