@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 export default function LiveClock() {
   const [time, setTime] = useState<string>("");
-  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     const tick = () => {
@@ -13,10 +12,10 @@ export default function LiveClock() {
       const mm = String(now.getMinutes()).padStart(2, "0");
       const ss = String(now.getSeconds()).padStart(2, "0");
       setTime(`${hh}:${mm}:${ss}`);
-      rafRef.current = requestAnimationFrame(tick);
     };
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
   }, []);
 
   return (
