@@ -8,22 +8,27 @@ import LiveClock from "@/components/landing/LiveClock";
 
 function ParallaxGeometry() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [offsets, setOffsets] = useState({ y: 0 });
+  const scrollElRef = useRef<Element | null>(null);
+  const [, forceUpdate] = useState(0);
 
   useEffect(() => {
+    // Find the scrollable container (layout's overflow-y-auto div)
+    const el = document.querySelector("[data-scroll-container]");
+    if (!el) return;
+    scrollElRef.current = el;
+
     const onScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const scrolled = -rect.top / window.innerHeight;
-      setOffsets({ y: scrolled });
+      forceUpdate((n) => n + 1);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
-  const t = offsets.y;
+  const scrollTop = scrollElRef.current ? (scrollElRef.current as HTMLElement).scrollTop : 0;
+  const viewH = typeof window !== "undefined" ? window.innerHeight : 900;
+  const t = scrollTop / viewH;
   return (
-    <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
       {/* Large triangle — top right */}
       <div
         className="parallax-geo"
@@ -90,7 +95,7 @@ export default function LandingPage() {
   return (
     <div style={{ background: "#080808", color: "rgba(255,255,255,0.82)" }}>
       {/* Scanline overlay */}
-      <div className="scanlines" />
+      <div className="scanlines" aria-hidden="true" />
 
       {/* ===== Section 1: Time Anchor (Hero) ===== */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
@@ -177,7 +182,7 @@ export default function LandingPage() {
         >
           <Link href="/orbit" className="brutal-cta">
             {t.hero_cta}
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" />
             </svg>
           </Link>
@@ -206,7 +211,7 @@ export default function LandingPage() {
       <div className="diagonal-divider" />
 
       {/* ===== Section 2: Functions as Statements ===== */}
-      <section id="features" className="relative px-4 md:px-8 py-24 md:py-32 max-w-6xl mx-auto">
+      <section id="features" className="relative px-4 md:px-8 py-24 md:py-32 max-w-6xl mx-auto" style={{ scrollMarginTop: 72 }}>
         {/* Section label */}
         <div className="flex items-center gap-3 mb-16">
           <div style={{ width: 24, height: 2, background: "#EAB308" }} />
@@ -372,7 +377,7 @@ export default function LandingPage() {
             </div>
             <Link href="/orbit" className="brutal-cta">
               {t.cta_button}
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
             </Link>

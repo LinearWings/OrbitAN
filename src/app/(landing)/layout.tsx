@@ -15,7 +15,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="h-screen bg-[#080808] text-white/80 overflow-y-auto" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+    <div className="h-screen bg-[#080808] text-white/80 overflow-y-auto" data-scroll-container style={{ fontFamily: "'Satoshi', sans-serif" }}>
       <header
         className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-8 py-5 border-b border-white/[0.06]"
         style={{ background: "rgba(8,8,8,0.8)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
