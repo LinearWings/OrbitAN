@@ -82,7 +82,7 @@ const translations = {
     feature_methods_title: "Six Methodologies",
     feature_methods_desc: "GTD 5-stage kanban · Pomodoro 25+5 timer · Pareto 80/20 scoring · Moffatt 8×25min sessions · Howell urgent/important matrix · SWOT analysis. All built into the orbital system.",
     feature_focus_title: "Focus Blocks",
-    feature_focus_desc: "Define a time range on the clock face, select a methodology, and the system marks it as a colored arc on the outer ring. Overlap-aware assignment algorithm auto-selects the ring layer.",
+    feature_focus_desc: "Define a time range on the clock face, select a methodology, and the system marks it as a colored arc on the outer ring. The overlap-aware assignment algorithm auto-selects the ring layer.",
     how_title: "Workflow",
     how_1_title: "Create Tasks",
     how_1_desc: "Click the clock face to set start/end times → enter task name → select type (Work/Study/Meeting/Personal) → confirm. The task appears as a comet arc at its scheduled position on the orbital clock.",
