@@ -63,6 +63,9 @@ const translations = {
     changelog_title: "更新日志",
     changelog_desc: "版本历史与近期变更记录。",
     back_docs: "← 返回文档",
+    cta_label: "开始使用",
+    cta_body: "在轨道时钟上标记你的第一个任务。",
+    cta_button: "进入系统",
   },
   en: {
     siteTitle: "OrbitAN — Orbital Planning",
@@ -126,6 +129,9 @@ const translations = {
     changelog_title: "Changelog",
     changelog_desc: "Version history and recent changes.",
     back_docs: "← Back to Docs",
+    cta_label: "GET STARTED",
+    cta_body: "Mark your first task on the orbital clock.",
+    cta_button: "ENTER ORBIT",
   },
 } as const;
 

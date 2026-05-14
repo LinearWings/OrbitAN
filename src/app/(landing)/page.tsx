@@ -340,6 +340,8 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <div className="diagonal-divider" />
+
       {/* ===== Section 4: Action Zone (CTA) ===== */}
       <section className="relative px-4 py-24 md:py-32">
         <div
@@ -358,18 +360,18 @@ export default function LandingPage() {
                   className="text-xs tracking-[0.15em]"
                   style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.2)" }}
                 >
-                  {lang === "zh" ? "开始使用" : "GET STARTED"}
+                  {t.cta_label}
                 </span>
               </div>
               <p
                 className="text-xl md:text-2xl font-semibold tracking-tight"
                 style={{ fontFamily: "'Clash Display', sans-serif", color: "rgba(255,255,255,0.8)" }}
               >
-                {lang === "zh" ? "在轨道时钟上标记你的第一个任务。" : "Mark your first task on the orbital clock."}
+                {t.cta_body}
               </p>
             </div>
             <Link href="/orbit" className="brutal-cta">
-              {lang === "zh" ? "进入系统" : "ENTER ORBIT"}
+              {t.cta_button}
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
@@ -382,7 +384,7 @@ export default function LandingPage() {
       <footer className="px-4 md:px-8 py-8 border-t" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div style={{ width: 6, height: 6, background: "rgba(255,255,255,0.2)" }} />
+            <div style={{ width: 6, height: 6, background: "#EAB308" }} />
             <span
               className="text-xs"
               style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.15)" }}
