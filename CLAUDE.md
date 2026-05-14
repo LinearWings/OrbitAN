@@ -172,7 +172,9 @@ The landing page fuses four art movements into a cohesive visual language:
 - **Surrealist** — Time fragments (floating oversized numbers 06/12/18/24/00 at random angles and opacities), deconstructed clock rings (dashed circles with tick marks, 120s rotation), multi-layer clock display (primary sharp blue + secondary tilted/blurred amber at 6h offset with reversed seconds + tertiary ghost amber)
 - **Avant-garde** — Text fracture animations (irregular letter-spacing jumps), oversized brutalist section numbers (18rem bleeding off cards), angle-bracket decorations, diamond markers (rotated squares replacing circles), diagonal slash dividers, perspective grids
 
-**Important**: Font edges must NOT glow (no text-shadow bloom). Glow effects come from background radial gradients (`background-glow` class, `radial-gradient` behind elements). This applies to the clock, title, and all text elements.
+**Important rules**:
+- Font edges must NOT glow (no text-shadow bloom). Glow effects come from background radial gradients (`background-glow` class, `radial-gradient` behind elements).
+- **No gradients on lines.** All line elements (dividers, rails, streaks, slashes, conduits, constellation lines) must use solid rgba colors. No `linear-gradient` on any structural line.
 
 **Color alignment with orbit page**: The landing page uses the same dual-accent scheme as the main orbit application:
 - **Blue `#2563EB`** — Primary accent (clock, feature cards 01, section headers, industrial rails)

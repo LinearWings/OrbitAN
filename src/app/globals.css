@@ -583,11 +583,6 @@ button:active, a:active, [role="button"]:active {
 }
 
 /* ── Light Streak ── */
-@keyframes streakShimmer {
-  0%, 100% { opacity: 0.15; }
-  50% { opacity: 0.5; }
-}
-
 /* ── Glitch Text ── */
 @keyframes glitchText {
   0%, 90%, 100% { transform: translateX(0); }
@@ -623,7 +618,7 @@ button:active, a:active, [role="button"]:active {
 
 /* ── Background Glow (radial glow behind elements, not on text) ── */
 @keyframes backgroundGlowPulse {
-  0%, 100% { opacity: 0.7; }
+  0%, 100% { opacity: 0.8; }
   50% { opacity: 1; }
 }
 .background-glow {
@@ -631,12 +626,12 @@ button:active, a:active, [role="button"]:active {
   inset: -30%;
   pointer-events: none;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(37,99,235,0.08) 0%, rgba(37,99,235,0.03) 30%, transparent 65%);
+  background: radial-gradient(ellipse at center, rgba(37,99,235,0.12) 0%, rgba(37,99,235,0.05) 30%, transparent 65%);
   filter: blur(40px);
   animation: backgroundGlowPulse 3s ease-in-out infinite;
 }
 .background-glow--amber {
-  background: radial-gradient(ellipse at center, rgba(234,179,8,0.06) 0%, rgba(234,179,8,0.02) 30%, transparent 65%);
+  background: radial-gradient(ellipse at center, rgba(234,179,8,0.08) 0%, rgba(234,179,8,0.03) 30%, transparent 65%);
 }
 
 /* ── Bloom Text Utility (kept for non-critical uses, now subdued) ── */
@@ -732,15 +727,7 @@ button:active, a:active, [role="button"]:active {
 .light-streak {
   pointer-events: none;
   height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(37,99,235,0.2) 20%,
-    rgba(255,255,255,0.1) 50%,
-    rgba(37,99,235,0.2) 80%,
-    transparent
-  );
-  animation: streakShimmer 4s ease-in-out infinite;
+  background: rgba(37,99,235,0.12);
 }
 
 /* ── Spotlight (mouse-following) ── */
@@ -772,15 +759,8 @@ button:active, a:active, [role="button"]:active {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(37,99,235,0.2) 25%,
-    rgba(255,255,255,0.1) 50%,
-    rgba(37,99,235,0.2) 75%,
-    transparent 100%
-  );
+  height: 1px;
+  background: rgba(37,99,235,0.12);
 }
 
 /* ── Marquee Time Strip ── */
@@ -897,25 +877,25 @@ button:active, a:active, [role="button"]:active {
   inset: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(37,99,235,0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37,99,235,0.035) 1px, transparent 1px);
+    linear-gradient(rgba(37,99,235,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,0.08) 1px, transparent 1px);
   background-size: 48px 48px;
   background-position: center center;
-  mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 80%);
+  mask-image: radial-gradient(ellipse at 50% 50%, black 35%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 35%, transparent 75%);
 }
 .blueprint-grid-dense {
   background-size: 24px 24px;
   background-image:
-    linear-gradient(rgba(37,99,235,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37,99,235,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(37,99,235,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,0.06) 1px, transparent 1px);
   mask-image: none;
   -webkit-mask-image: none;
 }
 .blueprint-grid-amber {
   background-image:
-    linear-gradient(rgba(234,179,8,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(234,179,8,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(234,179,8,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(234,179,8,0.05) 1px, transparent 1px);
 }
 
 /* ── Constructivist Diagonal Line Network ── */
@@ -930,9 +910,9 @@ button:active, a:active, [role="button"]:active {
   transform-origin: center center;
 }
 .constructivist-line--thick { height: 3px; }
-.constructivist-line--blue { background: rgba(37,99,235,0.08); }
-.constructivist-line--amber { background: rgba(234,179,8,0.05); }
-.constructivist-line--white { background: rgba(255,255,255,0.03); }
+.constructivist-line--blue { background: rgba(37,99,235,0.15); }
+.constructivist-line--amber { background: rgba(234,179,8,0.10); }
+.constructivist-line--white { background: rgba(255,255,255,0.06); }
 
 /* ── Line Cluster (dense parallel lines at an angle) ── */
 .line-cluster {
@@ -955,22 +935,22 @@ button:active, a:active, [role="button"]:active {
 .brutalist-mass {
   position: absolute;
   pointer-events: none;
-  border: 6px solid rgba(255,255,255,0.04);
-  background: rgba(0,0,0,0.4);
+  border: 6px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.5);
 }
 .brutalist-mass--solid {
   background: rgba(2,2,2,0.85);
-  border-color: rgba(37,99,235,0.08);
+  border-color: rgba(37,99,235,0.15);
 }
 .brutalist-mass--accent {
-  border-color: rgba(37,99,235,0.12);
-  box-shadow: inset 0 0 60px rgba(37,99,235,0.03);
+  border-color: rgba(37,99,235,0.20);
+  box-shadow: inset 0 0 60px rgba(37,99,235,0.06);
 }
 
 /* ── Heavy Frame (brutalist content container) ── */
 .heavy-frame {
   position: relative;
-  border: 6px solid rgba(255,255,255,0.06);
+  border: 6px solid rgba(255,255,255,0.10);
   padding: 40px;
   background: rgba(0,0,0,0.5);
   box-shadow: inset 0 0 80px rgba(0,0,0,0.3);
@@ -979,14 +959,14 @@ button:active, a:active, [role="button"]:active {
   content: "";
   position: absolute;
   inset: 4px;
-  border: 1px solid rgba(37,99,235,0.06);
+  border: 1px solid rgba(37,99,235,0.10);
   pointer-events: none;
 }
 .heavy-frame::after {
   content: "";
   position: absolute;
   inset: -12px;
-  border: 1px solid rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
   pointer-events: none;
 }
 
@@ -996,65 +976,52 @@ button:active, a:active, [role="button"]:active {
   pointer-events: none;
 }
 .industrial-rail--vertical {
-  width: 6px;
-  background:
-    linear-gradient(to bottom,
-      transparent 0%,
-      rgba(37,99,235,0.15) 10%,
-      rgba(37,99,235,0.08) 50%,
-      rgba(37,99,235,0.15) 90%,
-      transparent 100%);
-  box-shadow: 0 0 20px rgba(37,99,235,0.06);
+  width: 4px;
+  background: rgba(37,99,235,0.12);
 }
 .industrial-rail--horizontal {
-  height: 4px;
-  background:
-    linear-gradient(to right,
-      transparent 0%,
-      rgba(37,99,235,0.15) 10%,
-      rgba(37,99,235,0.06) 50%,
-      rgba(37,99,235,0.15) 90%,
-      transparent 100%);
+  height: 2px;
+  background: rgba(37,99,235,0.10);
 }
 
 /* ── Diamond Marker (constructivist node) ── */
 .geo-diamond {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   background: #2563EB;
   transform: rotate(45deg);
-  box-shadow: 0 0 12px rgba(37,99,235,0.5), 0 0 24px rgba(37,99,235,0.15);
+  box-shadow: 0 0 16px rgba(37,99,235,0.6), 0 0 32px rgba(37,99,235,0.2);
 }
 .geo-diamond--amber {
   background: #EAB308;
-  box-shadow: 0 0 12px rgba(234,179,8,0.5), 0 0 24px rgba(234,179,8,0.15);
+  box-shadow: 0 0 16px rgba(234,179,8,0.6), 0 0 32px rgba(234,179,8,0.2);
 }
 .geo-diamond--hollow {
   background: transparent;
-  border: 2px solid rgba(37,99,235,0.4);
-  box-shadow: 0 0 8px rgba(37,99,235,0.15);
+  border: 2px solid rgba(37,99,235,0.6);
+  box-shadow: 0 0 10px rgba(37,99,235,0.2);
 }
 
 /* ── Time Fragment (floating deconstructed number) ── */
 @keyframes timeFragmentFloat {
-  0%, 100% { transform: translateY(0) rotate(var(--frag-rotate, 0deg)); opacity: var(--frag-opacity, 0.04); }
-  50% { transform: translateY(-20px) rotate(var(--frag-rotate, 0deg)); opacity: calc(var(--frag-opacity, 0.04) * 2); }
+  0%, 100% { transform: translateY(0) rotate(var(--frag-rotate, 0deg)); opacity: var(--frag-opacity, 0.12); }
+  50% { transform: translateY(-30px) rotate(var(--frag-rotate, 0deg)); opacity: calc(var(--frag-opacity, 0.12) * 1.8); }
 }
 .time-fragment {
   position: absolute;
   pointer-events: none;
   font-family: "Clash Display", sans-serif;
   font-weight: 700;
-  font-size: clamp(4rem, 10vw, 10rem);
-  color: rgba(37,99,235,0.04);
+  font-size: clamp(4rem, 12vw, 12rem);
+  color: rgba(37,99,235,0.10);
   line-height: 0.8;
   animation: timeFragmentFloat 12s ease-in-out infinite;
 }
 .time-fragment--amber {
-  color: rgba(234,179,8,0.03);
+  color: rgba(234,179,8,0.08);
 }
-.time-fragment--sm { font-size: clamp(2rem, 5vw, 5rem); }
-.time-fragment--lg { font-size: clamp(6rem, 15vw, 16rem); }
+.time-fragment--sm { font-size: clamp(2.5rem, 6vw, 6rem); }
+.time-fragment--lg { font-size: clamp(7rem, 18vw, 18rem); }
 
 /* ── Deconstructed Clock Ring ── */
 @keyframes deconstructedSpin {
@@ -1065,7 +1032,7 @@ button:active, a:active, [role="button"]:active {
   position: absolute;
   pointer-events: none;
   border-radius: 50%;
-  border: 1px solid rgba(37,99,235,0.06);
+  border: 1px solid rgba(37,99,235,0.15);
 }
 .deconstructed-ring--dashed {
   border-style: dashed;
@@ -1075,7 +1042,7 @@ button:active, a:active, [role="button"]:active {
   position: absolute;
   pointer-events: none;
   width: 2px;
-  background: rgba(37,99,235,0.08);
+  background: rgba(37,99,235,0.18);
   transform-origin: bottom center;
 }
 
@@ -1089,51 +1056,51 @@ button:active, a:active, [role="button"]:active {
     conic-gradient(
       from 0deg,
       transparent 0deg, transparent 14deg,
-      rgba(37,99,235,0.02) 15deg, transparent 16deg,
+      rgba(37,99,235,0.05) 15deg, transparent 16deg,
       transparent 29deg,
-      rgba(37,99,235,0.02) 30deg, transparent 31deg,
+      rgba(37,99,235,0.05) 30deg, transparent 31deg,
       transparent 44deg,
-      rgba(37,99,235,0.015) 45deg, transparent 46deg,
+      rgba(37,99,235,0.04) 45deg, transparent 46deg,
       transparent 59deg,
-      rgba(37,99,235,0.02) 60deg, transparent 61deg,
+      rgba(37,99,235,0.05) 60deg, transparent 61deg,
       transparent 74deg,
-      rgba(37,99,235,0.015) 75deg, transparent 76deg,
+      rgba(37,99,235,0.04) 75deg, transparent 76deg,
       transparent 89deg,
-      rgba(37,99,235,0.02) 90deg, transparent 91deg,
+      rgba(37,99,235,0.05) 90deg, transparent 91deg,
       transparent 104deg,
-      rgba(37,99,235,0.015) 105deg, transparent 106deg,
+      rgba(37,99,235,0.04) 105deg, transparent 106deg,
       transparent 119deg,
-      rgba(37,99,235,0.02) 120deg, transparent 121deg,
+      rgba(37,99,235,0.05) 120deg, transparent 121deg,
       transparent 134deg,
-      rgba(37,99,235,0.015) 135deg, transparent 136deg,
+      rgba(37,99,235,0.04) 135deg, transparent 136deg,
       transparent 149deg,
-      rgba(37,99,235,0.02) 150deg, transparent 151deg,
+      rgba(37,99,235,0.05) 150deg, transparent 151deg,
       transparent 164deg,
-      rgba(37,99,235,0.015) 165deg, transparent 166deg,
+      rgba(37,99,235,0.04) 165deg, transparent 166deg,
       transparent 179deg,
-      rgba(37,99,235,0.02) 180deg, transparent 181deg,
+      rgba(37,99,235,0.05) 180deg, transparent 181deg,
       transparent 194deg,
-      rgba(37,99,235,0.015) 195deg, transparent 196deg,
+      rgba(37,99,235,0.04) 195deg, transparent 196deg,
       transparent 209deg,
-      rgba(37,99,235,0.02) 210deg, transparent 211deg,
+      rgba(37,99,235,0.05) 210deg, transparent 211deg,
       transparent 224deg,
-      rgba(37,99,235,0.015) 225deg, transparent 226deg,
+      rgba(37,99,235,0.04) 225deg, transparent 226deg,
       transparent 239deg,
-      rgba(37,99,235,0.02) 240deg, transparent 241deg,
+      rgba(37,99,235,0.05) 240deg, transparent 241deg,
       transparent 254deg,
-      rgba(37,99,235,0.015) 255deg, transparent 256deg,
+      rgba(37,99,235,0.04) 255deg, transparent 256deg,
       transparent 269deg,
-      rgba(37,99,235,0.02) 270deg, transparent 271deg,
+      rgba(37,99,235,0.05) 270deg, transparent 271deg,
       transparent 284deg,
-      rgba(37,99,235,0.015) 285deg, transparent 286deg,
+      rgba(37,99,235,0.04) 285deg, transparent 286deg,
       transparent 299deg,
-      rgba(37,99,235,0.02) 300deg, transparent 301deg,
+      rgba(37,99,235,0.05) 300deg, transparent 301deg,
       transparent 314deg,
-      rgba(37,99,235,0.015) 315deg, transparent 316deg,
+      rgba(37,99,235,0.04) 315deg, transparent 316deg,
       transparent 329deg,
-      rgba(37,99,235,0.02) 330deg, transparent 331deg,
+      rgba(37,99,235,0.05) 330deg, transparent 331deg,
       transparent 344deg,
-      rgba(37,99,235,0.015) 345deg, transparent 346deg,
+      rgba(37,99,235,0.04) 345deg, transparent 346deg,
       transparent 359deg
     );
 }
@@ -1198,7 +1165,7 @@ button:active, a:active, [role="button"]:active {
   font-family: "Clash Display", sans-serif;
   font-size: clamp(7rem, 16vw, 18rem);
   font-weight: 700;
-  color: rgba(255,255,255,0.015);
+  color: rgba(255,255,255,0.04);
   line-height: 0.55;
   user-select: none;
   position: relative;
@@ -1206,33 +1173,10 @@ button:active, a:active, [role="button"]:active {
 }
 
 /* ── Time Conduit (horizontal time-carrying pipe) ── */
-@keyframes conduitFlow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
-}
 .time-conduit {
   position: relative;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(37,99,235,0.2) 20%,
-    rgba(37,99,235,0.4) 40%,
-    rgba(37,99,235,0.2) 60%,
-    transparent
-  );
-  background-size: 200% 100%;
-  animation: conduitFlow 8s linear infinite;
-}
-.time-conduit::before {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: rgba(37,99,235,0.03);
-  filter: blur(3px);
+  height: 1px;
+  background: rgba(37,99,235,0.12);
 }
 
 /* ── Avant-garde Card (fractured border) ── */
@@ -1264,18 +1208,13 @@ button:active, a:active, [role="button"]:active {
 }
 
 /* ── Diagonal Slash Divider ── */
-@keyframes slashDrift {
-  0%, 100% { opacity: 0.03; }
-  50% { opacity: 0.08; }
-}
 .diagonal-slash {
   position: absolute;
   pointer-events: none;
-  height: 2px;
+  height: 1px;
   width: 200%;
-  background: linear-gradient(to right, transparent, rgba(37,99,235,0.3) 40%, rgba(37,99,235,0.3) 60%, transparent);
+  background: rgba(37,99,235,0.15);
   transform-origin: center;
-  animation: slashDrift 6s ease-in-out infinite;
 }
 
 /* ── Heavy Brutalist CTA (enhanced) ── */
@@ -1318,17 +1257,18 @@ button:active, a:active, [role="button"]:active {
 .constellation-dot {
   position: absolute;
   pointer-events: none;
-  width: 3px;
-  height: 3px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: rgba(37,99,235,0.5);
+  background: rgba(37,99,235,0.7);
+  box-shadow: 0 0 6px rgba(37,99,235,0.3);
   animation: constellationPulse 4s ease-in-out infinite;
 }
 .constellation-line {
   position: absolute;
   pointer-events: none;
   height: 1px;
-  background: linear-gradient(to right, rgba(37,99,235,0.15), rgba(37,99,235,0.03));
+  background: rgba(37,99,235,0.12);
   transform-origin: left center;
 }
 
@@ -1337,7 +1277,7 @@ button:active, a:active, [role="button"]:active {
   background: #020202;
   position: absolute;
   pointer-events: none;
-  border: 1px solid rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 /* ── Section stamp (industrial label) ── */
@@ -1365,33 +1305,33 @@ button:active, a:active, [role="button"]:active {
   height: 200vmax;
   background: conic-gradient(
     from 0deg,
-    transparent 0deg, transparent 2deg, rgba(37,99,235,0.015) 2.5deg, transparent 3deg,
-    transparent 5deg, transparent 6deg, rgba(234,179,8,0.01) 6.5deg, transparent 7deg,
-    transparent 10deg, transparent 11deg, rgba(37,99,235,0.012) 11.5deg, transparent 12deg,
-    transparent 14deg, rgba(37,99,235,0.01) 14.5deg, transparent 15deg,
-    transparent 19deg, transparent 20deg, rgba(37,99,235,0.015) 20.5deg, transparent 21deg,
-    transparent 24deg, transparent 25deg, rgba(234,179,8,0.01) 25.5deg, transparent 26deg,
-    transparent 29deg, rgba(37,99,235,0.012) 29.5deg, transparent 30deg,
-    transparent 34deg, transparent 35deg, rgba(37,99,235,0.015) 35.5deg, transparent 36deg,
-    transparent 39deg, rgba(37,99,235,0.01) 39.5deg, transparent 40deg,
-    transparent 44deg, transparent 45deg, rgba(37,99,235,0.012) 45.5deg, transparent 46deg,
-    transparent 49deg, rgba(234,179,8,0.01) 49.5deg, transparent 50deg,
-    transparent 54deg, transparent 55deg, rgba(37,99,235,0.015) 55.5deg, transparent 56deg,
-    transparent 59deg, rgba(37,99,235,0.01) 59.5deg, transparent 60deg,
-    transparent 64deg, transparent 65deg, rgba(37,99,235,0.012) 65.5deg, transparent 66deg,
-    transparent 69deg, rgba(37,99,235,0.01) 69.5deg, transparent 70deg,
-    transparent 74deg, transparent 75deg, rgba(37,99,235,0.015) 75.5deg, transparent 76deg,
-    transparent 79deg, rgba(234,179,8,0.01) 79.5deg, transparent 80deg,
-    transparent 84deg, transparent 85deg, rgba(37,99,235,0.012) 85.5deg, transparent 86deg,
-    transparent 89deg, rgba(37,99,235,0.01) 89.5deg, transparent 90deg,
-    transparent 94deg, transparent 95deg, rgba(37,99,235,0.015) 95.5deg, transparent 96deg,
-    transparent 99deg, rgba(37,99,235,0.01) 99.5deg, transparent 100deg,
-    transparent 104deg, transparent 105deg, rgba(37,99,235,0.012) 105.5deg, transparent 106deg,
-    transparent 109deg, rgba(37,99,235,0.01) 109.5deg, transparent 110deg,
-    transparent 114deg, transparent 115deg, rgba(37,99,235,0.015) 115.5deg, transparent 116deg,
-    transparent 119deg, rgba(234,179,8,0.01) 119.5deg, transparent 120deg,
-    transparent 124deg, transparent 125deg, rgba(37,99,235,0.012) 125.5deg, transparent 126deg,
-    transparent 129deg, rgba(37,99,235,0.01) 129.5deg, transparent 130deg,
+    transparent 0deg, transparent 2deg, rgba(37,99,235,0.04) 2.5deg, transparent 3deg,
+    transparent 5deg, transparent 6deg, rgba(234,179,8,0.025) 6.5deg, transparent 7deg,
+    transparent 10deg, transparent 11deg, rgba(37,99,235,0.035) 11.5deg, transparent 12deg,
+    transparent 14deg, rgba(37,99,235,0.03) 14.5deg, transparent 15deg,
+    transparent 19deg, transparent 20deg, rgba(37,99,235,0.04) 20.5deg, transparent 21deg,
+    transparent 24deg, transparent 25deg, rgba(234,179,8,0.025) 25.5deg, transparent 26deg,
+    transparent 29deg, rgba(37,99,235,0.035) 29.5deg, transparent 30deg,
+    transparent 34deg, transparent 35deg, rgba(37,99,235,0.04) 35.5deg, transparent 36deg,
+    transparent 39deg, rgba(37,99,235,0.03) 39.5deg, transparent 40deg,
+    transparent 44deg, transparent 45deg, rgba(37,99,235,0.035) 45.5deg, transparent 46deg,
+    transparent 49deg, rgba(234,179,8,0.025) 49.5deg, transparent 50deg,
+    transparent 54deg, transparent 55deg, rgba(37,99,235,0.04) 55.5deg, transparent 56deg,
+    transparent 59deg, rgba(37,99,235,0.03) 59.5deg, transparent 60deg,
+    transparent 64deg, transparent 65deg, rgba(37,99,235,0.035) 65.5deg, transparent 66deg,
+    transparent 69deg, rgba(37,99,235,0.03) 69.5deg, transparent 70deg,
+    transparent 74deg, transparent 75deg, rgba(37,99,235,0.04) 75.5deg, transparent 76deg,
+    transparent 79deg, rgba(234,179,8,0.025) 79.5deg, transparent 80deg,
+    transparent 84deg, transparent 85deg, rgba(37,99,235,0.035) 85.5deg, transparent 86deg,
+    transparent 89deg, rgba(37,99,235,0.03) 89.5deg, transparent 90deg,
+    transparent 94deg, transparent 95deg, rgba(37,99,235,0.04) 95.5deg, transparent 96deg,
+    transparent 99deg, rgba(37,99,235,0.03) 99.5deg, transparent 100deg,
+    transparent 104deg, transparent 105deg, rgba(37,99,235,0.035) 105.5deg, transparent 106deg,
+    transparent 109deg, rgba(37,99,235,0.03) 109.5deg, transparent 110deg,
+    transparent 114deg, transparent 115deg, rgba(37,99,235,0.04) 115.5deg, transparent 116deg,
+    transparent 119deg, rgba(234,179,8,0.025) 119.5deg, transparent 120deg,
+    transparent 124deg, transparent 125deg, rgba(37,99,235,0.035) 125.5deg, transparent 126deg,
+    transparent 129deg, rgba(37,99,235,0.03) 129.5deg, transparent 130deg,
     transparent 360deg
   );
 }
@@ -1429,11 +1369,11 @@ button:active, a:active, [role="button"]:active {
 /* ── Clock containment (brutalist clock housing) ── */
 .clock-housing {
   position: relative;
-  border: 8px solid rgba(255,255,255,0.05);
+  border: 8px solid rgba(255,255,255,0.08);
   background: rgba(0,0,0,0.6);
   box-shadow:
     inset 0 0 120px rgba(0,0,0,0.5),
-    0 0 0 2px rgba(37,99,235,0.06),
+    0 0 0 2px rgba(37,99,235,0.10),
     0 0 0 16px rgba(0,0,0,0.4);
   padding: clamp(2rem, 5vw, 4rem);
 }
@@ -1441,21 +1381,21 @@ button:active, a:active, [role="button"]:active {
   content: "";
   position: absolute;
   inset: -16px;
-  border: 1px solid rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
   pointer-events: none;
 }
 
 /* ── Time-mark notches (clock-dial style edge markers) ── */
 @keyframes timeMarkPulse {
-  0%, 100% { opacity: 0.08; }
-  50% { opacity: 0.2; }
+  0%, 100% { opacity: 0.20; }
+  50% { opacity: 0.45; }
 }
 .time-mark {
   position: absolute;
   pointer-events: none;
-  width: 12px;
+  width: 16px;
   height: 2px;
-  background: rgba(37,99,235,0.5);
-  box-shadow: 0 0 4px rgba(37,99,235,0.2);
+  background: rgba(37,99,235,0.7);
+  box-shadow: 0 0 6px rgba(37,99,235,0.3);
   animation: timeMarkPulse 3s ease-in-out infinite;
 }

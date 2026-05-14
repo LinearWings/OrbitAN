@@ -77,9 +77,9 @@ function MouseSpotlight() {
       className="spotlight-layer"
       style={{
         background: `radial-gradient(circle 400px at ${pos.x}px ${pos.y}px,
-          rgba(37,99,235,0.04) 0%,
-          rgba(37,99,235,0.015) 30%,
-          rgba(37,99,235,0.005) 50%,
+          rgba(37,99,235,0.08) 0%,
+          rgba(37,99,235,0.04) 30%,
+          rgba(37,99,235,0.015) 50%,
           transparent 70%)`,
       }}
       aria-hidden="true"
@@ -146,8 +146,8 @@ function MarqueeStrip() {
   return (
     <div className="marquee-strip pointer-events-none select-none" aria-hidden="true"
       style={{
-        borderTop: "2px solid rgba(255,255,255,0.03)",
-        borderBottom: "2px solid rgba(255,255,255,0.03)",
+        borderTop: "2px solid rgba(255,255,255,0.06)",
+        borderBottom: "2px solid rgba(255,255,255,0.06)",
         padding: "5px 0",
         background: "rgba(0,0,0,0.4)",
       }}>
@@ -185,21 +185,21 @@ function ConstructivistGeometry() {
       {/* ── Dense diagonal line clusters — top-left zone ── */}
       <div style={{ position: "absolute", top: `${12 + t * 40}%`, left: `${-5 - t * 20}%`, width: "60%", height: "60%", transform: "rotate(-38deg)", display: "flex", flexDirection: "column", gap: "12px" }}>
         {Array.from({ length: 14 }).map((_, i) => (
-          <div key={`d1-${i}`} style={{ height: 1, width: "100%", background: `rgba(37,99,235,${0.02 + i * 0.003})` }} />
+          <div key={`d1-${i}`} style={{ height: 1, width: "100%", background: `rgba(37,99,235,${0.05 + i * 0.006})` }} />
         ))}
       </div>
 
       {/* ── Horizontal line cluster — mid-right ── */}
       <div style={{ position: "absolute", top: `${40 + t * 15}%`, right: `${-15 + t * 10}%`, width: "45%", height: "30%", transform: "rotate(22deg)", display: "flex", flexDirection: "column", gap: "8px" }}>
         {Array.from({ length: 10 }).map((_, i) => (
-          <div key={`d2-${i}`} style={{ height: 1, width: "100%", background: `rgba(37,99,235,${0.015 + i * 0.004})` }} />
+          <div key={`d2-${i}`} style={{ height: 1, width: "100%", background: `rgba(37,99,235,${0.04 + i * 0.008})` }} />
         ))}
       </div>
 
       {/* ── Vertical line cluster — far left ── */}
       <div style={{ position: "absolute", top: `${55 + t * 20}%`, left: `${3 - t * 5}%`, width: "2%", height: "40%", transform: "rotate(5deg)", display: "flex", flexDirection: "row", gap: "4px" }}>
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={`v1-${i}`} style={{ width: 1, height: "100%", background: `rgba(255,255,255,${0.015 + i * 0.005})` }} />
+          <div key={`v1-${i}`} style={{ width: 1, height: "100%", background: `rgba(255,255,255,${0.04 + i * 0.01})` }} />
         ))}
       </div>
 
@@ -208,7 +208,7 @@ function ConstructivistGeometry() {
         position: "absolute",
         top: `${-15 + t * 25}%`, right: `${-10 + t * 5}%`,
         width: "min(50vw, 500px)", height: "min(50vw, 500px)",
-        border: "6px solid rgba(37,99,235,0.03)",
+        border: "6px solid rgba(37,99,235,0.08)",
         transform: `rotate(${25 + t * 8}deg)`,
         background: "rgba(0,0,0,0.3)",
       }} />
@@ -218,7 +218,7 @@ function ConstructivistGeometry() {
         position: "absolute",
         top: `${30 + t * 35}%`, left: `${-20 - t * 15}%`,
         width: "min(80vw, 800px)", height: "4px",
-        background: "linear-gradient(to right, transparent, rgba(37,99,235,0.08) 30%, rgba(37,99,235,0.08) 70%, transparent)",
+        background: "rgba(37,99,235,0.15)",
         transform: `rotate(-42deg)`,
       }} />
 
@@ -228,9 +228,9 @@ function ConstructivistGeometry() {
         top: `${70 + t * 10}%`, left: `${8 - t * 8}%`,
         width: "min(16vw, 160px)", height: "min(16vw, 160px)",
       }}>
-        <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: "2px", background: "rgba(37,99,235,0.08)" }} />
-        <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: "2px", background: "rgba(37,99,235,0.08)" }} />
-        <div style={{ position: "absolute", top: 8, left: 8, right: 8, bottom: 8, border: "1px solid rgba(255,255,255,0.03)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: "2px", background: "rgba(37,99,235,0.18)" }} />
+        <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: "2px", background: "rgba(37,99,235,0.18)" }} />
+        <div style={{ position: "absolute", top: 8, left: 8, right: 8, bottom: 8, border: "1px solid rgba(255,255,255,0.06)", borderRadius: "50%" }} />
       </div>
 
       {/* ── Deconstructed ring — surrealist partial clock face ── */}
@@ -238,7 +238,7 @@ function ConstructivistGeometry() {
         position: "absolute",
         top: `${45 + t * 20}%`, right: `${10 - t * 8}%`,
         width: "min(30vw, 300px)", height: "min(30vw, 300px)",
-        border: "1px dashed rgba(37,99,235,0.05)",
+        border: "1px dashed rgba(37,99,235,0.14)",
         borderRadius: "50%",
         animation: `deconstructedSpin ${120 + t * 30}s linear infinite`,
       }}>
@@ -250,7 +250,7 @@ function ConstructivistGeometry() {
               top: "50%", left: "50%",
               width: i % 3 === 0 ? 3 : 1,
               height: i % 3 === 0 ? "42%" : "15%",
-              background: i % 3 === 0 ? "rgba(37,99,235,0.12)" : "rgba(37,99,235,0.04)",
+              background: i % 3 === 0 ? "rgba(37,99,235,0.22)" : "rgba(37,99,235,0.10)",
               transform: `translate(-50%, -100%) rotate(${angle}deg)`,
               transformOrigin: "bottom center",
             }} />
@@ -264,8 +264,8 @@ function ConstructivistGeometry() {
       <div className="constellation-dot" style={{ top: `${35 + t * 60}%`, left: `${12 - t * 3}%`, animationDelay: "3s" }} />
 
       {/* ── Vertical rail — far right ── */}
-      <div style={{ position: "absolute", top: 0, bottom: 0, right: `${2 + t * 3}%`, width: "3px", background: "rgba(37,99,235,0.04)" }} />
-      <div style={{ position: "absolute", top: 0, bottom: 0, right: `${2.5 + t * 3}%`, width: "1px", background: "rgba(255,255,255,0.015)" }} />
+      <div style={{ position: "absolute", top: 0, bottom: 0, right: `${2 + t * 3}%`, width: "3px", background: "rgba(37,99,235,0.10)" }} />
+      <div style={{ position: "absolute", top: 0, bottom: 0, right: `${2.5 + t * 3}%`, width: "1px", background: "rgba(255,255,255,0.05)" }} />
 
       {/* ── Void block — bottom left ── */}
       <div className="void-block" style={{
@@ -278,7 +278,7 @@ function ConstructivistGeometry() {
         position: "absolute",
         top: `${10 + t * 30}%`, left: `${60 - t * 10}%`,
         width: "min(25vw, 250px)", height: "8px",
-        background: "rgba(37,99,235,0.05)",
+        background: "rgba(37,99,235,0.12)",
       }} />
     </div>
   );
@@ -289,11 +289,11 @@ function ConstructivistGeometry() {
    ══════════════════════════════════════════════ */
 function TimeFragments() {
   const fragments = [
-    { value: "06", top: "8%", left: "5%", rotate: -12, opacity: 0.03, delay: 0, size: "lg" },
-    { value: "12", top: "5%", right: "8%", rotate: 8, opacity: 0.04, delay: 3, size: "lg" },
-    { value: "18", bottom: "10%", left: "3%", rotate: -5, opacity: 0.03, delay: 6, size: "md" },
-    { value: "24", bottom: "6%", right: "6%", rotate: 15, opacity: 0.04, delay: 9, size: "lg" },
-    { value: "00", top: "50%", right: "2%", rotate: -20, opacity: 0.02, delay: 4, size: "sm" },
+    { value: "06", top: "8%", left: "5%", rotate: -12, opacity: 0.10, delay: 0, size: "lg" },
+    { value: "12", top: "5%", right: "8%", rotate: 8, opacity: 0.12, delay: 3, size: "lg" },
+    { value: "18", bottom: "10%", left: "3%", rotate: -5, opacity: 0.08, delay: 6, size: "md" },
+    { value: "24", bottom: "6%", right: "6%", rotate: 15, opacity: 0.12, delay: 9, size: "lg" },
+    { value: "00", top: "50%", right: "2%", rotate: -20, opacity: 0.06, delay: 4, size: "sm" },
   ];
 
   return (
@@ -353,7 +353,7 @@ function DiagonalSlashDivider() {
   return (
     <div style={{ position: "relative", height: 80 }} aria-hidden="true">
       <div className="diagonal-slash" style={{ top: "50%", left: "-50%", transform: "rotate(-8deg)" }} />
-      <div className="diagonal-slash" style={{ top: "calc(50% + 8px)", left: "-50%", transform: "rotate(-8deg)", animationDelay: "3s" }} />
+      <div className="diagonal-slash" style={{ top: "calc(50% + 8px)", left: "-50%", transform: "rotate(-8deg)" }} />
       <div style={{
         position: "absolute", top: "50%", left: "50%",
         width: 8, height: 8, background: "#2563EB", transform: "translate(-50%, -50%) rotate(45deg)",
@@ -377,7 +377,7 @@ function FeatureCard({ num, title, desc, accentColor = "#2563EB" }: {
       {/* Number bleed */}
       <div className="section-number-brutalist" style={{
         position: "absolute", top: -60, right: 16,
-        color: "rgba(255,255,255,0.012)",
+        color: "rgba(255,255,255,0.035)",
         fontSize: "clamp(5rem, 12vw, 14rem)",
       }}>
         {num}
@@ -454,7 +454,7 @@ export default function LandingPage() {
           <div style={{ margin: "0 auto 16px", width: "clamp(120px, 20vw, 280px)" }}>
             <div style={{
               width: "100%", height: 4,
-              background: "linear-gradient(to right, transparent, #2563EB 20%, #2563EB 50%, #EAB308 80%, transparent)",
+              background: "#2563EB",
               boxShadow: "0 0 12px rgba(234,179,8,0.15)",
             }} />
           </div>
@@ -476,17 +476,17 @@ export default function LandingPage() {
               position: "absolute", top: "50%", left: "50%",
               transform: "translate(-50%, -50%)",
               width: "clamp(300px, 60vw, 600px)", height: "clamp(150px, 25vw, 300px)",
-              background: "radial-gradient(ellipse at center, rgba(37,99,235,0.06) 0%, transparent 70%)",
+              background: "radial-gradient(ellipse at center, rgba(37,99,235,0.10) 0%, transparent 70%)",
               filter: "blur(50px)",
               pointerEvents: "none",
             }} />
             <div className="angle-bracket angle-bracket--tl" style={{ width: 32, height: 32, position: "relative", zIndex: 1 }} />
             <div style={{
               width: "clamp(60px, 12vw, 120px)", height: 4,
-              background: "linear-gradient(to right, transparent, #EAB308 30%, #EAB308 70%, transparent)",
+              background: "#EAB308",
               position: "relative", zIndex: 1,
             }} />
-            <span className="text-fracture" style={{
+            <span style={{
               fontFamily: "'Clash Display', sans-serif",
               fontSize: "clamp(3rem, 7vw, 5.5rem)",
               fontWeight: 700,
@@ -498,7 +498,7 @@ export default function LandingPage() {
             </span>
             <div style={{
               width: "clamp(60px, 12vw, 120px)", height: 4,
-              background: "linear-gradient(to right, transparent, #EAB308 30%, #EAB308 70%, transparent)",
+              background: "#EAB308",
               position: "relative", zIndex: 1,
             }} />
             <div className="angle-bracket" style={{ width: 32, height: 32 }} />
@@ -510,7 +510,7 @@ export default function LandingPage() {
           <div style={{
             borderLeft: "6px solid rgba(234,179,8,0.15)",
             padding: "16px 0 16px 20px",
-            background: "linear-gradient(to right, rgba(234,179,8,0.015), transparent)",
+            background: "rgba(234,179,8,0.02)",
             textAlign: "left" as const,
           }}>
             <p style={{
@@ -553,7 +553,7 @@ export default function LandingPage() {
 
         {/* Bottom scroll indicator — vertical rail */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2" style={{ zIndex: 10 }}>
-          <div style={{ width: 2, height: 56, background: "linear-gradient(to bottom, rgba(37,99,235,0.25), transparent)" }} />
+          <div style={{ width: 2, height: 56, background: "rgba(37,99,235,0.25)" }} />
         </div>
       </section>
 
@@ -570,7 +570,7 @@ export default function LandingPage() {
 
         {/* ── Section header ── */}
         <div className="flex items-center gap-5 mb-24 relative" style={{ zIndex: 1 }}>
-          <div style={{ width: 48, height: 8, background: "linear-gradient(to right, #2563EB, #EAB308)", boxShadow: "0 0 20px rgba(37,99,235,0.4)" }} />
+          <div style={{ width: 48, height: 8, background: "#2563EB", boxShadow: "0 0 20px rgba(37,99,235,0.4)" }} />
           <SectionStamp text={t.features_title} />
           <div className="light-streak" style={{ flex: 1, height: 2 }} />
         </div>
@@ -648,7 +648,7 @@ export default function LandingPage() {
 
         {/* ── Section header ── */}
         <div className="flex items-center gap-5 mb-24 relative" style={{ zIndex: 1 }}>
-          <div style={{ width: 48, height: 8, background: "linear-gradient(to right, #2563EB, #EAB308)", boxShadow: "0 0 20px rgba(37,99,235,0.4)" }} />
+          <div style={{ width: 48, height: 8, background: "#2563EB", boxShadow: "0 0 20px rgba(37,99,235,0.4)" }} />
           <SectionStamp text={t.how_title} />
           <div className="light-streak" style={{ flex: 1, height: 2 }} />
         </div>
@@ -661,24 +661,18 @@ export default function LandingPage() {
               left: "60px",
               top: 40,
               bottom: 40,
-              width: 8,
-              background: `
-                linear-gradient(to bottom,
-                  transparent 0%,
-                  rgba(37,99,235,0.2) 8%,
-                  rgba(37,99,235,0.08) 50%,
-                  rgba(37,99,235,0.2) 92%,
-                  transparent 100%)`,
+              width: 6,
+              background: "rgba(37,99,235,0.12)",
             }}
           />
           {/* Rail side-lines */}
           <div style={{
             position: "absolute", left: 54, top: 40, bottom: 40, width: 2,
-            background: "rgba(37,99,235,0.06)",
+            background: "rgba(37,99,235,0.12)",
           }} />
           <div style={{
             position: "absolute", left: 70, top: 40, bottom: 40, width: 1,
-            background: "rgba(255,255,255,0.02)",
+            background: "rgba(255,255,255,0.06)",
           }} />
 
           {[
@@ -718,22 +712,22 @@ export default function LandingPage() {
                 top: 58,
                 width: 32,
                 height: 1,
-                background: "linear-gradient(to right, rgba(37,99,235,0.2), transparent)",
+                background: "rgba(37,99,235,0.12)",
               }} />
 
               {/* ── Content block in brutalist frame ── */}
               <div style={{
                 flex: 1,
                 paddingLeft: 24,
-                borderLeft: "3px solid rgba(255,255,255,0.04)",
+                borderLeft: "3px solid rgba(255,255,255,0.08)",
                 position: "relative",
               }}>
                 {/* Angle bracket corner */}
                 <div style={{
                   position: "absolute", top: 0, left: 0,
                   width: 20, height: 20,
-                  borderTop: "2px solid rgba(37,99,235,0.15)",
-                  borderLeft: "2px solid rgba(37,99,235,0.15)",
+                  borderTop: "2px solid rgba(37,99,235,0.30)",
+                  borderLeft: "2px solid rgba(37,99,235,0.30)",
                 }} />
                 <h3 style={{
                   fontFamily: "'Clash Display', sans-serif",
@@ -764,7 +758,7 @@ export default function LandingPage() {
           position: "absolute", left: "2%", top: "30%",
           animationDelay: "2s", animationDuration: "14s",
           ["--frag-rotate" as string]: "-8deg",
-          ["--frag-opacity" as string]: 0.03,
+          ["--frag-opacity" as string]: 0.09,
         }}>
           12:00
         </div>
@@ -772,7 +766,7 @@ export default function LandingPage() {
           position: "absolute", right: "3%", bottom: "25%",
           animationDelay: "5s", animationDuration: "16s",
           ["--frag-rotate" as string]: "12deg",
-          ["--frag-opacity" as string]: 0.025,
+          ["--frag-opacity" as string]: 0.07,
         }}>
           24:00
         </div>
@@ -793,19 +787,19 @@ export default function LandingPage() {
           {/* Outer ghost frame */}
           <div style={{
             position: "absolute", inset: -24,
-            border: "2px solid rgba(37,99,235,0.04)",
+            border: "2px solid rgba(37,99,235,0.10)",
             pointerEvents: "none",
           }} />
           {/* Inner heavy frame */}
           <div style={{
             position: "absolute", inset: -12,
-            border: "4px solid rgba(255,255,255,0.03)",
+            border: "4px solid rgba(255,255,255,0.08)",
             pointerEvents: "none",
           }} />
           {/* Content box */}
           <div style={{
-            borderTop: "6px solid rgba(37,99,235,0.25)",
-            borderBottom: "4px solid rgba(255,255,255,0.04)",
+            borderTop: "6px solid rgba(37,99,235,0.35)",
+            borderBottom: "4px solid rgba(255,255,255,0.08)",
             padding: "clamp(4rem, 10vw, 7rem) 0",
             position: "relative",
             background: "rgba(0,0,0,0.3)",
@@ -854,19 +848,19 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════════════
           FOOTER
           ════════════════════════════════════════════════════ */}
-      <footer style={{ borderTop: "4px solid rgba(255,255,255,0.04)", padding: "32px 0", background: "rgba(0,0,0,0.3)" }}>
+      <footer style={{ borderTop: "4px solid rgba(255,255,255,0.08)", padding: "32px 0", background: "rgba(0,0,0,0.3)" }}>
         <div className="max-w-6xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="geo-diamond geo-diamond--hollow" style={{ width: 8, height: 8 }} />
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.625rem", color: "rgba(255,255,255,0.07)", letterSpacing: "0.06em" }}>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.625rem", color: "rgba(255,255,255,0.12)", letterSpacing: "0.06em" }}>
               {t.footer_text}
             </span>
           </div>
           <div className="flex items-center gap-10">
-            <Link href="/docs" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.625rem", color: "rgba(255,255,255,0.09)", textDecoration: "none" }}>
+            <Link href="/docs" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.625rem", color: "rgba(255,255,255,0.15)", textDecoration: "none" }}>
               {t.footer_docs}
             </Link>
-            <div style={{ width: 1, height: 12, background: "rgba(255,255,255,0.05)" }} />
+            <div style={{ width: 1, height: 12, background: "rgba(255,255,255,0.10)" }} />
             <Link href="/orbit" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.625rem", color: "rgba(37,99,235,0.3)", textDecoration: "none" }}>
               {t.footer_launch}
             </Link>
