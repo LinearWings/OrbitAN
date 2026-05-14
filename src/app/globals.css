@@ -448,7 +448,7 @@ button:active, a:active, [role="button"]:active {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 100;
+  z-index: 50;
   background: repeating-linear-gradient(
     0deg,
     transparent,
@@ -498,15 +498,6 @@ button:active, a:active, [role="button"]:active {
   }
   50% {
     text-shadow: 0 0 12px rgba(234, 179, 8, 0.15);
-  }
-}
-
-@keyframes borderSnap {
-  0% {
-    border-width: 1px;
-  }
-  100% {
-    border-width: 3px;
   }
 }
 
@@ -596,11 +587,11 @@ button:active, a:active, [role="button"]:active {
   border: 2px solid #EAB308;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: border-width 0s steps(1), margin 0s steps(1);
+  transition: outline-width 0s steps(1);
 }
 .brutal-cta:hover {
-  border-width: 4px;
-  margin: -2px;
+  outline: 2px solid #EAB308;
+  outline-offset: 0;
 }
 
 /* Time code label for workflow timeline */
