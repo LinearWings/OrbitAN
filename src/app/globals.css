@@ -441,9 +441,9 @@ button:active, a:active, [role="button"]:active {
   animation: select-pulse 0.4s ease-out;
 }
 
-/* ===== Brutalist Landing Effects ===== */
+/* ===== Brutalist Landing Effects v2 ===== */
 
-/* Scanline overlay — applied via dedicated element */
+/* ── Scanline & CRT Overlay ── */
 .scanlines {
   position: fixed;
   inset: 0;
@@ -452,174 +452,220 @@ button:active, a:active, [role="button"]:active {
   background: repeating-linear-gradient(
     0deg,
     transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
+    transparent 3px,
+    rgba(0, 0, 0, 0.06) 3px,
+    rgba(0, 0, 0, 0.06) 6px
   );
+  animation: crtFlicker 8s ease-in-out infinite;
+}
+@keyframes crtFlicker {
+  0%, 99.4%, 100% { opacity: 1; }
+  99.5%, 99.8% { opacity: 0.3; }
 }
 
-/* Hard-cut reveal — elements snap up from below with zero easing */
+/* ── Glitch Text ── */
+@keyframes glitchText {
+  0%, 92%, 100% { transform: translateX(0); }
+  93% { transform: translateX(-3px) skewX(-1deg); }
+  94% { transform: translateX(3px) skewX(1deg); }
+  95% { transform: translateX(-1px); }
+  96% { transform: translateX(0); }
+}
+.glitch-text {
+  animation: glitchText 6s ease-in-out infinite;
+}
+
+/* ── Blue Pulse (clock glow) ── */
+@keyframes bluePulse {
+  0%, 100% { text-shadow: 0 0 0 rgba(37, 99, 235, 0); }
+  50% { text-shadow: 0 0 24px rgba(37, 99, 235, 0.25), 0 0 48px rgba(37, 99, 235, 0.08); }
+}
+
+/* ── Hard-cut entry animations ── */
 @keyframes hardCutIn {
-  0% {
-    transform: translateY(60px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  0% { transform: translateY(80px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
-
+@keyframes hardCutInGlitch {
+  0% { transform: translateY(80px) translateX(0); opacity: 0; }
+  15% { transform: translateY(0) translateX(4px); opacity: 1; }
+  18% { transform: translateY(0) translateX(-3px); }
+  20% { transform: translateY(0) translateX(0); opacity: 1; }
+  100% { transform: translateY(0) translateX(0); opacity: 1; }
+}
 @keyframes hardCutInRight {
-  0% {
-    transform: translateX(40px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  0% { transform: translateX(60px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
 }
-
 @keyframes hardCutInLeft {
-  0% {
-    transform: translateX(-40px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  0% { transform: translateX(-60px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
 }
 
-@keyframes clockPulse {
-  0%, 100% {
-    text-shadow: 0 0 0 rgba(234, 179, 8, 0);
-  }
-  50% {
-    text-shadow: 0 0 12px rgba(234, 179, 8, 0.15);
-  }
-}
+.hard-cut-in { animation: hardCutIn 0.3s steps(1) forwards; }
+.hard-cut-in-glitch { animation: hardCutInGlitch 0.5s steps(1) forwards; }
+.hard-cut-in-right { animation: hardCutInRight 0.3s steps(1) forwards; }
+.hard-cut-in-left { animation: hardCutInLeft 0.3s steps(1) forwards; }
 
-.hard-cut-in {
-  animation: hardCutIn 0.3s steps(1) forwards;
-}
-
-.hard-cut-in-right {
-  animation: hardCutInRight 0.3s steps(1) forwards;
-}
-
-.hard-cut-in-left {
-  animation: hardCutInLeft 0.3s steps(1) forwards;
-}
-
-/* Staggered reveal delays */
+/* Staggered delays */
 .reveal-1 { animation-delay: 0.1s; }
 .reveal-2 { animation-delay: 0.2s; }
 .reveal-3 { animation-delay: 0.3s; }
 .reveal-4 { animation-delay: 0.4s; }
 .reveal-5 { animation-delay: 0.5s; }
 
-/* Brutalist border — thick single-side accent */
-.brutal-border-top {
-  border-top: 3px solid rgba(255, 255, 255, 0.12);
-}
+/* ── Heavy Brutalist Borders ── */
+.brutal-border-top    { border-top: 4px solid rgba(255, 255, 255, 0.12); }
+.brutal-border-left   { border-left: 4px solid rgba(255, 255, 255, 0.12); }
+.brutal-border-right  { border-right: 4px solid rgba(255, 255, 255, 0.12); }
+.brutal-border-bottom { border-bottom: 4px solid rgba(255, 255, 255, 0.12); }
 
-.brutal-border-left {
-  border-left: 3px solid rgba(255, 255, 255, 0.12);
-}
-
-.brutal-border-right {
-  border-right: 3px solid rgba(255, 255, 255, 0.12);
-}
-
-/* Hard panel — no rounded corners, sharp edges */
+/* Hard panel — heavier edges */
 .hard-panel {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.015);
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0s steps(1), border-color 0s steps(1);
 }
+.hard-panel:hover {
+  transform: skewX(-0.5deg);
+  border-color: rgba(37, 99, 235, 0.25);
+}
+.hard-panel--method:hover { border-color: rgba(37, 99, 235, 0.3); }
+.hard-panel--focus:hover  { border-color: rgba(107, 114, 128, 0.3); }
 
-/* Diagonal section divider */
+/* ── Diagonal Section Divider ── */
 .diagonal-divider {
   position: relative;
+  height: 60px;
 }
 .diagonal-divider::before {
   content: "";
   position: absolute;
-  top: -40px;
+  top: 0;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 2px;
   background: linear-gradient(
-    to bottom right,
-    transparent 49%,
-    rgba(255, 255, 255, 0.06) 49.5%,
-    rgba(255, 255, 255, 0.06) 50.5%,
-    transparent 51%
+    to right,
+    transparent 0%,
+    rgba(37, 99, 235, 0.15) 20%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(37, 99, 235, 0.15) 80%,
+    transparent 100%
+  );
+}
+.diagonal-divider::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 100%
   );
 }
 
-/* Clock digit style */
+/* ── Clock Digit ── */
 .clock-digit {
   font-family: "JetBrains Mono", monospace;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-}
-
-/* Parallax geometric shapes */
-.parallax-geo {
-  position: absolute;
-  pointer-events: none;
-  transition: transform 0.1s linear;
-}
-
-/* Brutalist CTA button */
-.brutal-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 48px;
-  font-family: "Clash Display", sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #080808;
-  background: #EAB308;
-  border: 2px solid #EAB308;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: outline-width 0s steps(1);
-}
-.brutal-cta:hover {
-  outline: 2px solid #EAB308;
-  outline-offset: 0;
-}
-
-/* Time code label for workflow timeline */
-.time-code {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.6875rem;
-  color: rgba(255, 255, 255, 0.2);
   letter-spacing: 0.06em;
 }
 
-/* Section number — oversized, low opacity */
-.section-number {
-  font-family: "Clash Display", sans-serif;
-  font-size: clamp(4rem, 8vw, 8rem);
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.03);
-  line-height: 0.8;
+/* ── Parallax Geometry ── */
+.parallax-geo {
+  position: absolute;
+  pointer-events: none;
+  transition: transform 0.05s linear;
 }
 
-/* Horizontal rule — hard industrial */
+/* ── Brutalist CTA (Blue-dominant) ── */
+.brutal-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 56px;
+  font-family: "Clash Display", sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: #2563EB;
+  border: 2px solid #2563EB;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: border-width 0s steps(1), margin 0s steps(1);
+}
+.brutal-cta:hover {
+  border-width: 6px;
+  margin: -4px;
+  box-shadow: 0 0 40px rgba(37, 99, 235, 0.3);
+}
+
+/* ── Time Code ── */
+.time-code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.18);
+  letter-spacing: 0.08em;
+}
+
+/* ── Section Number (oversized, bleeding) ── */
+.section-number {
+  font-family: "Clash Display", sans-serif;
+  font-size: clamp(5rem, 10vw, 10rem);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.025);
+  line-height: 0.7;
+  user-select: none;
+}
+
+/* ── Industrial HR ── */
 .hr-hard {
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 2px solid rgba(255, 255, 255, 0.06);
   width: 100%;
 }
 
-/* Text bleed — deliberately overflows */
+/* ── Text Bleed ── */
 .text-bleed {
   white-space: nowrap;
   overflow: visible;
+}
+
+/* ── Marquee Time Strip ── */
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee-strip {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.marquee-strip-inner {
+  display: inline-flex;
+  animation: marqueeScroll 30s linear infinite;
+}
+
+/* ── Thick Oppressive Frame ── */
+.oppressive-frame {
+  border: 4px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+.oppressive-frame::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border: 1px solid rgba(37, 99, 235, 0.06);
+  pointer-events: none;
+}
+
+/* ── Heavy Block Quote / Emphasis ── */
+.heavy-block {
+  border-left: 6px solid #2563EB;
+  padding-left: 24px;
+  background: rgba(37, 99, 235, 0.03);
 }

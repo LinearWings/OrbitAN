@@ -22,10 +22,11 @@ export default function LiveClock() {
     <span
       className="clock-digit select-none"
       style={{
-        fontSize: "clamp(3rem, 12vw, 10rem)",
-        color: "#EAB308",
-        animation: "clockPulse 2s ease-in-out infinite",
-        lineHeight: 1,
+        fontSize: "clamp(4rem, 14vw, 12rem)",
+        color: "#2563EB",
+        animation: "bluePulse 2s ease-in-out infinite",
+        lineHeight: 0.9,
+        fontWeight: 700,
       }}
     >
       {time || "--:--:--"}

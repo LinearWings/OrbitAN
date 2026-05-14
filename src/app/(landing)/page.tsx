@@ -6,16 +6,15 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
 import LiveClock from "@/components/landing/LiveClock";
 
-function ParallaxGeometry() {
+/* ── Parallax Background Geometry ── */
+function BrutalistGeometry() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     const el = document.querySelector("[data-scroll-container]");
     if (!el) return;
-    const onScroll = () => {
-      setScrollY((el as HTMLElement).scrollTop);
-    };
+    const onScroll = () => setScrollY((el as HTMLElement).scrollTop);
     onScroll();
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
@@ -23,315 +22,375 @@ function ParallaxGeometry() {
 
   const viewH = typeof window !== "undefined" ? window.innerHeight : 900;
   const t = scrollY / viewH;
+
   return (
     <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-      {/* Large triangle — top right */}
-      <div
-        className="parallax-geo"
-        style={{
-          top: `${-10 + t * 30}%`,
-          right: "-5%",
-          width: 0,
-          height: 0,
-          borderLeft: "min(30vw, 300px) solid transparent",
-          borderBottom: `min(50vh, 500px) solid rgba(234,179,8,0.04)`,
-          transform: `rotate(${15 + t * 5}deg)`,
-        }}
-      />
-      {/* Diagonal line — left side */}
-      <div
-        className="parallax-geo"
-        style={{
-          top: `${40 + t * 20}%`,
-          left: `${5 - t * 10}%`,
-          width: "min(40vw, 400px)",
-          height: "1px",
-          background: "rgba(37,99,235,0.12)",
-          transform: `rotate(-35deg)`,
-        }}
-      />
-      {/* Circle ring */}
-      <div
-        className="parallax-geo"
-        style={{
-          top: `${60 + t * 15}%`,
-          right: `${10 - t * 10}%`,
-          width: "min(20vw, 200px)",
-          height: "min(20vw, 200px)",
-          border: "1px solid rgba(255,255,255,0.04)",
-          borderRadius: "50%",
-        }}
-      />
-      {/* Small amber dot */}
-      <div
-        className="parallax-geo"
-        style={{
-          top: `${25 + t * 40}%`,
-          left: `${80 + t * 5}%`,
-          width: "6px",
-          height: "6px",
-          borderRadius: "50%",
-          background: "rgba(234,179,8,0.3)",
-        }}
-      />
+      {/* Massive rotated rectangle — top right */}
+      <div className="parallax-geo" style={{
+        top: `${-15 + t * 25}%`, right: `${-10 + t * 5}%`,
+        width: "min(50vw, 500px)", height: "min(50vw, 500px)",
+        border: "3px solid rgba(37,99,235,0.05)",
+        transform: `rotate(${25 + t * 8}deg)`,
+      }} />
+      {/* Thick diagonal — crosses the viewport */}
+      <div className="parallax-geo" style={{
+        top: `${30 + t * 35}%`, left: `${-20 - t * 15}%`,
+        width: "min(80vw, 800px)", height: "4px",
+        background: "rgba(37,99,235,0.08)",
+        transform: `rotate(-42deg)`,
+      }} />
+      {/* Industrial crosshair — bottom left */}
+      <div className="parallax-geo" style={{
+        top: `${70 + t * 10}%`, left: `${8 - t * 8}%`,
+        width: "min(12vw, 120px)", height: "min(12vw, 120px)",
+        border: "1px solid rgba(255,255,255,0.04)",
+        transform: `rotate(${45 + t * 3}deg)`,
+      }}>
+        <div style={{
+          position: "absolute", top: "50%", left: 0, right: 0, height: "1px",
+          background: "rgba(255,255,255,0.03)",
+        }} />
+        <div style={{
+          position: "absolute", left: "50%", top: 0, bottom: 0, width: "1px",
+          background: "rgba(255,255,255,0.03)",
+        }} />
+      </div>
+      {/* Heavy circle ring — right side */}
+      <div className="parallax-geo" style={{
+        top: `${45 + t * 20}%`, right: `${15 - t * 12}%`,
+        width: "min(25vw, 250px)", height: "min(25vw, 250px)",
+        border: "2px solid rgba(37,99,235,0.05)",
+        borderRadius: "50%",
+      }} />
+      {/* Small blue dot constellation */}
+      <div className="parallax-geo" style={{
+        top: `${18 + t * 50}%`, left: `${75 + t * 8}%`,
+        width: "4px", height: "4px", borderRadius: "50%",
+        background: "rgba(37,99,235,0.4)",
+      }} />
+      <div className="parallax-geo" style={{
+        top: `${55 + t * 30}%`, left: `${88 - t * 5}%`,
+        width: "4px", height: "4px", borderRadius: "50%",
+        background: "rgba(37,99,235,0.3)",
+      }} />
+      {/* Amber dot — rare accent, only one */}
+      <div className="parallax-geo" style={{
+        top: `${35 + t * 60}%`, left: `${12 - t * 3}%`,
+        width: "5px", height: "5px", borderRadius: "50%",
+        background: "rgba(234,179,8,0.3)",
+      }} />
+      {/* Vertical heavy line — far right */}
+      <div className="parallax-geo" style={{
+        top: 0, bottom: 0, right: `${2 + t * 3}%`,
+        width: "2px",
+        background: "rgba(37,99,235,0.04)",
+      }} />
     </div>
   );
 }
 
+/* ── Marquee Time Strip ── */
+function MarqueeStrip() {
+  const chars = "00:00 · 01:00 · 02:00 · 03:00 · 04:00 · 05:00 · 06:00 · 07:00 · 08:00 · 09:00 · 10:00 · 11:00 · 12:00 · 13:00 · 14:00 · 15:00 · 16:00 · 17:00 · 18:00 · 19:00 · 20:00 · 21:00 · 22:00 · 23:00 · ";
+  return (
+    <div className="marquee-strip pointer-events-none select-none" aria-hidden="true"
+      style={{
+        borderTop: "2px solid rgba(255,255,255,0.04)",
+        borderBottom: "2px solid rgba(255,255,255,0.04)",
+        padding: "6px 0",
+        background: "rgba(0,0,0,0.3)",
+      }}>
+      <div className="marquee-strip-inner" style={{
+        fontFamily: "'JetBrains Mono', monospace",
+        fontSize: "0.625rem",
+        color: "rgba(255,255,255,0.08)",
+        letterSpacing: "0.12em",
+      }}>
+        {chars}{chars}
+      </div>
+    </div>
+  );
+}
+
+/* ── Glitch Subtitle ── */
+function GlitchSubtitle({ text }: { text: string }) {
+  return (
+    <span className="glitch-text" style={{
+      fontFamily: "'JetBrains Mono', monospace",
+      fontSize: "0.6875rem",
+      letterSpacing: "0.3em",
+      color: "rgba(255,255,255,0.1)",
+      textTransform: "uppercase" as const,
+    }}>
+      {text}
+    </span>
+  );
+}
+
+/* ══════════════════════════════════════════
+   LANDING PAGE
+   ══════════════════════════════════════════ */
 export default function LandingPage() {
   const lang = useLanguage();
   const t = getT(lang);
 
-  const today = new Date();
-  const dateStr = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, "0")}.${String(today.getDate()).padStart(2, "0")}`;
-  const weekdayStr = lang === "zh"
-    ? ["日", "一", "二", "三", "四", "五", "六"][today.getDay()]
-    : ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][today.getDay()];
-
   return (
-    <div style={{ background: "#080808", color: "rgba(255,255,255,0.82)" }}>
-      {/* Scanline overlay */}
+    <div style={{ background: "#050505", color: "rgba(255,255,255,0.85)" }}>
+      {/* CRT overlay */}
       <div className="scanlines" aria-hidden="true" />
 
-      {/* ===== Section 1: Time Anchor (Hero) ===== */}
+      {/* ═══ SECTION 1: TIME ANCHOR (HERO) ═══ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
-        <ParallaxGeometry />
+        <BrutalistGeometry />
 
-        {/* Top-left: OrbitAN label */}
-        <div className="absolute top-8 left-8 flex items-center gap-4">
-          <div style={{ width: 12, height: 12, background: "#EAB308" }} />
-          <span
-            className="text-sm tracking-[0.15em] text-white/30 uppercase"
-            style={{ fontFamily: "'Clash Display', sans-serif" }}
-          >
-            OrbitAN
-          </span>
-        </div>
-
-        {/* Top-right: date box */}
-        <div
-          className="absolute top-8 right-8 px-4 py-2"
-          style={{
-            border: "1px solid rgba(255,255,255,0.1)",
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: "0.6875rem",
-            color: "rgba(255,255,255,0.35)",
-          }}
-        >
-          {dateStr} <span style={{ color: "rgba(234,179,8,0.6)" }}>{weekdayStr}</span>
-        </div>
-
-        {/* Center: Live clock */}
-        <div className="text-center" style={{ animation: "hardCutIn 0.3s steps(1) forwards", opacity: 0 }}>
+        {/* Massive Blue Clock */}
+        <div style={{ animation: "hardCutInGlitch 0.5s steps(1) forwards", opacity: 0 }}>
           <LiveClock />
-          <div
-            className="mt-4 text-xs tracking-[0.25em] uppercase"
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              color: "rgba(255,255,255,0.12)",
-            }}
-          >
-            {t.hero_tagline}
+          <div className="mt-3 text-center">
+            <GlitchSubtitle text={t.hero_tagline} />
           </div>
         </div>
 
-        {/* Title lines with diagonal separators */}
-        <div
-          className="mt-12 text-center"
-          style={{ animation: "hardCutIn 0.3s steps(1) 0.2s forwards", opacity: 0 }}
-        >
-          <h1
-            className="text-3xl md:text-5xl font-semibold tracking-tight leading-[1.1]"
-            style={{ fontFamily: "'Clash Display', sans-serif", color: "rgba(255,255,255,0.85)" }}
-          >
+        {/* Title Block */}
+        <div className="mt-10 text-center" style={{ animation: "hardCutIn 0.3s steps(1) 0.2s forwards", opacity: 0 }}>
+          <h1 style={{
+            fontFamily: "'Clash Display', sans-serif",
+            fontSize: "clamp(2rem, 5vw, 4rem)",
+            fontWeight: 600,
+            lineHeight: 1.05,
+            letterSpacing: "-0.02em",
+            color: "rgba(255,255,255,0.88)",
+          }}>
             {t.hero_title_1}
           </h1>
           <div className="flex items-center justify-center gap-4 my-3">
-            <div style={{ width: "clamp(40px, 8vw, 80px)", height: 1, background: "rgba(234,179,8,0.4)" }} />
-            <span
-              className="text-4xl md:text-6xl font-semibold tracking-tight"
-              style={{ fontFamily: "'Clash Display', sans-serif", color: "#EAB308" }}
-            >
+            <div style={{ width: "clamp(50px, 10vw, 100px)", height: 3, background: "#2563EB" }} />
+            <span style={{
+              fontFamily: "'Clash Display', sans-serif",
+              fontSize: "clamp(3rem, 7vw, 5.5rem)",
+              fontWeight: 700,
+              color: "#2563EB",
+              letterSpacing: "-0.02em",
+            }}>
               {t.hero_title_2}
             </span>
-            <div style={{ width: "clamp(40px, 8vw, 80px)", height: 1, background: "rgba(234,179,8,0.4)" }} />
+            <div style={{ width: "clamp(50px, 10vw, 100px)", height: 3, background: "#2563EB" }} />
           </div>
         </div>
 
-        {/* Description */}
-        <div
-          className="mt-8 max-w-xl text-center"
-          style={{ animation: "hardCutIn 0.3s steps(1) 0.4s forwards", opacity: 0 }}
-        >
-          <p
-            className="text-sm md:text-base leading-relaxed"
-            style={{ fontFamily: "'Satoshi', sans-serif", color: "rgba(255,255,255,0.3)" }}
-          >
+        {/* Description — clipped, industrial */}
+        <div className="mt-8 max-w-xl text-center" style={{ animation: "hardCutIn 0.3s steps(1) 0.4s forwards", opacity: 0 }}>
+          <p style={{
+            fontFamily: "'Satoshi', sans-serif",
+            fontSize: "0.9375rem",
+            lineHeight: 1.7,
+            color: "rgba(255,255,255,0.28)",
+            borderLeft: "2px solid rgba(37,99,235,0.2)",
+            paddingLeft: 16,
+            textAlign: "left" as const,
+          }}>
             {t.hero_desc}
           </p>
         </div>
 
-        {/* CTA buttons */}
-        <div
-          className="mt-10 flex items-center gap-6"
-          style={{ animation: "hardCutIn 0.3s steps(1) 0.5s forwards", opacity: 0 }}
-        >
+        {/* CTA */}
+        <div className="mt-12 flex items-center gap-8" style={{ animation: "hardCutIn 0.3s steps(1) 0.6s forwards", opacity: 0 }}>
           <Link href="/orbit" className="brutal-cta">
             {t.hero_cta}
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" />
             </svg>
           </Link>
-          <a
-            href="#features"
-            className="text-sm tracking-[0.1em] uppercase"
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              color: "rgba(255,255,255,0.2)",
-              textDecoration: "none",
-              paddingBottom: 2,
-              borderBottom: "1px solid rgba(255,255,255,0.08)",
-            }}
-          >
-            {t.learn_more} ↓
+          <a href="#features" style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "0.6875rem",
+            color: "rgba(255,255,255,0.15)",
+            textDecoration: "none",
+            letterSpacing: "0.08em",
+          }}>
+            {t.learn_more}
+            <span style={{ display: "block", marginTop: 4, color: "rgba(37,99,235,0.4)" }}>↓</span>
           </a>
         </div>
 
-        {/* Bottom scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ color: "rgba(255,255,255,0.08)" }}>
-          <div style={{ width: 1, height: 40, background: "rgba(255,255,255,0.06)" }} />
+        {/* Bottom: scroll indicator */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
+          <div style={{ width: 1, height: 48, background: "rgba(37,99,235,0.15)" }} />
         </div>
       </section>
 
-      {/* Diagonal divider */}
       <div className="diagonal-divider" />
 
-      {/* ===== Section 2: Functions as Statements ===== */}
-      <section id="features" className="relative px-4 md:px-8 py-24 md:py-32 max-w-6xl mx-auto" style={{ scrollMarginTop: 72 }}>
+      {/* Marquee time strip between sections */}
+      <MarqueeStrip />
+
+      <div className="diagonal-divider" />
+
+      {/* ═══ SECTION 2: CORE SYSTEMS ═══ */}
+      <section id="features" className="relative px-4 md:px-8 py-28 md:py-36 max-w-6xl mx-auto" style={{ scrollMarginTop: 72 }}>
         {/* Section label */}
-        <div className="flex items-center gap-3 mb-16">
-          <div style={{ width: 24, height: 2, background: "#EAB308" }} />
-          <span
-            className="text-xs tracking-[0.2em] uppercase"
-            style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.15)" }}
-          >
+        <div className="flex items-center gap-4 mb-20">
+          <div style={{ width: 32, height: 4, background: "#2563EB" }} />
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "0.6875rem",
+            letterSpacing: "0.25em",
+            color: "rgba(255,255,255,0.12)",
+            textTransform: "uppercase" as const,
+          }}>
             {t.features_title}
           </span>
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.04)" }} />
         </div>
 
-        {/* Panel 01 — Orbital Clock */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-0 mb-8">
-          <div className="md:col-span-2 flex md:justify-end md:pr-8 mb-4 md:mb-0">
+        {/* 01 — Orbital Clock */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-0 mb-6">
+          <div className="md:col-span-2 flex md:justify-end md:pr-10 mb-2 md:mb-0 md:-mt-6">
             <span className="section-number">01</span>
           </div>
-          <div className="md:col-span-6 hard-panel p-8 brutal-border-left" style={{ borderLeftColor: "#2563EB" }}>
-            <div style={{ width: 8, height: 8, background: "#2563EB", marginBottom: 20 }} />
-            <h2
-              className="text-xl md:text-2xl font-semibold mb-4 tracking-tight"
-              style={{ fontFamily: "'Clash Display', sans-serif", color: "rgba(255,255,255,0.82)" }}
-            >
+          <div className="md:col-span-7 hard-panel p-10" style={{ borderLeft: "4px solid #2563EB" }}>
+            <h2 style={{
+              fontFamily: "'Clash Display', sans-serif",
+              fontSize: "clamp(1.25rem, 2vw, 1.75rem)",
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.85)",
+              marginBottom: 16,
+              letterSpacing: "-0.01em",
+            }}>
               {t.feature_clock_title}
             </h2>
-            <p className="text-sm leading-relaxed" style={{ fontFamily: "'Satoshi', sans-serif", color: "rgba(255,255,255,0.3)" }}>
+            <p style={{
+              fontFamily: "'Satoshi', sans-serif",
+              fontSize: "0.875rem",
+              lineHeight: 1.7,
+              color: "rgba(255,255,255,0.28)",
+              maxWidth: "90%",
+            }}>
               {t.feature_clock_desc}
             </p>
           </div>
-          <div className="md:col-span-4 hidden md:block" />
         </div>
 
-        {/* Panel 02 — Six Methodologies (offset right) */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-0 mb-8">
+        {/* 02 — Six Methodologies (offset right) */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-0 mb-6">
           <div className="md:col-span-3 hidden md:block" />
-          <div className="md:col-span-2 flex md:justify-end md:pr-8 mb-4 md:mb-0">
+          <div className="md:col-span-2 flex md:justify-end md:pr-10 mb-2 md:mb-0 md:-mt-6">
             <span className="section-number">02</span>
           </div>
-          <div className="md:col-span-6 hard-panel p-8 brutal-border-left" style={{ borderLeftColor: "#EAB308" }}>
-            <div style={{ width: 8, height: 8, background: "#EAB308", marginBottom: 20 }} />
-            <h2
-              className="text-xl md:text-2xl font-semibold mb-4 tracking-tight"
-              style={{ fontFamily: "'Clash Display', sans-serif", color: "rgba(255,255,255,0.82)" }}
-            >
+          <div className="md:col-span-7 hard-panel hard-panel--method p-10" style={{ borderLeft: "4px solid #2563EB" }}>
+            <h2 style={{
+              fontFamily: "'Clash Display', sans-serif",
+              fontSize: "clamp(1.25rem, 2vw, 1.75rem)",
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.85)",
+              marginBottom: 16,
+              letterSpacing: "-0.01em",
+            }}>
               {t.feature_methods_title}
             </h2>
-            <p className="text-sm leading-relaxed" style={{ fontFamily: "'Satoshi', sans-serif", color: "rgba(255,255,255,0.3)" }}>
+            <p style={{
+              fontFamily: "'Satoshi', sans-serif",
+              fontSize: "0.875rem",
+              lineHeight: 1.7,
+              color: "rgba(255,255,255,0.28)",
+              maxWidth: "90%",
+            }}>
               {t.feature_methods_desc}
             </p>
           </div>
         </div>
 
-        {/* Panel 03 — Focus Blocks */}
+        {/* 03 — Focus Blocks */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-          <div className="md:col-span-2 flex md:justify-end md:pr-8 mb-4 md:mb-0">
+          <div className="md:col-span-2 flex md:justify-end md:pr-10 mb-2 md:mb-0 md:-mt-6">
             <span className="section-number">03</span>
           </div>
-          <div className="md:col-span-6 hard-panel p-8 brutal-border-left" style={{ borderLeftColor: "#6B7280" }}>
-            <div style={{ width: 8, height: 8, background: "#6B7280", marginBottom: 20 }} />
-            <h2
-              className="text-xl md:text-2xl font-semibold mb-4 tracking-tight"
-              style={{ fontFamily: "'Clash Display', sans-serif", color: "rgba(255,255,255,0.82)" }}
-            >
+          <div className="md:col-span-7 hard-panel hard-panel--focus p-10" style={{ borderLeft: "4px solid #6B7280" }}>
+            <h2 style={{
+              fontFamily: "'Clash Display', sans-serif",
+              fontSize: "clamp(1.25rem, 2vw, 1.75rem)",
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.85)",
+              marginBottom: 16,
+              letterSpacing: "-0.01em",
+            }}>
               {t.feature_focus_title}
             </h2>
-            <p className="text-sm leading-relaxed" style={{ fontFamily: "'Satoshi', sans-serif", color: "rgba(255,255,255,0.3)" }}>
+            <p style={{
+              fontFamily: "'Satoshi', sans-serif",
+              fontSize: "0.875rem",
+              lineHeight: 1.7,
+              color: "rgba(255,255,255,0.28)",
+              maxWidth: "90%",
+            }}>
               {t.feature_focus_desc}
             </p>
           </div>
         </div>
       </section>
 
-      {/* Diagonal divider */}
+      <div className="diagonal-divider" />
+      <MarqueeStrip />
       <div className="diagonal-divider" />
 
-      {/* ===== Section 3: Workflow Timeline ===== */}
-      <section className="relative px-4 md:px-8 py-24 md:py-32 max-w-4xl mx-auto">
-        <div className="flex items-center gap-3 mb-16">
-          <div style={{ width: 24, height: 2, background: "#2563EB" }} />
-          <span
-            className="text-xs tracking-[0.2em] uppercase"
-            style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.15)" }}
-          >
+      {/* ═══ SECTION 3: WORKFLOW TIMELINE ═══ */}
+      <section className="relative px-4 md:px-8 py-28 md:py-36 max-w-4xl mx-auto">
+        <div className="flex items-center gap-4 mb-20">
+          <div style={{ width: 32, height: 4, background: "#2563EB" }} />
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "0.6875rem",
+            letterSpacing: "0.25em",
+            color: "rgba(255,255,255,0.12)",
+            textTransform: "uppercase" as const,
+          }}>
             {t.how_title}
           </span>
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.04)" }} />
         </div>
 
-        {/* Timeline */}
-        <div className="relative">
-          {/* Vertical line */}
-          <div
-            className="absolute left-[60px] md:left-[100px] top-0 bottom-0"
-            style={{ width: 1, background: "rgba(255,255,255,0.06)" }}
-          />
+        <div className="relative oppressive-frame">
+          {/* Timeline rail */}
+          <div className="absolute left-[60px] md:left-[100px] top-12 bottom-12"
+            style={{ width: 3, background: "rgba(37,99,235,0.12)" }} />
 
           {[
-            { time: "00:00", title: t.how_1_title, desc: t.how_1_desc, color: "#2563EB" },
-            { time: "06:00", title: t.how_2_title, desc: t.how_2_desc, color: "#EAB308" },
-            { time: "12:00", title: t.how_3_title, desc: t.how_3_desc, color: "#6B7280" },
-            { time: "18:00", title: t.how_4_title, desc: t.how_4_desc, color: "#9CA3AF" },
+            { time: "00:00", title: t.how_1_title, desc: t.how_1_desc },
+            { time: "06:00", title: t.how_2_title, desc: t.how_2_desc },
+            { time: "12:00", title: t.how_3_title, desc: t.how_3_desc },
+            { time: "18:00", title: t.how_4_title, desc: t.how_4_desc },
           ].map((step, i) => (
-            <div key={i} className="relative flex items-start mb-20 last:mb-0">
-              {/* Time code */}
-              <div className="time-code w-[60px] md:w-[100px] flex-shrink-0 text-right pr-6 pt-1">
+            <div key={i} className="relative flex items-start py-10 first:pt-12 last:pb-12">
+              <div className="time-code w-[60px] md:w-[100px] flex-shrink-0 text-right pr-8 pt-1"
+                style={{ fontSize: "0.8125rem", color: "rgba(255,255,255,0.15)" }}>
                 {step.time}
               </div>
-              {/* Dot on timeline */}
-              <div
-                className="absolute rounded-full flex-shrink-0 left-[57px] md:left-[97px]"
+              {/* Node on timeline */}
+              <div className="absolute left-[58.5px] md:left-[98.5px] rounded-full flex-shrink-0"
                 style={{
-                  top: 6,
-                  width: 7,
-                  height: 7,
-                  background: step.color,
-                }}
-              />
-              {/* Content */}
-              <div className="pl-10 md:pl-16 flex-1">
-                <h3
-                  className="text-base md:text-lg font-semibold mb-2 tracking-tight"
-                  style={{ fontFamily: "'Clash Display', sans-serif", color: "rgba(255,255,255,0.75)" }}
-                >
+                  top: 46,
+                  width: 9,
+                  height: 9,
+                  background: "#2563EB",
+                  boxShadow: "0 0 12px rgba(37,99,235,0.3)",
+                }} />
+              <div className="pl-12 md:pl-20 flex-1">
+                <h3 style={{
+                  fontFamily: "'Clash Display', sans-serif",
+                  fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                  fontWeight: 600,
+                  color: "rgba(255,255,255,0.78)",
+                  marginBottom: 8,
+                }}>
                   {step.title}
                 </h3>
-                <p className="text-sm leading-relaxed max-w-lg" style={{ fontFamily: "'Satoshi', sans-serif", color: "rgba(255,255,255,0.28)" }}>
+                <p style={{
+                  fontFamily: "'Satoshi', sans-serif",
+                  fontSize: "0.875rem",
+                  lineHeight: 1.7,
+                  color: "rgba(255,255,255,0.25)",
+                  maxWidth: "85%",
+                }}>
                   {step.desc}
                 </p>
               </div>
@@ -342,37 +401,41 @@ export default function LandingPage() {
 
       <div className="diagonal-divider" />
 
-      {/* ===== Section 4: Action Zone (CTA) ===== */}
-      <section className="relative px-4 py-24 md:py-32">
-        <div
-          className="max-w-4xl mx-auto"
-          style={{
-            borderTop: "2px solid rgba(255,255,255,0.08)",
-            borderBottom: "2px solid rgba(255,255,255,0.08)",
-            padding: "clamp(3rem, 8vw, 6rem) 0",
-          }}
-        >
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+      {/* ═══ SECTION 4: ACTION ZONE ═══ */}
+      <section className="relative px-4 py-32 md:py-40">
+        <div className="max-w-4xl mx-auto" style={{
+          borderTop: "4px solid rgba(37,99,235,0.2)",
+          borderBottom: "4px solid rgba(255,255,255,0.05)",
+          padding: "clamp(4rem, 10vw, 7rem) 0",
+        }}>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div style={{ width: 8, height: 8, background: "#EAB308" }} />
-                <span
-                  className="text-xs tracking-[0.15em]"
-                  style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.2)" }}
-                >
+              <div className="flex items-center gap-3 mb-5">
+                <div style={{ width: 10, height: 10, background: "#EAB308" }} />
+                <span style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.18em",
+                  color: "rgba(255,255,255,0.15)",
+                }}>
                   {t.cta_label}
                 </span>
               </div>
-              <p
-                className="text-xl md:text-2xl font-semibold tracking-tight"
-                style={{ fontFamily: "'Clash Display', sans-serif", color: "rgba(255,255,255,0.8)" }}
-              >
+              <p style={{
+                fontFamily: "'Clash Display', sans-serif",
+                fontSize: "clamp(1.5rem, 3vw, 2.25rem)",
+                fontWeight: 600,
+                color: "rgba(255,255,255,0.82)",
+                letterSpacing: "-0.01em",
+                borderLeft: "3px solid rgba(37,99,235,0.3)",
+                paddingLeft: 20,
+              }}>
                 {t.cta_body}
               </p>
             </div>
-            <Link href="/orbit" className="brutal-cta">
+            <Link href="/orbit" className="brutal-cta" style={{ whiteSpace: "nowrap" }}>
               {t.cta_button}
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
             </Link>
@@ -380,31 +443,40 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== Footer ===== */}
-      <footer className="px-4 md:px-8 py-8 border-t" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* ═══ FOOTER ═══ */}
+      <footer style={{
+        borderTop: "2px solid rgba(255,255,255,0.04)",
+        padding: "28px 0",
+      }}>
+        <div className="max-w-6xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div style={{ width: 6, height: 6, background: "#EAB308" }} />
-            <span
-              className="text-xs"
-              style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.15)" }}
-            >
+            <div style={{ width: 5, height: 5, background: "#2563EB" }} />
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "0.625rem",
+              color: "rgba(255,255,255,0.1)",
+              letterSpacing: "0.06em",
+            }}>
               {t.footer_text}
             </span>
           </div>
-          <div className="flex items-center gap-6">
-            <Link
-              href="/docs"
-              className="text-xs hover:opacity-70"
-              style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.2)" }}
-            >
+          <div className="flex items-center gap-8">
+            <Link href="/docs" style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "0.625rem",
+              color: "rgba(255,255,255,0.12)",
+              textDecoration: "none",
+              letterSpacing: "0.06em",
+            }}>
               {t.footer_docs}
             </Link>
-            <Link
-              href="/orbit"
-              className="text-xs hover:opacity-70"
-              style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.2)" }}
-            >
+            <Link href="/orbit" style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "0.625rem",
+              color: "rgba(37,99,235,0.3)",
+              textDecoration: "none",
+              letterSpacing: "0.06em",
+            }}>
               {t.footer_launch}
             </Link>
           </div>
