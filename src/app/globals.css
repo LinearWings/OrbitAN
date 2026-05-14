@@ -614,20 +614,37 @@ button:active, a:active, [role="button"]:active {
 .hard-cut-in        { animation: hardCutIn 0.35s steps(1) forwards; }
 .hard-cut-in-glitch { animation: hardCutInGlitch 0.6s steps(1) forwards; }
 
-/* ── Clock Digit ── */
+/* ── Clock Digit (no text-shadow bloom — glow comes from background) ── */
 .clock-digit {
   font-family: "JetBrains Mono", monospace;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.08em;
-  animation: bloomPulseStrong 3s ease-in-out infinite;
 }
 
-/* ── Bloom Text Utility ── */
+/* ── Background Glow (radial glow behind elements, not on text) ── */
+@keyframes backgroundGlowPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+.background-glow {
+  position: absolute;
+  inset: -30%;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(37,99,235,0.08) 0%, rgba(37,99,235,0.03) 30%, transparent 65%);
+  filter: blur(40px);
+  animation: backgroundGlowPulse 3s ease-in-out infinite;
+}
+.background-glow--amber {
+  background: radial-gradient(ellipse at center, rgba(234,179,8,0.06) 0%, rgba(234,179,8,0.02) 30%, transparent 65%);
+}
+
+/* ── Bloom Text Utility (kept for non-critical uses, now subdued) ── */
 .bloom-text {
   animation: bloomPulse 3s ease-in-out infinite;
 }
 .bloom-text-strong {
-  animation: bloomPulseStrong 3s ease-in-out infinite;
+  /* No longer used for main title — background glow replaces text-shadow bloom */
 }
 
 /* ── Neon Border ── */
@@ -868,4 +885,577 @@ button:active, a:active, [role="button"]:active {
   border-left: 6px solid #2563EB;
   padding-left: 24px;
   background: rgba(37,99,235,0.02);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TEMPORAL BRUTALISM — SURREALIST · BRUTALIST · AVANT-GARDE · CONSTRUCTIVIST
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Blueprint Grid (constructivist architectural blueprint) ── */
+.blueprint-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(37,99,235,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: center center;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 40%, transparent 80%);
+}
+.blueprint-grid-dense {
+  background-size: 24px 24px;
+  background-image:
+    linear-gradient(rgba(37,99,235,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,0.025) 1px, transparent 1px);
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+.blueprint-grid-amber {
+  background-image:
+    linear-gradient(rgba(234,179,8,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(234,179,8,0.025) 1px, transparent 1px);
+}
+
+/* ── Constructivist Diagonal Line Network ── */
+@keyframes constructivistDrift {
+  0%, 100% { transform: translateX(0) rotate(var(--geo-angle, -35deg)); }
+  50% { transform: translateX(30px) rotate(var(--geo-angle, -35deg)); }
+}
+.constructivist-line {
+  position: absolute;
+  pointer-events: none;
+  height: 1px;
+  transform-origin: center center;
+}
+.constructivist-line--thick { height: 3px; }
+.constructivist-line--blue { background: rgba(37,99,235,0.08); }
+.constructivist-line--amber { background: rgba(234,179,8,0.05); }
+.constructivist-line--white { background: rgba(255,255,255,0.03); }
+
+/* ── Line Cluster (dense parallel lines at an angle) ── */
+.line-cluster {
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.line-cluster-line {
+  height: 1px;
+  width: 100%;
+  transform-origin: left center;
+}
+.line-cluster-line--blue { background: rgba(37,99,235,0.06); }
+.line-cluster-line--amber { background: rgba(234,179,8,0.04); }
+.line-cluster-line--white { background: rgba(255,255,255,0.02); }
+
+/* ── Brutalist Mass Block (heavy structural frame) ── */
+.brutalist-mass {
+  position: absolute;
+  pointer-events: none;
+  border: 6px solid rgba(255,255,255,0.04);
+  background: rgba(0,0,0,0.4);
+}
+.brutalist-mass--solid {
+  background: rgba(2,2,2,0.85);
+  border-color: rgba(37,99,235,0.08);
+}
+.brutalist-mass--accent {
+  border-color: rgba(37,99,235,0.12);
+  box-shadow: inset 0 0 60px rgba(37,99,235,0.03);
+}
+
+/* ── Heavy Frame (brutalist content container) ── */
+.heavy-frame {
+  position: relative;
+  border: 6px solid rgba(255,255,255,0.06);
+  padding: 40px;
+  background: rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.3);
+}
+.heavy-frame::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(37,99,235,0.06);
+  pointer-events: none;
+}
+.heavy-frame::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border: 1px solid rgba(255,255,255,0.02);
+  pointer-events: none;
+}
+
+/* ── Industrial Rail (thick timeline conduit) ── */
+.industrial-rail {
+  position: absolute;
+  pointer-events: none;
+}
+.industrial-rail--vertical {
+  width: 6px;
+  background:
+    linear-gradient(to bottom,
+      transparent 0%,
+      rgba(37,99,235,0.15) 10%,
+      rgba(37,99,235,0.08) 50%,
+      rgba(37,99,235,0.15) 90%,
+      transparent 100%);
+  box-shadow: 0 0 20px rgba(37,99,235,0.06);
+}
+.industrial-rail--horizontal {
+  height: 4px;
+  background:
+    linear-gradient(to right,
+      transparent 0%,
+      rgba(37,99,235,0.15) 10%,
+      rgba(37,99,235,0.06) 50%,
+      rgba(37,99,235,0.15) 90%,
+      transparent 100%);
+}
+
+/* ── Diamond Marker (constructivist node) ── */
+.geo-diamond {
+  width: 12px;
+  height: 12px;
+  background: #2563EB;
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px rgba(37,99,235,0.5), 0 0 24px rgba(37,99,235,0.15);
+}
+.geo-diamond--amber {
+  background: #EAB308;
+  box-shadow: 0 0 12px rgba(234,179,8,0.5), 0 0 24px rgba(234,179,8,0.15);
+}
+.geo-diamond--hollow {
+  background: transparent;
+  border: 2px solid rgba(37,99,235,0.4);
+  box-shadow: 0 0 8px rgba(37,99,235,0.15);
+}
+
+/* ── Time Fragment (floating deconstructed number) ── */
+@keyframes timeFragmentFloat {
+  0%, 100% { transform: translateY(0) rotate(var(--frag-rotate, 0deg)); opacity: var(--frag-opacity, 0.04); }
+  50% { transform: translateY(-20px) rotate(var(--frag-rotate, 0deg)); opacity: calc(var(--frag-opacity, 0.04) * 2); }
+}
+.time-fragment {
+  position: absolute;
+  pointer-events: none;
+  font-family: "Clash Display", sans-serif;
+  font-weight: 700;
+  font-size: clamp(4rem, 10vw, 10rem);
+  color: rgba(37,99,235,0.04);
+  line-height: 0.8;
+  animation: timeFragmentFloat 12s ease-in-out infinite;
+}
+.time-fragment--amber {
+  color: rgba(234,179,8,0.03);
+}
+.time-fragment--sm { font-size: clamp(2rem, 5vw, 5rem); }
+.time-fragment--lg { font-size: clamp(6rem, 15vw, 16rem); }
+
+/* ── Deconstructed Clock Ring ── */
+@keyframes deconstructedSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.deconstructed-ring {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  border: 1px solid rgba(37,99,235,0.06);
+}
+.deconstructed-ring--dashed {
+  border-style: dashed;
+  animation: deconstructedSpin 120s linear infinite;
+}
+.deconstructed-tick {
+  position: absolute;
+  pointer-events: none;
+  width: 2px;
+  background: rgba(37,99,235,0.08);
+  transform-origin: bottom center;
+}
+
+/* ── Radial Line Burst (constructivist sun rays from focal point) ── */
+.radial-burst {
+  position: absolute;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  background:
+    conic-gradient(
+      from 0deg,
+      transparent 0deg, transparent 14deg,
+      rgba(37,99,235,0.02) 15deg, transparent 16deg,
+      transparent 29deg,
+      rgba(37,99,235,0.02) 30deg, transparent 31deg,
+      transparent 44deg,
+      rgba(37,99,235,0.015) 45deg, transparent 46deg,
+      transparent 59deg,
+      rgba(37,99,235,0.02) 60deg, transparent 61deg,
+      transparent 74deg,
+      rgba(37,99,235,0.015) 75deg, transparent 76deg,
+      transparent 89deg,
+      rgba(37,99,235,0.02) 90deg, transparent 91deg,
+      transparent 104deg,
+      rgba(37,99,235,0.015) 105deg, transparent 106deg,
+      transparent 119deg,
+      rgba(37,99,235,0.02) 120deg, transparent 121deg,
+      transparent 134deg,
+      rgba(37,99,235,0.015) 135deg, transparent 136deg,
+      transparent 149deg,
+      rgba(37,99,235,0.02) 150deg, transparent 151deg,
+      transparent 164deg,
+      rgba(37,99,235,0.015) 165deg, transparent 166deg,
+      transparent 179deg,
+      rgba(37,99,235,0.02) 180deg, transparent 181deg,
+      transparent 194deg,
+      rgba(37,99,235,0.015) 195deg, transparent 196deg,
+      transparent 209deg,
+      rgba(37,99,235,0.02) 210deg, transparent 211deg,
+      transparent 224deg,
+      rgba(37,99,235,0.015) 225deg, transparent 226deg,
+      transparent 239deg,
+      rgba(37,99,235,0.02) 240deg, transparent 241deg,
+      transparent 254deg,
+      rgba(37,99,235,0.015) 255deg, transparent 256deg,
+      transparent 269deg,
+      rgba(37,99,235,0.02) 270deg, transparent 271deg,
+      transparent 284deg,
+      rgba(37,99,235,0.015) 285deg, transparent 286deg,
+      transparent 299deg,
+      rgba(37,99,235,0.02) 300deg, transparent 301deg,
+      transparent 314deg,
+      rgba(37,99,235,0.015) 315deg, transparent 316deg,
+      transparent 329deg,
+      rgba(37,99,235,0.02) 330deg, transparent 331deg,
+      transparent 344deg,
+      rgba(37,99,235,0.015) 345deg, transparent 346deg,
+      transparent 359deg
+    );
+}
+
+/* ── Avant-garde Fractured Text ── */
+@keyframes textFractureShift {
+  0%, 92%, 100% { transform: translateX(0); letter-spacing: 0.02em; }
+  93% { transform: translateX(-3px); letter-spacing: 0.08em; }
+  94% { transform: translateX(5px); letter-spacing: -0.02em; }
+  95% { transform: translateX(-1px); letter-spacing: 0.04em; }
+}
+.text-fracture {
+  animation: textFractureShift 8s ease-in-out infinite;
+}
+
+/* ── Constructivist Angle Bracket ── */
+.angle-bracket {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-top: 2px solid rgba(37,99,235,0.3);
+  border-right: 2px solid rgba(37,99,235,0.3);
+}
+.angle-bracket--tl {
+  border-top: 2px solid rgba(37,99,235,0.3);
+  border-left: 2px solid rgba(37,99,235,0.3);
+  border-right: none;
+}
+.angle-bracket--lg {
+  width: 48px;
+  height: 48px;
+}
+
+/* ── Industrial Crosshair ── */
+.industrial-crosshair {
+  position: absolute;
+  pointer-events: none;
+  width: 40px;
+  height: 40px;
+}
+.industrial-crosshair::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(37,99,235,0.15);
+}
+.industrial-crosshair::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(37,99,235,0.15);
+}
+
+/* ── Oversized Section Number (brutalist variant) ── */
+.section-number-brutalist {
+  font-family: "Clash Display", sans-serif;
+  font-size: clamp(7rem, 16vw, 18rem);
+  font-weight: 700;
+  color: rgba(255,255,255,0.015);
+  line-height: 0.55;
+  user-select: none;
+  position: relative;
+  letter-spacing: -0.04em;
+}
+
+/* ── Time Conduit (horizontal time-carrying pipe) ── */
+@keyframes conduitFlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.time-conduit {
+  position: relative;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(37,99,235,0.2) 20%,
+    rgba(37,99,235,0.4) 40%,
+    rgba(37,99,235,0.2) 60%,
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: conduitFlow 8s linear infinite;
+}
+.time-conduit::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: rgba(37,99,235,0.03);
+  filter: blur(3px);
+}
+
+/* ── Avant-garde Card (fractured border) ── */
+.avant-card {
+  position: relative;
+  border: 3px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.35);
+  padding: 36px;
+}
+.avant-card::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 20%;
+  right: 20%;
+  height: 6px;
+  background: #2563EB;
+}
+.avant-card::after {
+  content: "";
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 32px;
+  height: 32px;
+  border-top: 2px solid rgba(37,99,235,0.15);
+  border-right: 2px solid rgba(37,99,235,0.15);
+  pointer-events: none;
+}
+
+/* ── Diagonal Slash Divider ── */
+@keyframes slashDrift {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.08; }
+}
+.diagonal-slash {
+  position: absolute;
+  pointer-events: none;
+  height: 2px;
+  width: 200%;
+  background: linear-gradient(to right, transparent, rgba(37,99,235,0.3) 40%, rgba(37,99,235,0.3) 60%, transparent);
+  transform-origin: center;
+  animation: slashDrift 6s ease-in-out infinite;
+}
+
+/* ── Heavy Brutalist CTA (enhanced) ── */
+.brutal-cta-heavy {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 64px;
+  font-family: "Clash Display", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: #2563EB;
+  border: 8px solid #1d4ed8;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  position: relative;
+  box-shadow:
+    0 0 0 4px rgba(37,99,235,0.2),
+    0 0 0 12px rgba(37,99,235,0.06);
+  transition: border-width 0s steps(1), margin 0s steps(1);
+}
+.brutal-cta-heavy:hover {
+  border-width: 12px;
+  margin: -4px;
+}
+.brutal-cta-heavy::after {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  pointer-events: none;
+  border: 1px solid rgba(37,99,235,0.06);
+}
+
+/* ── Geometry Constellation (dots connected by lines) ── */
+@keyframes constellationPulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+}
+.constellation-dot {
+  position: absolute;
+  pointer-events: none;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(37,99,235,0.5);
+  animation: constellationPulse 4s ease-in-out infinite;
+}
+.constellation-line {
+  position: absolute;
+  pointer-events: none;
+  height: 1px;
+  background: linear-gradient(to right, rgba(37,99,235,0.15), rgba(37,99,235,0.03));
+  transform-origin: left center;
+}
+
+/* ── Void Block (pure black constructivist masses) ── */
+.void-block {
+  background: #020202;
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* ── Section stamp (industrial label) ── */
+.section-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.4em;
+  color: rgba(255,255,255,0.08);
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.3);
+}
+
+/* ── Line Burst Hero (dense radial lines behind clock) ── */
+.hero-line-burst {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  width: 200vmax;
+  height: 200vmax;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg, transparent 2deg, rgba(37,99,235,0.015) 2.5deg, transparent 3deg,
+    transparent 5deg, transparent 6deg, rgba(234,179,8,0.01) 6.5deg, transparent 7deg,
+    transparent 10deg, transparent 11deg, rgba(37,99,235,0.012) 11.5deg, transparent 12deg,
+    transparent 14deg, rgba(37,99,235,0.01) 14.5deg, transparent 15deg,
+    transparent 19deg, transparent 20deg, rgba(37,99,235,0.015) 20.5deg, transparent 21deg,
+    transparent 24deg, transparent 25deg, rgba(234,179,8,0.01) 25.5deg, transparent 26deg,
+    transparent 29deg, rgba(37,99,235,0.012) 29.5deg, transparent 30deg,
+    transparent 34deg, transparent 35deg, rgba(37,99,235,0.015) 35.5deg, transparent 36deg,
+    transparent 39deg, rgba(37,99,235,0.01) 39.5deg, transparent 40deg,
+    transparent 44deg, transparent 45deg, rgba(37,99,235,0.012) 45.5deg, transparent 46deg,
+    transparent 49deg, rgba(234,179,8,0.01) 49.5deg, transparent 50deg,
+    transparent 54deg, transparent 55deg, rgba(37,99,235,0.015) 55.5deg, transparent 56deg,
+    transparent 59deg, rgba(37,99,235,0.01) 59.5deg, transparent 60deg,
+    transparent 64deg, transparent 65deg, rgba(37,99,235,0.012) 65.5deg, transparent 66deg,
+    transparent 69deg, rgba(37,99,235,0.01) 69.5deg, transparent 70deg,
+    transparent 74deg, transparent 75deg, rgba(37,99,235,0.015) 75.5deg, transparent 76deg,
+    transparent 79deg, rgba(234,179,8,0.01) 79.5deg, transparent 80deg,
+    transparent 84deg, transparent 85deg, rgba(37,99,235,0.012) 85.5deg, transparent 86deg,
+    transparent 89deg, rgba(37,99,235,0.01) 89.5deg, transparent 90deg,
+    transparent 94deg, transparent 95deg, rgba(37,99,235,0.015) 95.5deg, transparent 96deg,
+    transparent 99deg, rgba(37,99,235,0.01) 99.5deg, transparent 100deg,
+    transparent 104deg, transparent 105deg, rgba(37,99,235,0.012) 105.5deg, transparent 106deg,
+    transparent 109deg, rgba(37,99,235,0.01) 109.5deg, transparent 110deg,
+    transparent 114deg, transparent 115deg, rgba(37,99,235,0.015) 115.5deg, transparent 116deg,
+    transparent 119deg, rgba(234,179,8,0.01) 119.5deg, transparent 120deg,
+    transparent 124deg, transparent 125deg, rgba(37,99,235,0.012) 125.5deg, transparent 126deg,
+    transparent 129deg, rgba(37,99,235,0.01) 129.5deg, transparent 130deg,
+    transparent 360deg
+  );
+}
+
+/* ── Surreal perspective-grid floor ── */
+.perspective-grid {
+  position: absolute;
+  pointer-events: none;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background:
+    linear-gradient(to top, rgba(37,99,235,0.04) 0%, transparent 100%);
+  mask-image: linear-gradient(to top, black 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+}
+
+/* ── Brutalist notch (decorative corner cutout) ── */
+.brutalist-notch {
+  position: relative;
+}
+.brutalist-notch::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-left: 4px solid rgba(37,99,235,0.2);
+  border-top: 4px solid rgba(37,99,235,0.2);
+  pointer-events: none;
+}
+
+/* ── Clock containment (brutalist clock housing) ── */
+.clock-housing {
+  position: relative;
+  border: 8px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.6);
+  box-shadow:
+    inset 0 0 120px rgba(0,0,0,0.5),
+    0 0 0 2px rgba(37,99,235,0.06),
+    0 0 0 16px rgba(0,0,0,0.4);
+  padding: clamp(2rem, 5vw, 4rem);
+}
+.clock-housing::after {
+  content: "";
+  position: absolute;
+  inset: -16px;
+  border: 1px solid rgba(255,255,255,0.02);
+  pointer-events: none;
+}
+
+/* ── Time-mark notches (clock-dial style edge markers) ── */
+@keyframes timeMarkPulse {
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0.2; }
+}
+.time-mark {
+  position: absolute;
+  pointer-events: none;
+  width: 12px;
+  height: 2px;
+  background: rgba(37,99,235,0.5);
+  box-shadow: 0 0 4px rgba(37,99,235,0.2);
+  animation: timeMarkPulse 3s ease-in-out infinite;
 }
