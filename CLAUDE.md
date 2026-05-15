@@ -6,6 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **OrbitAN (轨道计划)** — A cosmic-themed daily schedule planner with 6 time-management methodologies, a Canvas 2D orbital visualization, and an isometric pseudo-3D engine. Built with Next.js 16 + React 19 + TypeScript 6 + Tailwind CSS v4.
 
+## Documentation Files
+
+- `README.md` — Project overview, features, tech stack, quick start (bilingual zh/en)
+- `CONTRIBUTING.md` — Development setup, architecture, conventions, PR guidelines (bilingual zh/en)
+- `LICENSE` — MIT License
+- `CLAUDE.md` — This file, AI coding agent guidance
+- `docs/project-analysis.md` — Full project analysis (bugs, architecture, roadmap)
+- `docs/superpowers/` — Historical design specs and implementation plans
+
 ## Commands
 
 - `pnpm dev` — Start dev server
@@ -25,7 +34,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Route | File | Purpose |
 |---|---|---|
-| `/` | `src/app/(landing)/page.tsx` | Landing page — Temporal Brutalism design, LiveClock, particle field, features, timeline, CTA |
+| `/` | `src/app/(landing)/page.tsx` | Landing page — Orbital Control Station design, LiveClock, nebula/star field, Tyndall beams, instrument panels, docking CTA |
 | `/docs` | `src/app/(landing)/docs/page.tsx` | Documentation index |
 | `/docs/tutorial` | `src/app/(landing)/docs/tutorial/page.tsx` | Tutorial |
 | `/docs/methodology` | `src/app/(landing)/docs/methodology/page.tsx` | Methodology guide |
@@ -161,42 +170,45 @@ Overlap-aware: tasks sorted by start time then duration (longer first). Each of 
 - **Palette**: Dark void (#080808, #0A0A0F), amber #EAB308 (work/study), blue #2563EB (study), gray #374151 (meeting), #6B7280 (personal)
 - **Constructivist**: Geometric forms, bold diagonals at 3 offsets, concentric circles, rotated rectangles — amber/blue at low opacity (0.06–0.10)
 - **Fonts**: Clash Display (headings, from api.fontshare.com), Satoshi (body, from api.fontshare.com), JetBrains Mono (mono/tabular, from next/font/google)
-- **Effects** (in `globals.css`): Bloom, chromatic aberration, particle floats, CRT scanlines, glitch text, marquee, pulse rings, glass morphism
+- **Effects** (in `globals.css`): Nebula glow drift, Tyndall beam sweeps, star micro-flicker, dust particle float, mouse spotlight, bloom, glass morphism
 
-### Landing Page — Temporal Brutalism (Temporal Brutalism 时间粗野重构)
+### Landing Page — Orbital Control Station × Deep Space Observatory
 
-The landing page fuses four art movements into a cohesive visual language:
+The landing page is a deep-space orbital control station. The user is an operator about to enter orbit. Precision instruments float in a nebula field; data streams flow through cosmic dust. The design fuses **Hard Sci-Fi** (precision instruments, data overlays, beam lights) with **Cosmic Mysticism** (nebula glows, star fields, sublimation of time).
 
-- **Constructivist** — Blueprint grids (48px/24px CSS repeating line patterns), radial line bursts (conic-gradient rays from clock center), dense diagonal line clusters with parallax scrolling, industrial rails (8px vertical conduits)
-- **Brutalist** — Heavy frames (6–8px borders, triple-nested ghost/mid/heavy frames), brutalist mass blocks (solid #020202 blocks with low-opacity borders), clock housing (8px border + double shadow box), heavy CTA buttons (8px border + double outer frame rings)
-- **Surrealist** — Time fragments (floating oversized numbers 06/12/18/24/00 at random angles and opacities), deconstructed clock rings (dashed circles with tick marks, 120s rotation), multi-layer clock display (primary sharp blue + secondary tilted/blurred amber at 6h offset with reversed seconds + tertiary ghost amber)
-- **Avant-garde** — Text fracture animations (irregular letter-spacing jumps), oversized brutalist section numbers (18rem bleeding off cards), angle-bracket decorations, diamond markers (rotated squares replacing circles), diagonal slash dividers, perspective grids
+**Color System** (strict role enforcement):
+- **Blue `#3B82F6`** — Structure: clock, orbit lines, data streams, tick marks (geometric-order elements only)
+- **Amber `#F59E0B`** — Status/action: indicators, warnings, emphasis buttons (interactive attention nodes only)
+- **Violet `#6366F1`** — Depth/atmosphere: nebula glows, far-field Tyndall beams (background only)
+- Never mix blue and amber on the same element for the same function.
 
-**Important rules**:
-- Font edges must NOT glow (no text-shadow bloom). Glow effects come from background radial gradients (`background-glow` class, `radial-gradient` behind elements).
-- **No gradients on lines.** All line elements (dividers, rails, streaks, slashes, conduits, constellation lines) must use solid rgba colors. No `linear-gradient` on any structural line.
-
-**Color alignment with orbit page**: The landing page uses the same dual-accent scheme as the main orbit application:
-- **Blue `#2563EB`** — Primary accent (clock, feature cards 01, section headers, industrial rails)
-- **Amber `#EAB308`** — Secondary accent (time fragments, feature card 02/methodologies, deconstructed clock layers, accent diamonds, description rail)
-- **Gray `#374151`** — Tertiary (feature card 03/focus blocks)
-- Section header accent bars use blue→amber gradients to unify the palette
+**Spatial Depth System** (three distinct layers):
+| Layer | z-range | Content | Parallax |
+|---|---|---|---|
+| Deep Space | 0–10 | Nebula glows, distant stars, far-field Tyndall beams (violet, wide) | 0.1× |
+| Instrument | 20–40 | Orbit clock, data panels, orbit rings, near-field beams (blue/amber, narrow) | 0.5× |
+| Interface | 50–70 | Text, buttons, status indicators, mouse spotlight | 1.0× |
 
 Key landing page components:
-- `LiveClock` — Multi-layer clock: primary (Clash Display, blue bloom), deconstructed secondary (JetBrains Mono, -8° tilt, blurred, 6h time offset with reversed seconds), tertiary ghost (amber, 15° tilt, compressed)
-- `BlueprintGrid` — CSS repeating-linear-gradient line grids, with radial mask fade
-- `TimeFragments` — 5 floating oversized numbers positioned at viewport edges
-- `ConstructivistGeometry` — Parallax-scrolling line networks: 14-line diagonal cluster, 10-line horizontal cluster, 5-line vertical cluster, rotated mass blocks, dashed deconstructed rings with ticks
-- `RadialLineBurst` — conic-gradient ray burst (24 rays at 15° intervals)
-- `DiagonalSlashDivider` — Twin diagonal lines with diamond center marker replacing traditional horizontal dividers
-- `FeatureCard` — Avant-garde cards with 6px colored left border, oversized bleeding numbers, top blue bar accent
-- `SectionStamp` — Industrial mono labels with square indicator dot and hard border
+- `LiveClock` — Single precision clock face with thin-border instrument casing, tick ring, subtle glow (no deconstructed layers, no brutalist housing)
+- `NebulaGlow` — 3 large-area radial-gradient nebula glows (blue/violet, high blur, slow 55–65s drift)
+- `StarField` — 50 scattered star points with randomized micro-flicker (2–8s periods), varied brightness
+- `TyndallBeams` — Near-field narrow beams (blue/amber, blur 1–2px, 20–40s sweep) + far-field wide beams (violet, blur 60–100px, 60–90s drift), with dust particles clustered along beam paths
+- `InstrumentPanel` — Thin-border (1px) dark hull surfaces with top color strip, internal micro data viz (schematic orbit lines, tick marks), hover glow intensification
+- `SequentialTimeline` — 4 horizontal nodes (Calibrate/Load/Execute/Review) connected by thin light track with flowing dot, circular ring→fill→completion marks
+- `DockingCTA` — Minimal status panel + precision launch button, blue Tyndall beam passing through from behind
 
-The page is divided into 4 sections separated by `DiagonalSlashDivider` + `MarqueeStrip` (24h scrolling time) pairs:
-1. **Hero** — Full viewport with blueprint grid, radial burst, time fragments, clock housing, title with angle brackets, heavy CTA
-2. **Core Systems** — 3 feature cards (01 Orbital Clock, 02 Six Methodologies, 03 Focus Blocks) on vertical industrial rail with diamond markers
-3. **Workflow Timeline** — 4 steps (00:00/06:00/12:00/18:00) along 8px industrial rail, diamond node markers, angle-bracket framed content blocks
-4. **CTA Zone** — Triple-nested frame (ghost→mid→heavy), diamond status indicator, heavy brutalist CTA button
+The page is divided into 4 sections, separated by thin light-track dividers:
+1. **Orbital Baseline (Hero)** — Full viewport, centered clock, 6 ultra-thin concentric orbit rings rotating at different rates, 6 status indicator dots below, rising "time evaporation" particles from beneath clock
+2. **System Components (Features)** — Three horizontal instrument panels (Orbit Engine / Navigation Matrix / Focus Protocol), staggered scroll-triggered reveal (0.15s stagger, 0.6s each)
+3. **Docking Sequence (Workflow)** — 4 sequential nodes (00/06/12/18 timecodes), light track extends left→right on scroll
+4. **Docking Clearance (CTA)** — Single status panel with rotating "docking status" ring, beam brightness increases on viewport enter
+
+**Animation & Effects**:
+- **Page load sequence**: Deep space background instant → Tyndall beams fade in (200ms/2s) → Clock housing (400ms/0.6s) → Hands (600ms/0.4s, blur→sharp) → Status dots stagger (800ms, 60ms each) → Text fade (1000ms/0.5s) → Rising particles start (1200ms)
+- **Ambient**: Nebula slow drift (±20px, 40–60s), star micro-flicker (2–8s random), orbit rings slow rotation (60–120s/rev), dust particles upward float (10–20s)
+- **Interaction**: Mouse spotlight follows cursor (reduced intensity), panel hover glow + lift (−2px), button hover blue→white glow transition, button click 0.1s flash + rings accelerate
+- **Explicitly removed**: CRT scanlines, glitch/chromatic text, pulse rings, text fracture, constructivist geometry clusters, time fragment numbers, bounce/elastic easings, heavy brutalist borders
 
 ## Methodology System
 
