@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
+import ThreeHero from "@/components/landing/ThreeHero";
 import LiveClock from "@/components/landing/LiveClock";
 
 /* ══════════════════════════════════════════════
@@ -178,9 +179,9 @@ function StatusIndicators({ count = 6 }: { count?: number }) {
   );
 }
 
-function DataReadout({ label, value }: { label: string; value: string }) {
+function DataReadout({ label, value, variant }: { label: string; value: string; variant?: "mission" }) {
   return (
-    <div className="data-readout">
+    <div className={`data-readout ${variant === "mission" ? "data-readout--mission" : ""}`}>
       <span className="data-readout__label">{label}</span>
       <span className="data-readout__value">{value}</span>
     </div>
@@ -445,7 +446,9 @@ export default function LandingPage() {
 
   return (
     <div style={{ background: "#06080D", color: "rgba(255,255,255,0.85)" }}>
-      {/* ══════ Deep Space Layer (global, fixed) ══════ */}
+      {/* ══════ Deep Space Layer (global, fixed) — Three.js 3D Scene ══════ */}
+      <ThreeHero />
+      {/* CSS fallback layers (behind Three.js canvas, visible when WebGL unsupported) */}
       <NebulaGlow />
       <StarField />
       <TyndallBeams />
@@ -455,9 +458,6 @@ export default function LandingPage() {
           SECTION 1: ORBITAL BASELINE (HERO)
           ══════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
-        <NearFieldBeams />
-        <CosmicDustField />
-        <OrbitRings />
 
         {/* Data readouts — top left */}
         <div style={{
@@ -470,10 +470,10 @@ export default function LandingPage() {
         }}>
           <DataReadout label="LOCAL TIME" value={new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })} />
           <DataReadout label="DATE" value={dateStr || "----.--.--"} />
-          <DataReadout label="TZ" value={utcStr || "UTC+8"} />
+          <DataReadout label="MISSION" value={`LOG #00${3}`} variant="mission" />
         </div>
 
-        {/* Central clock */}
+        {/* Central clock — CSS fallback (hidden when Three.js active) */}
         <div style={{
           position: "relative",
           zIndex: 25,
@@ -500,21 +500,34 @@ export default function LandingPage() {
           animation: "fade-in 0.6s ease-out 0.5s forwards",
           opacity: 0,
         }}>
-          <h1 style={{
-            fontFamily: "'Clash Display', sans-serif",
-            fontSize: "clamp(1.75rem, 4vw, 3rem)",
-            fontWeight: 600,
-            lineHeight: 1.1,
-            color: "rgba(255,255,255,0.85)",
-          }}>
-            {t.hero_title_1}
-          </h1>
+          {/* Ghost clone title — Lusion dual-layer text effect */}
+          <div style={{ position: "relative", display: "inline-block" }}>
+            <span
+              aria-hidden="true"
+              className="title-ghost-clone"
+            >
+              {t.hero_title_1}
+            </span>
+            <h1 style={{
+              fontFamily: "'Clash Display', sans-serif",
+              fontSize: "clamp(2rem, 5vw, 4rem)",
+              fontWeight: 600,
+              lineHeight: 1.1,
+              color: "rgba(255,255,255,0.9)",
+              letterSpacing: "-0.015em",
+              textShadow: "0 0 40px rgba(59,130,246,0.15)",
+              position: "relative",
+              zIndex: 2,
+            }}>
+              {t.hero_title_1}
+            </h1>
+          </div>
           <hr className="instrument-divider" style={{ width: "clamp(120px, 20vw, 200px)", margin: "16px auto" }} />
           <p style={{
             fontFamily: "'Satoshi', sans-serif",
             fontSize: "0.9375rem",
             lineHeight: 1.7,
-            color: "rgba(255,255,255,0.25)",
+            color: "rgba(255,255,255,0.3)",
             maxWidth: 480,
             margin: "0 auto",
           }}>

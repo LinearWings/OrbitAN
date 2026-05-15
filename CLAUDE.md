@@ -34,7 +34,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Route | File | Purpose |
 |---|---|---|
-| `/` | `src/app/(landing)/page.tsx` | Landing page — Orbital Control Station design, LiveClock, nebula/star field, Tyndall beams, instrument panels, docking CTA |
+| `/` | `src/app/(landing)/page.tsx` | Landing page — Three.js 3D Hero + HUD overlay, instrument panels, docking CTA |
 | `/docs` | `src/app/(landing)/docs/page.tsx` | Documentation index |
 | `/docs/tutorial` | `src/app/(landing)/docs/tutorial/page.tsx` | Tutorial |
 | `/docs/methodology` | `src/app/(landing)/docs/methodology/page.tsx` | Methodology guide |
@@ -190,13 +190,19 @@ The landing page is a deep-space orbital control station. The user is an operato
 | Interface | 50–70 | Text, buttons, status indicators, mouse spotlight | 1.0× |
 
 Key landing page components:
-- `LiveClock` — Single precision clock face with thin-border instrument casing, tick ring, subtle glow (no deconstructed layers, no brutalist housing)
-- `NebulaGlow` — 3 large-area radial-gradient nebula glows (blue/violet, high blur, slow 55–65s drift)
-- `StarField` — 50 scattered star points with randomized micro-flicker (2–8s periods), varied brightness
-- `TyndallBeams` — Near-field narrow beams (blue/amber, blur 1–2px, 20–40s sweep) + far-field wide beams (violet, blur 60–100px, 60–90s drift), with dust particles clustered along beam paths
-- `InstrumentPanel` — Thin-border (1px) dark hull surfaces with top color strip, internal micro data viz (schematic orbit lines, tick marks), hover glow intensification
-- `SequentialTimeline` — 4 horizontal nodes (Calibrate/Load/Execute/Review) connected by thin light track with flowing dot, circular ring→fill→completion marks
-- `DockingCTA` — Minimal status panel + precision launch button, blue Tyndall beam passing through from behind
+- **`ThreeHero`** — Three.js canvas wrapper with WebGL detection fallback; renders full 3D Hero scene. Falls back to CSS LiveClock if WebGL unavailable.
+- **`LiveClock`** — CSS clock (fallback when WebGL unsupported). Single precision clock face with thin-border instrument casing.
+- `three/particles.ts` — 200+ glowing point sprites in 3D spherical distribution (fireflies + stars + dust), additive blending
+- `three/beams.ts` — 2 volumetric Tyndall beams (blue + amber) with custom GLSL shader, cylinder geometry, noise perturbation
+- `three/rings.ts` — 6 tilted TorusGeometry orbit rings with varied inclinations, rotation speeds, and metalness
+- `three/clock-face.ts` — Curved 3D clock: concave dish dial, tick marks, sprite numerals, extruded hands, glass cover
+- `three/nebula.ts` — 3 volumetric nebula clouds with FBM noise shader, additive blending, slow drift
+- `NebulaGlow` — CSS fallback: 3 large-area radial-gradient nebula glows
+- `StarField` — CSS fallback: 50 scattered star points with micro-flicker
+- `TyndallBeams` — CSS fallback: far-field beam linear-gradients
+- `InstrumentPanel` — Thin-border (1px) dark hull surfaces with top color strip, internal micro data viz
+- `SequentialTimeline` — 4 horizontal nodes (Calibrate/Load/Execute/Review) with light track connector
+- `DockingCTA` — Minimal status panel + precision launch button
 
 The page is divided into 4 sections, separated by thin light-track dividers:
 1. **Orbital Baseline (Hero)** — Full viewport, centered clock, 6 ultra-thin concentric orbit rings rotating at different rates, 6 status indicator dots below, rising "time evaporation" particles from beneath clock
@@ -243,6 +249,8 @@ Two languages: `zh` (Chinese, default) and `en` (English). Simple key-value map 
 - Hover effects disabled on touch devices via `@media (hover: none)`
 - iOS smooth scrolling, overscroll prevention, tap highlight removal
 
-## Zero External Dependencies
+## Dependencies
 
-No React Query, Zustand, date-fns/dayjs, Framer Motion, or any UI library. Everything is vanilla React hooks, Canvas 2D, and CSS animations. The only runtime dependencies are `next`, `react`, and `react-dom`.
+- **Runtime**: `next`, `react`, `react-dom`, `three` (0.184.x, ~140KB gzipped)
+- **Three.js** is used exclusively for the landing page Hero section (dynamic import). It has a CSS fallback when WebGL is unavailable. The orbit app and sections 2-4 of the landing page are pure CSS/HTML with zero Three.js involvement.
+- No React Query, Zustand, date-fns/dayjs, Framer Motion, or any UI library. All state management, Canvas 2D, and non-Hero rendering is vanilla React hooks + CSS.

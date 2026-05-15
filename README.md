@@ -3,7 +3,6 @@
 A cosmic-themed daily schedule planner — 24-hour orbital clock visualization, six time-management methodologies, and an isometric pseudo-3D engine. Built as a pure client-side SPA with zero external runtime dependencies.
 
 > A day is an orbit. Focus is your gravity.
-> 一日一轨道，专注即引力。
 
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
