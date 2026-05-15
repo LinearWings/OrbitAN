@@ -414,3 +414,320 @@ button:active, a:active, [role="button"]:active {
 /* ══════════════════════════════════════════════════════════════
    SCI-FI LANDING EFFECTS — ORBITAL CONTROL STATION
    ══════════════════════════════════════════════════════════════ */
+
+/* ── Nebula Glow (deep space atmospheric clouds) ── */
+.nebula-glow {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(120px);
+  animation: nebulaDrift 50s ease-in-out infinite;
+}
+
+@keyframes nebulaDrift {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(2%, -1.5%); }
+  50% { transform: translate(-1%, 2%); }
+  75% { transform: translate(-2%, -0.5%); }
+}
+
+/* ── Tyndall Beam — far field (wide, diffuse, violet) ── */
+.tyndall-beam--far {
+  position: fixed;
+  pointer-events: none;
+  width: 250%;
+  height: 120px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(99, 102, 241, 0.015) 25%,
+    rgba(99, 102, 241, 0.04) 45%,
+    rgba(99, 102, 241, 0.06) 50%,
+    rgba(99, 102, 241, 0.04) 55%,
+    rgba(99, 102, 241, 0.015) 75%,
+    transparent 100%
+  );
+  filter: blur(80px);
+  animation: farBeamRotate 40s ease-in-out infinite;
+}
+
+@keyframes farBeamRotate {
+  0%, 100% { transform: rotate(-12deg); opacity: 0.7; }
+  50% { transform: rotate(-8deg); opacity: 1; }
+}
+
+/* ── Tyndall Beam — near field (narrow, sharp, blue) ── */
+.tyndall-beam--near {
+  position: absolute;
+  pointer-events: none;
+  width: 200%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(59, 130, 246, 0.01) 15%,
+    rgba(59, 130, 246, 0.08) 40%,
+    rgba(255, 255, 255, 0.04) 50%,
+    rgba(59, 130, 246, 0.08) 60%,
+    rgba(59, 130, 246, 0.01) 85%,
+    transparent 100%
+  );
+  filter: blur(2px);
+  animation: nearBeamSweep 25s ease-in-out infinite;
+}
+
+@keyframes nearBeamSweep {
+  0%, 100% { transform: translateX(-30%) rotate(-25deg); opacity: 0.6; }
+  50% { transform: translateX(10%) rotate(-25deg); opacity: 1; }
+}
+
+/* ── Star Point (distant star with micro-flicker) ── */
+@keyframes starFlicker {
+  0%, 100% { opacity: var(--star-base, 0.5); }
+  30% { opacity: var(--star-peak, 0.9); }
+  60% { opacity: var(--star-base, 0.5); }
+  85% { opacity: var(--star-dip, 0.2); }
+}
+
+.star-point {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  background: white;
+  animation: starFlicker var(--star-period, 4s) ease-in-out infinite;
+  animation-delay: var(--star-delay, 0s);
+}
+
+/* ── Cosmic Dust (slow-rising particles in beam paths) ── */
+@keyframes dustRise {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: var(--dust-opacity, 0.6); }
+  90% { opacity: var(--dust-opacity, 0.6); }
+  100% { transform: translateY(-120px) translateX(var(--dust-drift, 15px)); opacity: 0; }
+}
+
+.cosmic-dust {
+  position: absolute;
+  pointer-events: none;
+  width: var(--dust-size, 2px);
+  height: var(--dust-size, 2px);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+  animation: dustRise var(--dust-duration, 14s) ease-out infinite;
+  animation-delay: var(--dust-delay, 0s);
+}
+
+/* ── Orbit Ring (concentric ring around clock) ── */
+@keyframes orbitRingRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.orbit-ring {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  border: 0.5px solid rgba(59, 130, 246, 0.15);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orbitRingRotate var(--ring-speed, 90s) linear infinite;
+}
+
+/* ── Status Indicator Dot ── */
+@keyframes statusPulse {
+  0%, 100% { box-shadow: 0 0 4px var(--status-color, rgba(59,130,246,0.4)); }
+  50% { box-shadow: 0 0 10px var(--status-color, rgba(59,130,246,0.7)); }
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: statusPulse 3s ease-in-out infinite;
+  animation-delay: var(--status-delay, 0s);
+}
+
+.status-dot--active {
+  background: #F59E0B;
+  --status-color: rgba(245, 158, 11, 0.6);
+}
+
+.status-dot--standby {
+  background: rgba(59, 130, 246, 0.6);
+  --status-color: rgba(59, 130, 246, 0.3);
+}
+
+/* ── Data Readout (small metric display) ── */
+.data-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.data-readout__label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.15);
+  text-transform: uppercase;
+}
+
+.data-readout__value {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ── Instrument Panel (feature card) ── */
+.instrument-panel {
+  background: rgba(10, 13, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 32px;
+  position: relative;
+  transition: border-color 0.3s ease,
+              box-shadow 0.3s ease,
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.instrument-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--panel-accent, #3B82F6);
+  border-radius: 6px 6px 0 0;
+}
+
+.instrument-panel:hover {
+  border-color: rgba(59, 130, 246, 0.25);
+  box-shadow:
+    0 0 30px rgba(59, 130, 246, 0.06),
+    inset 0 0 30px rgba(59, 130, 246, 0.02);
+  transform: translateY(-2px);
+}
+
+.instrument-panel--amber { --panel-accent: #F59E0B; }
+.instrument-panel--violet { --panel-accent: #6366F1; }
+
+/* ── Instrument Button ── */
+.instrument-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 44px;
+  font-family: "Clash Display", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.instrument-btn:hover {
+  background: rgba(59, 130, 246, 0.22);
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow:
+    0 0 40px rgba(59, 130, 246, 0.15),
+    0 0 80px rgba(59, 130, 246, 0.04);
+}
+
+.instrument-btn:active {
+  transform: scale(0.97);
+}
+
+/* ── Sequence Timeline Node ── */
+.sequence-node {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(59, 130, 246, 0.35);
+  background: rgba(10, 13, 20, 0.9);
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sequence-node--active {
+  border-color: rgba(59, 130, 246, 0.8);
+  background: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.3);
+}
+
+/* ── Light Track (horizontal connector between nodes) ── */
+.light-track {
+  height: 1px;
+  background: rgba(59, 130, 246, 0.15);
+  flex: 1;
+  min-width: 40px;
+  align-self: center;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes lightFlow {
+  from { left: 0%; opacity: 0; }
+  50% { opacity: 0.8; }
+  to { left: 100%; opacity: 0; }
+}
+
+.light-track::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.6);
+  transform: translate(-50%, -50%);
+  animation: lightFlow 4s ease-in-out infinite;
+  animation-delay: var(--flow-delay, 0s);
+}
+
+/* ── Docking Status Ring (CTA spinner) ── */
+@keyframes dockingSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.docking-ring {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(59, 130, 246, 0.15);
+  border-top-color: rgba(59, 130, 246, 0.5);
+  animation: dockingSpin 3s linear infinite;
+}
+
+/* ── Instrument Divider (thin horizontal rule with center glow) ── */
+.instrument-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(59, 130, 246, 0.05) 20%,
+    rgba(59, 130, 246, 0.15) 50%,
+    rgba(59, 130, 246, 0.05) 80%,
+    transparent 100%
+  );
+  margin: 0;
+  border: 0;
+}
+
+/* ── Clock Background Glow Pulse (restored — needed by LiveClock) ── */
+@keyframes backgroundGlowPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
