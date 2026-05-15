@@ -412,364 +412,427 @@ button:active, a:active, [role="button"]:active {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   SCI-FI LANDING EFFECTS — ORBITAL CONTROL STATION
+   LANDING PAGE — Lusion-inspired Typography-Driven Design
    ══════════════════════════════════════════════════════════════ */
 
-/* ── Nebula Glow (deep space atmospheric clouds) ── */
-.nebula-glow {
+/* ── Landing container ── */
+.landing {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Subtle deep space background ── */
+.landing-bg {
   position: fixed;
+  inset: 0;
   pointer-events: none;
-  border-radius: 50%;
-  filter: blur(120px);
-  animation: nebulaDrift 50s ease-in-out infinite;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(59,130,246,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(99,102,241,0.03) 0%, transparent 50%),
+    #06080D;
 }
 
-@keyframes nebulaDrift {
-  0%, 100% { transform: translate(0, 0); }
-  25% { transform: translate(2%, -1.5%); }
-  50% { transform: translate(-1%, 2%); }
-  75% { transform: translate(-2%, -0.5%); }
-}
-
-/* ── Tyndall Beam — far field (wide, diffuse, violet) ── */
-.tyndall-beam--far {
-  position: fixed;
-  pointer-events: none;
-  width: 250%;
-  height: 120px;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(99, 102, 241, 0.015) 25%,
-    rgba(99, 102, 241, 0.04) 45%,
-    rgba(99, 102, 241, 0.06) 50%,
-    rgba(99, 102, 241, 0.04) 55%,
-    rgba(99, 102, 241, 0.015) 75%,
-    transparent 100%
-  );
-  filter: blur(80px);
-  animation: farBeamRotate 40s ease-in-out infinite;
-}
-
-@keyframes farBeamRotate {
-  0%, 100% { transform: rotate(-12deg); opacity: 0.7; }
-  50% { transform: rotate(-8deg); opacity: 1; }
-}
-
-/* ── Tyndall Beam — near field (narrow, sharp, blue) ── */
-.tyndall-beam--near {
-  position: absolute;
-  pointer-events: none;
-  width: 200%;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(59, 130, 246, 0.01) 15%,
-    rgba(59, 130, 246, 0.08) 40%,
-    rgba(255, 255, 255, 0.04) 50%,
-    rgba(59, 130, 246, 0.08) 60%,
-    rgba(59, 130, 246, 0.01) 85%,
-    transparent 100%
-  );
-  filter: blur(2px);
-  animation: nearBeamSweep 25s ease-in-out infinite;
-}
-
-@keyframes nearBeamSweep {
-  0%, 100% { transform: translateX(-30%) rotate(-25deg); opacity: 0.6; }
-  50% { transform: translateX(10%) rotate(-25deg); opacity: 1; }
-}
-
-/* ── Star Point (distant star with micro-flicker) ── */
-@keyframes starFlicker {
-  0%, 100% { opacity: var(--star-base, 0.5); }
-  30% { opacity: var(--star-peak, 0.9); }
-  60% { opacity: var(--star-base, 0.5); }
-  85% { opacity: var(--star-dip, 0.2); }
-}
-
-.star-point {
-  position: fixed;
-  pointer-events: none;
-  border-radius: 50%;
-  background: white;
-  animation: starFlicker var(--star-period, 4s) ease-in-out infinite;
-  animation-delay: var(--star-delay, 0s);
-}
-
-/* ── Cosmic Dust (slow-rising particles in beam paths) ── */
-@keyframes dustRise {
-  0% { transform: translateY(0) translateX(0); opacity: 0; }
-  10% { opacity: var(--dust-opacity, 0.6); }
-  90% { opacity: var(--dust-opacity, 0.6); }
-  100% { transform: translateY(-120px) translateX(var(--dust-drift, 15px)); opacity: 0; }
-}
-
-.cosmic-dust {
-  position: absolute;
-  pointer-events: none;
-  width: var(--dust-size, 2px);
-  height: var(--dust-size, 2px);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
-  animation: dustRise var(--dust-duration, 14s) ease-out infinite;
-  animation-delay: var(--dust-delay, 0s);
-}
-
-/* ── Orbit Ring (concentric ring around clock) ── */
-@keyframes orbitRingRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.orbit-ring {
-  position: absolute;
-  pointer-events: none;
-  border-radius: 50%;
-  border: 0.5px solid rgba(59, 130, 246, 0.15);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  animation: orbitRingRotate var(--ring-speed, 90s) linear infinite;
-}
-
-/* ── Status Indicator Dot ── */
-@keyframes statusPulse {
-  0%, 100% { box-shadow: 0 0 4px var(--status-color, rgba(59,130,246,0.4)); }
-  50% { box-shadow: 0 0 10px var(--status-color, rgba(59,130,246,0.7)); }
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  animation: statusPulse 3s ease-in-out infinite;
-  animation-delay: var(--status-delay, 0s);
-}
-
-.status-dot--active {
-  background: #F59E0B;
-  --status-color: rgba(245, 158, 11, 0.6);
-}
-
-.status-dot--standby {
-  background: rgba(59, 130, 246, 0.6);
-  --status-color: rgba(59, 130, 246, 0.3);
-}
-
-/* ── Data Readout (small metric display) ── */
-.data-readout {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.data-readout__label {
+/* ── Section Label (Lusion-style tiny uppercase + cross) ── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-family: "JetBrains Mono", monospace;
   font-size: 0.5625rem;
-  letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.25em;
+  color: rgba(255,255,255,0.2);
   text-transform: uppercase;
 }
 
-.data-readout__value {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.8125rem;
-  font-variant-numeric: tabular-nums;
-  color: rgba(255, 255, 255, 0.85);
-  text-shadow:
-    0 0 8px rgba(0, 0, 0, 0.6),
-    0 0 2px rgba(59, 130, 246, 0.2);
+/* ── Section Heading (Lusion-style massive text) ── */
+.section-heading {
+  font-family: "Clash Display", sans-serif;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,0.88);
+  margin-top: 0.5em;
 }
 
-.data-readout--mission .data-readout__label {
-  color: rgba(245, 158, 11, 0.35);
+/* ── Section Header container ── */
+.section-header {
+  margin-bottom: clamp(3rem, 8vh, 5rem);
 }
 
-.data-readout--mission .data-readout__value {
-  color: rgba(245, 158, 11, 0.7);
-  text-shadow: 0 0 6px rgba(245, 158, 11, 0.15);
+/* ── Word reveal animation ── */
+.reveal-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: wordReveal 0.6s cubic-bezier(0.16,1,0.3,1) forwards;
+  animation-delay: var(--delay, 0s);
 }
 
-/* ── Instrument Panel (feature card) ── */
-.instrument-panel {
-  background: rgba(10, 13, 20, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
-  padding: 32px;
+@keyframes wordReveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════ HERO ══════ */
+
+.hero {
   position: relative;
-  transition: border-color 0.3s ease,
-              box-shadow 0.3s ease,
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 6vh, 5rem) clamp(1rem, 4vw, 3rem);
+  text-align: center;
+  z-index: 1;
 }
 
-.instrument-panel::before {
-  content: "";
+/* Cross decorations (Lusion-style) */
+.hero-crosses {
+  display: flex;
+  justify-content: space-between;
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--panel-accent, #3B82F6);
-  border-radius: 6px 6px 0 0;
+  bottom: clamp(3rem, 8vh, 5rem);
+  left: clamp(2rem, 6vw, 5rem);
+  right: clamp(2rem, 6vw, 5rem);
+  color: rgba(255,255,255,0.12);
 }
 
-.instrument-panel:hover {
-  border-color: rgba(59, 130, 246, 0.25);
-  box-shadow:
-    0 0 30px rgba(59, 130, 246, 0.06),
-    inset 0 0 30px rgba(59, 130, 246, 0.02);
-  transform: translateY(-2px);
-}
-
-.instrument-panel--amber { --panel-accent: #F59E0B; }
-.instrument-panel--violet { --panel-accent: #6366F1; }
-
-/* ── Instrument Button ── */
-.instrument-btn {
-  display: inline-flex;
+/* Meta data line */
+.hero-meta {
+  display: flex;
   align-items: center;
   gap: 12px;
-  padding: 18px 44px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.2);
+  text-transform: uppercase;
+  margin-bottom: clamp(1.5rem, 4vh, 3rem);
+}
+
+.hero-meta__sep {
+  width: 1px;
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+}
+
+/* Clock */
+.hero-clock {
+  margin-bottom: clamp(1.5rem, 4vh, 3rem);
+}
+
+/* Massive headline */
+.hero-title {
   font-family: "Clash Display", sans-serif;
-  font-size: 0.9375rem;
+  font-size: clamp(2.5rem, 7vw, 7rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: rgba(255,255,255,0.9);
+  max-width: 10ch;
+  margin-bottom: 0.25em;
+}
+
+/* Description */
+.hero-desc {
+  font-family: "Satoshi", sans-serif;
+  font-size: clamp(0.875rem, 1.4vw, 1.0625rem);
+  line-height: 1.7;
+  color: rgba(255,255,255,0.28);
+  max-width: 480px;
+  margin-bottom: clamp(2rem, 5vh, 3.5rem);
+}
+
+/* CTA row */
+.hero-cta-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.5rem, 3vh, 2.5rem);
+}
+
+/* Primary CTA button — Lusion-style: minimal, clean */
+.cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 40px;
+  font-family: "Clash Display", sans-serif;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #fff;
-  background: rgba(59, 130, 246, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  border-radius: 4px;
+  background: rgba(59,130,246,0.15);
+  border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 2px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
-.instrument-btn:hover {
-  background: rgba(59, 130, 246, 0.22);
-  border-color: rgba(59, 130, 246, 0.6);
-  box-shadow:
-    0 0 40px rgba(59, 130, 246, 0.15),
-    0 0 80px rgba(59, 130, 246, 0.04);
+.cta-primary:hover {
+  background: rgba(59,130,246,0.25);
+  border-color: rgba(59,130,246,0.5);
 }
 
-.instrument-btn:active {
-  transform: scale(0.97);
+.cta-primary--large {
+  padding: 20px 52px;
+  font-size: 1rem;
 }
 
-/* ── Sequence Timeline Node ── */
-.sequence-node {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid rgba(59, 130, 246, 0.35);
-  background: rgba(10, 13, 20, 0.9);
-  position: relative;
-  z-index: 2;
-  flex-shrink: 0;
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+/* Scroll indicator */
+.hero-scroll-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.12);
+  text-transform: uppercase;
 }
 
-.sequence-node--active {
-  border-color: rgba(59, 130, 246, 0.8);
-  background: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 0 18px rgba(59, 130, 246, 0.3);
+.hero-scroll-line {
+  width: 1px;
+  height: 32px;
+  background: rgba(255,255,255,0.08);
 }
 
-/* ── Light Track (horizontal connector between nodes) ── */
-.light-track {
-  height: 1px;
-  background: rgba(59, 130, 246, 0.15);
-  flex: 1;
-  min-width: 40px;
-  align-self: center;
+/* ══════ FEATURES ══════ */
+
+.features {
   position: relative;
   z-index: 1;
+  padding: clamp(5rem, 12vh, 8rem) clamp(1rem, 4vw, 3rem);
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-@keyframes lightFlow {
-  from { left: 0%; opacity: 0; }
-  50% { opacity: 0.8; }
-  to { left: 100%; opacity: 0; }
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
 }
 
-.light-track::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(59, 130, 246, 0.6);
-  transform: translate(-50%, -50%);
-  animation: lightFlow 4s ease-in-out infinite;
-  animation-delay: var(--flow-delay, 0s);
+@media (min-width: 768px) {
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
 }
 
-/* ── Docking Status Ring (CTA spinner) ── */
-@keyframes dockingSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* Feature card — minimal, typographic */
+.feature-card {
+  padding: clamp(2rem, 5vw, 3rem) 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-.docking-ring {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid rgba(59, 130, 246, 0.15);
-  border-top-color: rgba(59, 130, 246, 0.5);
-  animation: dockingSpin 3s linear infinite;
+@media (min-width: 768px) {
+  .feature-card {
+    border-bottom: none;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .feature-card:last-child {
+    border-right: none;
+  }
 }
 
-/* ── Instrument Divider (thin horizontal rule with center glow) ── */
-.instrument-divider {
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(59, 130, 246, 0.05) 20%,
-    rgba(59, 130, 246, 0.15) 50%,
-    rgba(59, 130, 246, 0.05) 80%,
-    transparent 100%
-  );
-  margin: 0;
-  border: 0;
+.feature-card__index {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  color: rgba(59,130,246,0.35);
 }
 
-/* ── Clock Background Glow Pulse (restored — needed by LiveClock) ── */
-@keyframes backgroundGlowPulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
+.feature-card__tag {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.15);
+  text-transform: uppercase;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
-/* ── Title Ghost Clone (Lusion dual-layer text effect) ── */
-.title-ghost-clone {
-  position: absolute;
-  top: 3px;
-  left: 4px;
-  z-index: 1;
-  pointer-events: none;
+.feature-card__title {
   font-family: "Clash Display", sans-serif;
-  font-size: inherit;
+  font-size: clamp(1.125rem, 1.8vw, 1.5rem);
   font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.015em;
-  color: rgba(59, 130, 246, 0.04);
-  white-space: nowrap;
-  transform: translateZ(0);
-  text-shadow: none;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
 }
 
-/* Text legibility over 3D canvas */
-h1, .data-readout__value, .data-readout__label {
+.feature-card__desc {
+  font-family: "Satoshi", sans-serif;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.2);
+}
+
+/* ══════ WORKFLOW ══════ */
+
+.workflow {
   position: relative;
-  z-index: 35;
+  z-index: 1;
+  padding: clamp(5rem, 12vh, 8rem) clamp(1rem, 4vw, 3rem);
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-/* ── Three.js Canvas (sits below CSS overlay) ── */
-canvas[aria-hidden="true"] {
-  opacity: 1;
-  transition: opacity 1.2s ease-in;
+.workflow-steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+}
+
+@media (min-width: 640px) {
+  .workflow-steps {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.workflow-step {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+@media (min-width: 640px) {
+  .workflow-step {
+    border-bottom: none;
+    border-right: 1px solid rgba(255,255,255,0.05);
+    padding: 1.5rem;
+  }
+  .workflow-step:last-child {
+    border-right: none;
+  }
+}
+
+.workflow-step__time {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.15em;
+  color: rgba(59,130,246,0.3);
+}
+
+.workflow-step__node {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(59,130,246,0.25);
+  margin: 1rem 0;
+}
+
+.workflow-step__title {
+  font-family: "Clash Display", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 0.5rem;
+}
+
+.workflow-step__desc {
+  font-family: "Satoshi", sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.18);
+}
+
+/* ══════ END CTA ══════ */
+
+.end-cta {
+  position: relative;
+  z-index: 1;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(4rem, 10vh, 7rem) clamp(1rem, 4vw, 3rem);
+  text-align: center;
+}
+
+.end-cta__prompt {
+  font-family: "Satoshi", sans-serif;
+  font-size: clamp(0.875rem, 1.3vw, 1rem);
+  color: rgba(255,255,255,0.2);
+  margin-bottom: 0.75rem;
+}
+
+.end-cta__title {
+  font-family: "Clash Display", sans-serif;
+  font-size: clamp(2rem, 5.5vw, 5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: clamp(2rem, 5vh, 3.5rem);
+}
+
+.end-cta__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: clamp(1.5rem, 3vh, 2.5rem);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.25em;
+  color: rgba(255,255,255,0.12);
+  text-transform: uppercase;
+}
+
+.end-cta__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #F59E0B;
+  box-shadow: 0 0 6px rgba(245,158,11,0.3);
+}
+
+/* ══════ FOOTER ══════ */
+
+.footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem clamp(1rem, 4vw, 3rem);
+  border-top: 1px solid rgba(255,255,255,0.04);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.08);
+}
+
+.footer a {
+  color: rgba(255,255,255,0.12);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer a:hover {
+  color: rgba(255,255,255,0.3);
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-sep {
+  width: 1px;
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+}
+
+/* ── Clock pulse (still needed by LiveClock) ── */
+@keyframes backgroundGlowPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
 }

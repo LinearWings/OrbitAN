@@ -19,38 +19,16 @@ export default function LiveClock() {
   }, []);
 
   return (
-    <div style={{ position: "relative", display: "inline-block" }}>
-      {/* Background glow — radial pulse behind the clock */}
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "130%",
-          height: "130%",
-          background:
-            "radial-gradient(ellipse at center, rgba(59,130,246,0.12) 0%, rgba(59,130,246,0.04) 35%, transparent 70%)",
-          filter: "blur(40px)",
-          pointerEvents: "none",
-          animation: "backgroundGlowPulse 3s ease-in-out infinite",
-        }}
-      />
-
-      {/* Primary clock — clean, precise, no text-shadow bloom */}
-      <span
-        className="clock-digit select-none"
-        style={{
-          fontSize: "clamp(4rem, 14vw, 12rem)",
-          color: "#3B82F6",
-          lineHeight: 0.9,
-          fontWeight: 700,
-          position: "relative",
-          zIndex: 2,
-        }}
-      >
-        {time || "--:--:--"}
-      </span>
-    </div>
+    <span
+      className="clock-digit select-none"
+      style={{
+        fontSize: "clamp(4rem, 14vw, 11rem)",
+        color: "#3B82F6",
+        lineHeight: 0.9,
+        fontWeight: 700,
+      }}
+    >
+      {time || "--:--:--"}
+    </span>
   );
 }
