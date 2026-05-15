@@ -21,7 +21,7 @@ export function createOrbitRings(scene: THREE.Scene): OrbitRing[] {
     const material = new THREE.MeshStandardMaterial({
       color: new THREE.Color("#2563EB"),
       emissive: new THREE.Color("#1D4ED8"),
-      emissiveIntensity: 1.2,
+      emissiveIntensity: 0.5,
       metalness: 0.15,
       roughness: 0.35,
       transparent: true,

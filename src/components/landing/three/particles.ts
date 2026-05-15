@@ -54,25 +54,23 @@ export function createParticleField(scene: THREE.Scene): Particle[] {
       depthWrite: false,
       depthTest: true,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.5, // Lower — bloom compensates for glow
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
     });
 
     const sprite = new THREE.Sprite(material);
 
-    // Distribute in a large ellipsoid shell
     const phi = Math.acos(2 * Math.random() - 1);
     const theta = Math.random() * Math.PI * 2;
-    const baseRadius = 5 + Math.random() * 16;
+    const baseRadius = 4 + Math.random() * 14;
 
     const basePosition = new THREE.Vector3(
       baseRadius * Math.sin(phi) * Math.cos(theta),
       baseRadius * Math.sin(phi) * Math.sin(theta),
-      baseRadius * Math.cos(phi) * 0.6 - 2,
+      baseRadius * Math.cos(phi) * 0.5 - 2,
     );
 
-    // Larger sprites for visibility
-    const s = 0.15 + Math.random() * 0.6;
+    const s = 0.12 + Math.random() * 0.5;
     sprite.scale.set(s, s, 1);
     sprite.position.copy(basePosition);
 
@@ -107,9 +105,9 @@ export function updateParticles(
     p.sprite.position.y = p.basePosition.y + Math.cos(time * 0.5 + p.phase) * p.amplitude * 0.4 + parallaxY * depthFactor;
     p.sprite.position.z = p.basePosition.z + osc * 0.3;
 
-    const flicker = 0.3 + 0.7 * Math.abs(Math.sin(time * p.speed * 0.7 + p.phase));
+    const flicker = 0.4 + 0.6 * Math.abs(Math.sin(time * p.speed * 0.5 + p.phase));
     const scrollFade = 1 - scrollProgress * 1.5;
-    (p.sprite.material as THREE.SpriteMaterial).opacity = Math.max(0, flicker * scrollFade * 0.85);
+    (p.sprite.material as THREE.SpriteMaterial).opacity = Math.max(0, flicker * scrollFade * 0.45);
   }
 }
 
