@@ -7,12 +7,10 @@ export interface OrbitRing {
 }
 
 const RING_CONFIGS = [
-  { radius: 2.0, tube: 0.025, tiltX: 82, tiltY: 5, tiltZ: 3, speed: 0.25, opacity: 0.55 },
-  { radius: 2.4, tube: 0.020, tiltX: 78, tiltY: -4, tiltZ: -5, speed: -0.20, opacity: 0.45 },
-  { radius: 2.8, tube: 0.018, tiltX: 85, tiltY: 9, tiltZ: 2, speed: 0.16, opacity: 0.38 },
-  { radius: 3.2, tube: 0.016, tiltX: 73, tiltY: -7, tiltZ: -4, speed: -0.13, opacity: 0.30 },
-  { radius: 3.6, tube: 0.014, tiltX: 80, tiltY: 5, tiltZ: 7, speed: 0.10, opacity: 0.24 },
-  { radius: 4.0, tube: 0.012, tiltX: 88, tiltY: -3, tiltZ: -3, speed: -0.07, opacity: 0.18 },
+  { radius: 2.0, tube: 0.018, tiltX: 82, tiltY: 5, tiltZ: 3, speed: 0.20, opacity: 0.35 },
+  { radius: 2.5, tube: 0.014, tiltX: 78, tiltY: -4, tiltZ: -5, speed: -0.15, opacity: 0.25 },
+  { radius: 3.0, tube: 0.012, tiltX: 85, tiltY: 9, tiltZ: 2, speed: 0.10, opacity: 0.18 },
+  { radius: 3.5, tube: 0.010, tiltX: 80, tiltY: -3, tiltZ: -4, speed: -0.07, opacity: 0.12 },
 ];
 
 export function createOrbitRings(scene: THREE.Scene): OrbitRing[] {

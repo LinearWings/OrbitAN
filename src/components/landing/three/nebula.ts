@@ -62,10 +62,8 @@ export interface NebulaCloud {
 }
 
 const CONFIGS = [
-  { r: 2.2, color: [0.15, 0.30, 0.96], opacity: 0.12, pos: [2, 1.5, -4], drift: [0.012, 0.35] },
-  { r: 2.8, color: [0.30, 0.18, 0.90], opacity: 0.09, pos: [-2.5, -0.8, -5], drift: [0.010, 0.45] },
-  { r: 1.8, color: [0.12, 0.35, 0.85], opacity: 0.10, pos: [-0.5, -2.5, -4.5], drift: [0.014, 0.3] },
-  { r: 3.5, color: [0.08, 0.40, 0.95], opacity: 0.05, pos: [0, 3, -7], drift: [0.008, 0.25] },
+  { r: 2.2, color: [0.1, 0.2, 0.7], opacity: 0.06, pos: [2, 1.5, -4], drift: [0.008, 0.3] },
+  { r: 2.8, color: [0.2, 0.12, 0.6], opacity: 0.04, pos: [-2.5, -0.8, -5], drift: [0.006, 0.35] },
 ];
 
 export function createNebulaClouds(scene: THREE.Scene): NebulaCloud[] {

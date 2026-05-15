@@ -578,8 +578,10 @@ button:active, a:active, [role="button"]:active {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
-  color: rgba(255, 255, 255, 0.75);
-  text-shadow: 0 0 8px rgba(59, 130, 246, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.6),
+    0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .data-readout--mission .data-readout__label {
@@ -754,9 +756,16 @@ button:active, a:active, [role="button"]:active {
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.015em;
-  color: rgba(59, 130, 246, 0.06);
+  color: rgba(59, 130, 246, 0.04);
   white-space: nowrap;
   transform: translateZ(0);
+  text-shadow: none;
+}
+
+/* Text legibility over 3D canvas */
+h1, .data-readout__value, .data-readout__label {
+  position: relative;
+  z-index: 35;
 }
 
 /* ── Three.js Canvas (sits below CSS overlay) ── */

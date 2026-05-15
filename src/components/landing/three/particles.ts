@@ -45,7 +45,7 @@ const COLORS = [
 export function createParticleField(scene: THREE.Scene): Particle[] {
   const texture = getParticleTexture();
   const particles: Particle[] = [];
-  const count = 250;
+  const count = 100;
 
   for (let i = 0; i < count; i++) {
     const material = new THREE.SpriteMaterial({

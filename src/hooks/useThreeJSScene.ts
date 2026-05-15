@@ -76,35 +76,21 @@ export function useThreeJSScene(
 
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.8,  // strength — moderate, bloom is soft and atmospheric
-      0.4,  // radius — broader soft glow
-      0.3,  // threshold — bloom picks up even mid-brightness elements for cinematic feel
+      0.25, // strength — very subtle, just a whisper of glow
+      0.8,  // radius — broad but faint
+      0.7,  // threshold — only the brightest elements bloom
     );
     composer.addPass(bloomPass);
     stateRef.current.composer = composer;
     stateRef.current.bloom = bloomPass;
 
-    // —— LIGHTING — subtle, bloom amplifies it ——
-    scene.add(new THREE.AmbientLight(0x0a0a20, 0.5));
+    // —— LIGHTING — very subtle ——
+    scene.add(new THREE.AmbientLight(0x0a0a20, 0.6));
 
-    const key = new THREE.PointLight(0x7799dd, 30, 18, 2);
-    key.position.set(4, 3, 6);
+    // Single key light — enough to see the clock, nothing more
+    const key = new THREE.PointLight(0x6688bb, 15, 20, 2);
+    key.position.set(3, 2, 7);
     scene.add(key);
-
-    const fill = new THREE.PointLight(0xdd9944, 15, 12, 2);
-    fill.position.set(-4, -1, 4);
-    scene.add(fill);
-
-    const rim = new THREE.PointLight(0x3355aa, 20, 15, 2);
-    rim.position.set(0, 0, -4);
-    scene.add(rim);
-
-    // Spot on clock face
-    const spot = new THREE.SpotLight(0xbbccee, 40, 16, Math.PI / 5, 0.3, 1);
-    spot.position.set(0, 0.5, 8);
-    spot.target.position.set(0, 0, 0);
-    scene.add(spot);
-    scene.add(spot.target);
 
     // —— DARK BACKGROUND SPHERE ——
     const bgGeom = new THREE.SphereGeometry(25, 32, 32);
@@ -112,7 +98,7 @@ export function useThreeJSScene(
       vertexShader: `varying vec3 vP; void main() { vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
       fragmentShader: `varying vec3 vP; void main() {
         float d = length(vP) / 25.0;
-        gl_FragColor = vec4(vec3(0.01, 0.014, 0.03) * (1.0 - d * 0.4), 1.0);
+        gl_FragColor = vec4(vec3(0.005, 0.008, 0.018) * (1.0 - d * 0.3), 1.0);
       }`,
       side: THREE.BackSide, depthWrite: false,
     });
@@ -123,12 +109,9 @@ export function useThreeJSScene(
     stateRef.current.particles = createParticleField(scene);
 
     const beamA = createBeam(scene,
-      new THREE.Vector3(8, 5, -5), new THREE.Vector3(-5, -2, 6),
-      new THREE.Color("#4477cc"), 0.6);
-    const beamB = createBeam(scene,
-      new THREE.Vector3(-8, 0.5, -3), new THREE.Vector3(6, -0.2, 4),
-      new THREE.Color("#dd8822"), 0.4);
-    stateRef.current.beams = [beamA, beamB];
+      new THREE.Vector3(8, 6, -5), new THREE.Vector3(-4, -2, 5),
+      new THREE.Color("#335599"), 0.8);
+    stateRef.current.beams = [beamA];
 
     stateRef.current.rings = createOrbitRings(scene);
     stateRef.current.clock = createClockFace(scene);
