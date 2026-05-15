@@ -1,58 +1,128 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
 import LiveClock from "@/components/landing/LiveClock";
 
 /* ══════════════════════════════════════════════
-   PARTICLE FIELD
+   DEEP SPACE LAYER — global background
    ══════════════════════════════════════════════ */
 
-type ParticleData = {
-  id: number;
-  left: number; top: number;
-  color: "blue" | "white" | "amber";
-  size: "xs" | "sm" | "md";
-  anim: "float1" | "float2" | "float3" | "float4";
-  delay: number;
-  duration: number;
-};
-
-function generateParticles(): ParticleData[] {
-  const colors: Array<"blue"|"white"|"amber"> = ["blue","blue","blue","blue","blue","white","white","amber"];
-  const sizes: Array<"xs"|"sm"|"md"> = ["xs","xs","xs","sm","sm","sm","sm","md","md"];
-  const anims: Array<"float1"|"float2"|"float3"|"float4"> = ["float1","float1","float2","float2","float3","float3","float4"];
-  const items: ParticleData[] = [];
-  for (let i = 0; i < 40; i++) {
-    items.push({
-      id: i,
-      left: Math.random() * 100,
-      top: 20 + Math.random() * 80,
-      color: colors[Math.floor(Math.random() * colors.length)]!,
-      size: sizes[Math.floor(Math.random() * sizes.length)]!,
-      anim: anims[Math.floor(Math.random() * anims.length)]!,
-      delay: Math.random() * 8,
-      duration: 5 + Math.random() * 8,
-    });
-  }
-  return items;
+function NebulaGlow() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true" style={{ zIndex: 0 }}>
+      <div className="nebula-glow" style={{
+        top: "-20%", left: "20%",
+        width: "min(60vw, 700px)", height: "min(60vw, 700px)",
+        background: "radial-gradient(circle, rgba(59,130,246,0.07) 0%, rgba(59,130,246,0.03) 30%, transparent 60%)",
+        animationDuration: "55s",
+      }} />
+      <div className="nebula-glow" style={{
+        top: "30%", right: "-10%",
+        width: "min(50vw, 600px)", height: "min(50vw, 600px)",
+        background: "radial-gradient(circle, rgba(99,102,241,0.05) 0%, rgba(99,102,241,0.02) 35%, transparent 65%)",
+        animationDuration: "60s",
+        animationDelay: "-20s",
+      }} />
+      <div className="nebula-glow" style={{
+        bottom: "-15%", left: "40%",
+        width: "min(55vw, 650px)", height: "min(55vw, 650px)",
+        background: "radial-gradient(circle, rgba(59,130,246,0.04) 0%, rgba(59,130,246,0.01) 40%, transparent 70%)",
+        animationDuration: "65s",
+        animationDelay: "-35s",
+      }} />
+    </div>
+  );
 }
 
-function ParticleField() {
-  const [particles] = useState<ParticleData[]>(generateParticles);
+function StarField() {
+  const stars = useMemo(() =>
+    Array.from({ length: 50 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      size: Math.random() < 0.3 ? 2 : 1,
+      baseOpacity: 0.3 + Math.random() * 0.5,
+      peakOpacity: 0.5 + Math.random() * 0.5,
+      dipOpacity: Math.random() * 0.2,
+      period: 2 + Math.random() * 6,
+      delay: Math.random() * 5,
+    })), []
+  );
+
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+    <div className="fixed inset-0 pointer-events-none" aria-hidden="true" style={{ zIndex: 1 }}>
+      {stars.map((s) => (
+        <div
+          key={s.id}
+          className="star-point"
+          style={{
+            left: `${s.left}%`,
+            top: `${s.top}%`,
+            width: s.size,
+            height: s.size,
+            ["--star-base" as string]: s.baseOpacity,
+            ["--star-peak" as string]: s.peakOpacity,
+            ["--star-dip" as string]: s.dipOpacity,
+            ["--star-period" as string]: `${s.period}s`,
+            ["--star-delay" as string]: `${s.delay}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function TyndallBeams() {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true" style={{ zIndex: 2 }}>
+      <div className="tyndall-beam--far" style={{ top: "10%", left: "-80%", transform: "rotate(-15deg)" }} />
+      <div className="tyndall-beam--far" style={{ top: "60%", left: "-60%", transform: "rotate(-10deg)", animationDelay: "-20s" }} />
+    </div>
+  );
+}
+
+function NearFieldBeams() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true" style={{ zIndex: 21 }}>
+      <div className="tyndall-beam--near" style={{ top: "35%", animationDelay: "0s" }} />
+      <div className="tyndall-beam--near" style={{ top: "55%", animationDelay: "-12s", animationDuration: "30s" }} />
+      <div className="tyndall-beam--near" style={{ top: "75%", animationDelay: "-8s", animationDuration: "22s" }} />
+    </div>
+  );
+}
+
+function CosmicDustField() {
+  const particles = useMemo(() =>
+    Array.from({ length: 30 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: 30 + Math.random() * 70,
+      size: Math.random() < 0.4 ? 1 : 2,
+      opacity: 0.3 + Math.random() * 0.4,
+      drift: -10 + Math.random() * 20,
+      duration: 10 + Math.random() * 14,
+      delay: Math.random() * 12,
+    })), []
+  );
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true" style={{ zIndex: 22 }}>
       {particles.map((p) => (
         <div
           key={p.id}
-          className={`particle particle--${p.color} particle--size-${p.size} particle--${p.anim}`}
+          className="cosmic-dust"
           style={{
             left: `${p.left}%`,
             top: `${p.top}%`,
-            animationDelay: `${p.delay}s`,
-            animationDuration: `${p.duration}s`,
+            width: p.size,
+            height: p.size,
+            ["--dust-opacity" as string]: p.opacity,
+            ["--dust-drift" as string]: `${p.drift}px`,
+            ["--dust-duration" as string]: `${p.duration}s`,
+            ["--dust-delay" as string]: `${p.delay}s`,
           }}
         />
       ))}
@@ -61,8 +131,263 @@ function ParticleField() {
 }
 
 /* ══════════════════════════════════════════════
-   MOUSE SPOTLIGHT
+   INSTRUMENT LAYER — clock + panels
    ══════════════════════════════════════════════ */
+
+function OrbitRings() {
+  const rings = [
+    { size: 108, speed: 80, opacity: 0.10 },
+    { size: 116, speed: 95, opacity: 0.08 },
+    { size: 124, speed: 110, opacity: 0.07 },
+    { size: 132, speed: 85, opacity: 0.06 },
+    { size: 140, speed: 100, opacity: 0.05 },
+    { size: 148, speed: 115, opacity: 0.04 },
+  ];
+
+  return (
+    <div className="absolute inset-0 pointer-events-none flex items-center justify-center" aria-hidden="true" style={{ zIndex: 20 }}>
+      {rings.map((r, i) => (
+        <div
+          key={i}
+          className="orbit-ring"
+          style={{
+            width: `${r.size}%`,
+            height: `${r.size}%`,
+            borderColor: `rgba(59,130,246,${r.opacity})`,
+            ["--ring-speed" as string]: `${r.speed}s`,
+            animationDirection: i % 2 === 0 ? "normal" : "reverse",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function StatusIndicators({ count = 6 }: { count?: number }) {
+  return (
+    <div className="flex items-center gap-4" style={{ zIndex: 30 }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <div
+          key={i}
+          className={`status-dot ${i < 3 ? "status-dot--active" : "status-dot--standby"}`}
+          style={{ ["--status-delay" as string]: `${i * 0.4}s` }}
+          title={`Methodology ${i + 1}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function DataReadout({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="data-readout">
+      <span className="data-readout__label">{label}</span>
+      <span className="data-readout__value">{value}</span>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════
+   SECTION 2 — Instrument Panel
+   ══════════════════════════════════════════════ */
+
+function InstrumentPanel({
+  accent,
+  title,
+  desc,
+}: {
+  accent: "blue" | "amber" | "violet";
+  title: string;
+  desc: string;
+}) {
+  const accentClass =
+    accent === "amber" ? "instrument-panel--amber" :
+    accent === "violet" ? "instrument-panel--violet" : "";
+
+  return (
+    <div className={`instrument-panel ${accentClass}`}>
+      <h3 style={{
+        fontFamily: "'Clash Display', sans-serif",
+        fontSize: "1.25rem",
+        fontWeight: 600,
+        color: "rgba(255,255,255,0.85)",
+        marginBottom: 16,
+      }}>
+        {title}
+      </h3>
+      <p style={{
+        fontFamily: "'Satoshi', sans-serif",
+        fontSize: "0.875rem",
+        lineHeight: 1.7,
+        color: "rgba(255,255,255,0.3)",
+      }}>
+        {desc}
+      </p>
+      <div style={{
+        marginTop: 20,
+        height: 20,
+        display: "flex",
+        alignItems: "flex-end",
+        gap: 3,
+      }}>
+        {Array.from({ length: 12 }).map((_, i) => (
+          <div key={i} style={{
+            flex: 1,
+            height: `${4 + Math.sin(i * 0.8) * 8 + Math.random() * 10}px`,
+            background: accent === "amber" ? "rgba(245,158,11,0.15)" :
+                        accent === "violet" ? "rgba(99,102,241,0.12)" :
+                        "rgba(59,130,246,0.12)",
+            borderRadius: "1px 1px 0 0",
+          }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════
+   SECTION 3 — Sequence Timeline
+   ══════════════════════════════════════════════ */
+
+interface Step {
+  time: string;
+  title: string;
+  desc: string;
+}
+
+function SequenceTimeline({ steps }: { steps: Step[] }) {
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 0, position: "relative" }}>
+      {steps.map((step, i) => (
+        <div key={i} style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          flex: i < steps.length - 1 ? "1 1 0" : "0 0 auto",
+          minWidth: 0,
+        }}>
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "0.6875rem",
+            color: "rgba(255,255,255,0.15)",
+            letterSpacing: "0.06em",
+            marginBottom: 14,
+          }}>
+            {step.time}
+          </span>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+          }}>
+            <div className="sequence-node sequence-node--active" />
+            {i < steps.length - 1 && (
+              <div className="light-track" style={{ ["--flow-delay" as string]: `${i * 1}s` }} />
+            )}
+          </div>
+          <div style={{ marginTop: 16, textAlign: "center", padding: "0 8px" }}>
+            <h4 style={{
+              fontFamily: "'Clash Display', sans-serif",
+              fontSize: "0.9375rem",
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.75)",
+              marginBottom: 6,
+            }}>
+              {step.title}
+            </h4>
+            <p style={{
+              fontFamily: "'Satoshi', sans-serif",
+              fontSize: "0.8125rem",
+              lineHeight: 1.6,
+              color: "rgba(255,255,255,0.2)",
+            }}>
+              {step.desc}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════
+   SECTION 4 — CTA
+   ══════════════════════════════════════════════ */
+
+function DockingCTA({
+  statusLabel,
+  prompt,
+  buttonText,
+  href,
+}: {
+  statusLabel: string;
+  prompt: string;
+  buttonText: string;
+  href: string;
+}) {
+  return (
+    <div style={{
+      position: "relative",
+      background: "rgba(10,13,20,0.7)",
+      border: "1px solid rgba(255,255,255,0.06)",
+      borderRadius: 6,
+      padding: "clamp(3rem, 8vw, 5rem) 0",
+      textAlign: "center",
+      overflow: "hidden",
+    }}>
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none",
+        background:
+          "radial-gradient(ellipse at 50% 80%, rgba(59,130,246,0.08) 0%, rgba(59,130,246,0.03) 40%, transparent 70%)",
+      }} />
+
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 12,
+        marginBottom: 20,
+        position: "relative",
+      }}>
+        <div className="docking-ring" />
+        <span style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: "0.625rem",
+          letterSpacing: "0.25em",
+          color: "rgba(255,255,255,0.15)",
+          textTransform: "uppercase",
+        }}>
+          {statusLabel}
+        </span>
+      </div>
+
+      <p style={{
+        fontFamily: "'Clash Display', sans-serif",
+        fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)",
+        fontWeight: 600,
+        color: "rgba(255,255,255,0.75)",
+        marginBottom: 32,
+        position: "relative",
+      }}>
+        {prompt}
+      </p>
+
+      <Link href={href} className="instrument-btn" style={{ position: "relative" }}>
+        {buttonText}
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
+          <path d="M3 8h10M9 4l4 4-4 4" />
+        </svg>
+      </Link>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════
+   MOUSE SPOTLIGHT — retained, reduced intensity
+   ══════════════════════════════════════════════ */
+
 function MouseSpotlight() {
   const [pos, setPos] = useState({ x: -200, y: -200 });
   useEffect(() => {
@@ -74,13 +399,16 @@ function MouseSpotlight() {
   }, []);
   return (
     <div
-      className="spotlight-layer"
       style={{
-        background: `radial-gradient(circle 400px at ${pos.x}px ${pos.y}px,
-          rgba(37,99,235,0.08) 0%,
-          rgba(37,99,235,0.04) 30%,
-          rgba(37,99,235,0.015) 50%,
-          transparent 70%)`,
+        position: "fixed",
+        inset: 0,
+        pointerEvents: "none",
+        zIndex: 50,
+        background: `radial-gradient(circle 350px at ${pos.x}px ${pos.y}px,
+          rgba(59,130,246,0.04) 0%,
+          rgba(59,130,246,0.02) 30%,
+          transparent 60%)`,
+        transition: "background 0.4s ease-out",
       }}
       aria-hidden="true"
     />
@@ -88,785 +416,255 @@ function MouseSpotlight() {
 }
 
 /* ══════════════════════════════════════════════
-   LIGHT BEAMS
+   PAGE
    ══════════════════════════════════════════════ */
-function LightBeams() {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-      <div className="light-beam" style={{ top: "15%", animationDelay: "0s" }} />
-      <div className="light-beam" style={{ top: "45%", animationDelay: "-7s", animationDuration: "24s" }} />
-      <div className="light-beam light-beam-thick" style={{ top: "75%", animationDelay: "-13s", animationDuration: "18s" }} />
-    </div>
-  );
-}
 
-/* ══════════════════════════════════════════════
-   PULSE RINGS
-   ══════════════════════════════════════════════ */
-function PulseRings({ count = 3 }: { count?: number }) {
-  return (
-    <div className="absolute inset-0 pointer-events-none flex items-center justify-center" aria-hidden="true">
-      {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="pulse-ring absolute"
-          style={{
-            width: "min(50vw, 500px)",
-            height: "min(50vw, 500px)",
-            animationDelay: `${i * 1}s`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   GLITCH SUBTITLE
-   ══════════════════════════════════════════════ */
-function GlitchSubtitle({ text }: { text: string }) {
-  return (
-    <span className="glitch-text chromatic" style={{
-      fontFamily: "'JetBrains Mono', monospace",
-      fontSize: "0.6875rem",
-      letterSpacing: "0.35em",
-      color: "rgba(255,255,255,0.08)",
-      textTransform: "uppercase" as const,
-    }}>
-      {text}
-    </span>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   MARQUEE TIME STRIP
-   ══════════════════════════════════════════════ */
-function MarqueeStrip() {
-  const chars = "00:00 · 01:00 · 02:00 · 03:00 · 04:00 · 05:00 · 06:00 · 07:00 · 08:00 · 09:00 · 10:00 · 11:00 · 12:00 · 13:00 · 14:00 · 15:00 · 16:00 · 17:00 · 18:00 · 19:00 · 20:00 · 21:00 · 22:00 · 23:00 · ";
-  return (
-    <div className="marquee-strip pointer-events-none select-none" aria-hidden="true"
-      style={{
-        borderTop: "2px solid rgba(255,255,255,0.06)",
-        borderBottom: "2px solid rgba(255,255,255,0.06)",
-        padding: "5px 0",
-        background: "rgba(0,0,0,0.4)",
-      }}>
-      <div className="marquee-strip-inner" style={{
-        fontFamily: "'JetBrains Mono', monospace",
-        fontSize: "0.625rem",
-        color: "rgba(255,255,255,0.06)",
-        letterSpacing: "0.15em",
-      }}>
-        {chars}{chars}
-      </div>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   CONSTRUCTIVIST GEOMETRY — parallax line networks
-   ══════════════════════════════════════════════ */
-function ConstructivistGeometry() {
-  const [scrollY, setScrollY] = useState(0);
-  useEffect(() => {
-    const el = document.querySelector("[data-scroll-container]");
-    if (!el) return;
-    const onScroll = () => setScrollY((el as HTMLElement).scrollTop);
-    onScroll();
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
-  const viewH = typeof window !== "undefined" ? window.innerHeight : 900;
-  const t = scrollY / viewH;
-
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-
-      {/* ── Dense diagonal line clusters — top-left zone ── */}
-      <div style={{ position: "absolute", top: `${12 + t * 40}%`, left: `${-5 - t * 20}%`, width: "60%", height: "60%", transform: "rotate(-38deg)", display: "flex", flexDirection: "column", gap: "12px" }}>
-        {Array.from({ length: 14 }).map((_, i) => (
-          <div key={`d1-${i}`} style={{ height: 1, width: "100%", background: `rgba(37,99,235,${0.10 + i * 0.010})` }} />
-        ))}
-      </div>
-
-      {/* ── Horizontal line cluster — mid-right ── */}
-      <div style={{ position: "absolute", top: `${40 + t * 15}%`, right: `${-15 + t * 10}%`, width: "45%", height: "30%", transform: "rotate(22deg)", display: "flex", flexDirection: "column", gap: "8px" }}>
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div key={`d2-${i}`} style={{ height: 1, width: "100%", background: `rgba(37,99,235,${0.08 + i * 0.012})` }} />
-        ))}
-      </div>
-
-      {/* ── Vertical line cluster — far left ── */}
-      <div style={{ position: "absolute", top: `${55 + t * 20}%`, left: `${3 - t * 5}%`, width: "2%", height: "40%", transform: "rotate(5deg)", display: "flex", flexDirection: "row", gap: "4px" }}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={`v1-${i}`} style={{ width: 1, height: "100%", background: `rgba(255,255,255,${0.08 + i * 0.015})` }} />
-        ))}
-      </div>
-
-      {/* ── Massive rotated rectangle — brutalist mass ── */}
-      <div style={{
-        position: "absolute",
-        top: `${-15 + t * 25}%`, right: `${-10 + t * 5}%`,
-        width: "min(50vw, 500px)", height: "min(50vw, 500px)",
-        border: "6px solid rgba(37,99,235,0.08)",
-        transform: `rotate(${25 + t * 8}deg)`,
-        background: "rgba(0,0,0,0.3)",
-      }} />
-
-      {/* ── Thick diagonal band — constructivist slash ── */}
-      <div style={{
-        position: "absolute",
-        top: `${30 + t * 35}%`, left: `${-20 - t * 15}%`,
-        width: "min(80vw, 800px)", height: "4px",
-        background: "rgba(37,99,235,0.22)",
-        transform: `rotate(-42deg)`,
-      }} />
-
-      {/* ── Industrial crosshair ── */}
-      <div style={{
-        position: "absolute",
-        top: `${70 + t * 10}%`, left: `${8 - t * 8}%`,
-        width: "min(16vw, 160px)", height: "min(16vw, 160px)",
-      }}>
-        <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: "2px", background: "rgba(37,99,235,0.30)" }} />
-        <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: "2px", background: "rgba(37,99,235,0.30)" }} />
-        <div style={{ position: "absolute", top: 8, left: 8, right: 8, bottom: 8, border: "1px solid rgba(255,255,255,0.06)", borderRadius: "50%" }} />
-      </div>
-
-      {/* ── Deconstructed ring — surrealist partial clock face ── */}
-      <div style={{
-        position: "absolute",
-        top: `${45 + t * 20}%`, right: `${10 - t * 8}%`,
-        width: "min(30vw, 300px)", height: "min(30vw, 300px)",
-        border: "2px dashed rgba(37,99,235,0.22)",
-        borderRadius: "50%",
-        animation: `deconstructedSpin ${120 + t * 30}s linear infinite`,
-      }}>
-        {Array.from({ length: 8 }).map((_, i) => {
-          const angle = i * 45;
-          return (
-            <div key={`tick-${i}`} style={{
-              position: "absolute",
-              top: "50%", left: "50%",
-              width: i % 3 === 0 ? 4 : 2,
-              height: i % 3 === 0 ? "42%" : "15%",
-              background: i % 3 === 0 ? "rgba(37,99,235,0.30)" : "rgba(37,99,235,0.16)",
-              transform: `translate(-50%, -100%) rotate(${angle}deg)`,
-              transformOrigin: "bottom center",
-            }} />
-          );
-        })}
-      </div>
-
-      {/* ── Blue dot constellation ── */}
-      <div className="constellation-dot" style={{ top: `${18 + t * 50}%`, left: `${75 + t * 8}%`, animationDelay: "0s" }} />
-      <div className="constellation-dot" style={{ top: `${55 + t * 30}%`, left: `${88 - t * 5}%`, animationDelay: "1.5s" }} />
-      <div className="constellation-dot" style={{ top: `${35 + t * 60}%`, left: `${12 - t * 3}%`, animationDelay: "3s" }} />
-
-      {/* ── Vertical rail — far right ── */}
-      <div style={{ position: "absolute", top: 0, bottom: 0, right: `${2 + t * 3}%`, width: "3px", background: "rgba(37,99,235,0.18)" }} />
-      <div style={{ position: "absolute", top: 0, bottom: 0, right: `${2.5 + t * 3}%`, width: "1px", background: "rgba(255,255,255,0.08)" }} />
-
-      {/* ── Void block — bottom left ── */}
-      <div className="void-block" style={{
-        bottom: `${5 - t * 15}%`, left: `${-3 + t * 5}%`,
-        width: "min(20vw, 200px)", height: "min(20vw, 200px)",
-      }} />
-
-      {/* ── Heavy horizontal bar — top ── */}
-      <div style={{
-        position: "absolute",
-        top: `${10 + t * 30}%`, left: `${60 - t * 10}%`,
-        width: "min(25vw, 250px)", height: "8px",
-        background: "rgba(37,99,235,0.22)",
-      }} />
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   TIME FRAGMENTS — surrealist floating numbers
-   ══════════════════════════════════════════════ */
-function TimeFragments() {
-  const fragments = [
-    { value: "06", top: "8%", left: "5%", rotate: -12, opacity: 0.18, delay: 0, size: "lg" },
-    { value: "12", top: "5%", right: "10%", rotate: 8, opacity: 0.22, delay: 3, size: "lg" },
-    { value: "18", bottom: "10%", left: "3%", rotate: -5, opacity: 0.16, delay: 6, size: "md" },
-    { value: "24", bottom: "6%", right: "6%", rotate: 15, opacity: 0.22, delay: 9, size: "lg" },
-    { value: "00", top: "50%", right: "2%", rotate: -20, opacity: 0.12, delay: 4, size: "sm" },
-  ];
-
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-      {fragments.map((f, i) => (
-        <div
-          key={i}
-          className={`time-fragment ${i % 3 === 0 ? "time-fragment--amber" : ""} ${f.size === "sm" ? "time-fragment--sm" : f.size === "lg" ? "time-fragment--lg" : ""}`}
-          style={{
-            position: "absolute",
-            top: f.top, bottom: f.bottom, left: f.left, right: f.right,
-            animationDelay: `${f.delay}s`,
-            animationDuration: `${10 + i * 3}s`,
-            ["--frag-rotate" as string]: `${f.rotate}deg`,
-            ["--frag-opacity" as string]: f.opacity,
-          }}
-        >
-          {f.value}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   BLUEPRINT GRID — architectural line grid
-   ══════════════════════════════════════════════ */
-function BlueprintGrid({ dense = false }: { dense?: boolean }) {
-  return (
-    <div className={`blueprint-grid ${dense ? "blueprint-grid-dense" : ""}`} aria-hidden="true" />
-  );
-}
-
-/* ══════════════════════════════════════════════
-   RADIAL LINE BURST — constructivist rays
-   ══════════════════════════════════════════════ */
-function RadialLineBurst() {
-  return <div className="radial-burst" aria-hidden="true" />;
-}
-
-/* ══════════════════════════════════════════════
-   INDUSTRIAL STAMP — section label
-   ══════════════════════════════════════════════ */
-function SectionStamp({ text }: { text: string }) {
-  return (
-    <div className="section-stamp">
-      <div style={{ width: 6, height: 6, background: "#2563EB" }} />
-      {text}
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   DIAGONAL SLASH SECTION DIVIDER
-   ══════════════════════════════════════════════ */
-function DiagonalSlashDivider() {
-  return (
-    <div style={{ position: "relative", height: 80 }} aria-hidden="true">
-      <div className="diagonal-slash" style={{ top: "50%", left: "-50%", transform: "rotate(-8deg)" }} />
-      <div className="diagonal-slash" style={{ top: "calc(50% + 8px)", left: "-50%", transform: "rotate(-8deg)" }} />
-      <div style={{
-        position: "absolute", top: "50%", left: "50%",
-        width: 8, height: 8, background: "#2563EB", transform: "translate(-50%, -50%) rotate(45deg)",
-        boxShadow: "0 0 12px rgba(37,99,235,0.4)",
-      }} />
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   AVANT-GARDE FEATURE CARD
-   ══════════════════════════════════════════════ */
-function FeatureCard({ num, title, desc, accentColor = "#2563EB" }: {
-  num: string;
-  title: string;
-  desc: string;
-  accentColor?: string;
-}) {
-  return (
-    <div className="avant-card" style={{ borderLeft: `6px solid ${accentColor}` }}>
-      {/* Number bleed */}
-      <div className="section-number-brutalist" style={{
-        position: "absolute", top: -60, right: 16,
-        color: "rgba(255,255,255,0.07)",
-        fontSize: "clamp(5rem, 12vw, 14rem)",
-      }}>
-        {num}
-      </div>
-      <h2 style={{
-        fontFamily: "'Clash Display', sans-serif",
-        fontSize: "clamp(1.25rem, 2vw, 1.75rem)",
-        fontWeight: 600,
-        color: "rgba(255,255,255,0.85)",
-        marginBottom: 16,
-        position: "relative",
-      }}>
-        {title}
-      </h2>
-      <p style={{
-        fontFamily: "'Satoshi', sans-serif",
-        fontSize: "0.875rem",
-        lineHeight: 1.7,
-        color: "rgba(255,255,255,0.22)",
-        maxWidth: "90%",
-        position: "relative",
-      }}>
-        {desc}
-      </p>
-    </div>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   LANDING PAGE
-   ══════════════════════════════════════════════ */
 export default function LandingPage() {
   const lang = useLanguage();
   const t = getT(lang);
 
+  const [dateStr, setDateStr] = useState("");
+  const [utcStr, setUtcStr] = useState("");
+
+  useEffect(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    setDateStr(`${y}.${m}.${d}`);
+    const offset = -now.getTimezoneOffset() / 60;
+    setUtcStr(`UTC${offset >= 0 ? "+" : ""}${offset}`);
+  }, []);
+
+  const workflowSteps: Step[] = [
+    { time: "00", title: t.how_1_title, desc: t.how_1_desc },
+    { time: "06", title: t.how_2_title, desc: t.how_2_desc },
+    { time: "12", title: t.how_3_title, desc: t.how_3_desc },
+    { time: "18", title: t.how_4_title, desc: t.how_4_desc },
+  ];
+
   return (
-    <div style={{ background: "#090909", color: "rgba(255,255,255,0.85)" }}>
-      {/* ── Global warm ambient glow ── */}
-      <div style={{
-        position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
-        background: "radial-gradient(ellipse at 30% 20%, rgba(234,179,8,0.04) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(37,99,235,0.05) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, rgba(234,179,8,0.03) 0%, transparent 50%)",
-      }} aria-hidden="true" />
-      {/* Global effects */}
-      <div className="scanlines" aria-hidden="true" />
+    <div style={{ background: "#06080D", color: "rgba(255,255,255,0.85)" }}>
+      {/* ══════ Deep Space Layer (global, fixed) ══════ */}
+      <NebulaGlow />
+      <StarField />
+      <TyndallBeams />
       <MouseSpotlight />
 
-      {/* ═══════════════════════════════════════════════════════
-          SECTION 1: TIME ANCHOR (HERO)
-          ════════════════════════════════════════════════════ */}
+      {/* ══════════════════════════════════════════════
+          SECTION 1: ORBITAL BASELINE (HERO)
+          ══════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
-        <BlueprintGrid />
-        <RadialLineBurst />
-        <TimeFragments />
-        <PulseRings count={4} />
-        <ParticleField />
-        <LightBeams />
-        <ConstructivistGeometry />
+        <NearFieldBeams />
+        <CosmicDustField />
+        <OrbitRings />
 
-        {/* ── Heavy clock housing ── */}
-        <div style={{ animation: "hardCutInGlitch 0.6s steps(1) forwards", opacity: 0, position: "relative", zIndex: 10 }}>
-          <div className="clock-housing" style={{ position: "relative" }}>
-            {/* Small deconstructed ring behind clock */}
-            <div className="deconstructed-ring deconstructed-ring--dashed" style={{
-              position: "absolute",
-              top: "50%", left: "50%",
-              width: "120%", height: "120%",
-              transform: "translate(-50%, -50%)",
-            }} />
-            <LiveClock />
-          </div>
-          <div className="mt-5 text-center">
-            <GlitchSubtitle text={t.hero_tagline} />
-          </div>
+        {/* Data readouts — top left */}
+        <div style={{
+          position: "absolute",
+          top: "clamp(2rem, 6vh, 4rem)",
+          left: "clamp(1rem, 4vw, 3rem)",
+          display: "flex",
+          gap: "clamp(1.5rem, 4vw, 3rem)",
+          zIndex: 30,
+        }}>
+          <DataReadout label="LOCAL TIME" value={new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })} />
+          <DataReadout label="DATE" value={dateStr || "----.--.--"} />
+          <DataReadout label="TZ" value={utcStr || "UTC+8"} />
         </div>
 
-        {/* ── Title Block with constructivist framing ── */}
-        <div className="mt-12 text-center" style={{ animation: "hardCutIn 0.35s steps(1) 0.2s forwards", opacity: 0, position: "relative", zIndex: 10 }}>
-          {/* Heavy top rail — blue + amber dual stripe matching orbit page */}
-          <div style={{ margin: "0 auto 16px", width: "clamp(120px, 20vw, 280px)" }}>
-            <div style={{
-              width: "100%", height: 4,
-              background: "#2563EB",
-              boxShadow: "0 0 12px rgba(234,179,8,0.15)",
-            }} />
-          </div>
+        {/* Central clock */}
+        <div style={{
+          position: "relative",
+          zIndex: 25,
+          animation: "fade-in 0.8s ease-out forwards",
+        }}>
+          <LiveClock />
+        </div>
+
+        {/* Status indicators below clock */}
+        <div style={{
+          marginTop: "clamp(1.5rem, 3vh, 2.5rem)",
+          zIndex: 30,
+          animation: "fade-in 0.6s ease-out 0.3s forwards",
+          opacity: 0,
+        }}>
+          <StatusIndicators count={6} />
+        </div>
+
+        {/* Title */}
+        <div style={{
+          marginTop: "clamp(1.5rem, 3vh, 2.5rem)",
+          textAlign: "center",
+          zIndex: 30,
+          animation: "fade-in 0.6s ease-out 0.5s forwards",
+          opacity: 0,
+        }}>
           <h1 style={{
             fontFamily: "'Clash Display', sans-serif",
-            fontSize: "clamp(2rem, 5vw, 4rem)",
+            fontSize: "clamp(1.75rem, 4vw, 3rem)",
             fontWeight: 600,
-            lineHeight: 1.05,
-            letterSpacing: "-0.02em",
-            color: "rgba(255,255,255,0.88)",
+            lineHeight: 1.1,
+            color: "rgba(255,255,255,0.85)",
           }}>
             {t.hero_title_1}
           </h1>
-
-          {/* Constructivist center bar with angle brackets */}
-          <div className="flex items-center justify-center gap-4 my-4" style={{ position: "relative" }}>
-            {/* Background glow — not on text edge */}
-            <div style={{
-              position: "absolute", top: "50%", left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "clamp(300px, 60vw, 600px)", height: "clamp(150px, 25vw, 300px)",
-              background: "radial-gradient(ellipse at center, rgba(37,99,235,0.16) 0%, rgba(234,179,8,0.06) 30%, transparent 70%)",
-              filter: "blur(60px)",
-              pointerEvents: "none",
-            }} />
-            <div className="angle-bracket angle-bracket--tl" style={{ width: 32, height: 32, position: "relative", zIndex: 1 }} />
-            <div style={{
-              width: "clamp(60px, 12vw, 120px)", height: 4,
-              background: "#EAB308",
-              position: "relative", zIndex: 1,
-            }} />
-            <span style={{
-              fontFamily: "'Clash Display', sans-serif",
-              fontSize: "clamp(3rem, 7vw, 5.5rem)",
-              fontWeight: 700,
-              color: "#2563EB",
-              letterSpacing: "-0.02em",
-              position: "relative", zIndex: 1,
-            }}>
-              {t.hero_title_2}
-            </span>
-            <div style={{
-              width: "clamp(60px, 12vw, 120px)", height: 4,
-              background: "#EAB308",
-              position: "relative", zIndex: 1,
-            }} />
-            <div className="angle-bracket" style={{ width: 32, height: 32 }} />
-          </div>
-        </div>
-
-        {/* ── Description with heavy left rail ── */}
-        <div className="mt-10 max-w-xl text-center" style={{ animation: "hardCutIn 0.35s steps(1) 0.4s forwards", opacity: 0, position: "relative", zIndex: 10 }}>
-          <div style={{
-            borderLeft: "6px solid rgba(234,179,8,0.15)",
-            padding: "16px 0 16px 20px",
-            background: "rgba(234,179,8,0.02)",
-            textAlign: "left" as const,
+          <hr className="instrument-divider" style={{ width: "clamp(120px, 20vw, 200px)", margin: "16px auto" }} />
+          <p style={{
+            fontFamily: "'Satoshi', sans-serif",
+            fontSize: "0.9375rem",
+            lineHeight: 1.7,
+            color: "rgba(255,255,255,0.25)",
+            maxWidth: 480,
+            margin: "0 auto",
           }}>
-            <p style={{
-              fontFamily: "'Satoshi', sans-serif",
-              fontSize: "0.9375rem",
-              lineHeight: 1.7,
-              color: "rgba(255,255,255,0.25)",
-            }}>
-              {t.hero_desc}
-            </p>
-          </div>
+            {t.hero_desc}
+          </p>
         </div>
 
-        {/* ── CTA with heavy brutalist button ── */}
-        <div className="mt-14 flex items-center gap-10" style={{ animation: "strobeOnce 0.8s ease-out 0.6s forwards", opacity: 0, position: "relative", zIndex: 10 }}>
-          <Link href="/orbit" className="brutal-cta-heavy">
+        {/* CTA + secondary link */}
+        <div style={{
+          marginTop: "clamp(2rem, 5vh, 3.5rem)",
+          zIndex: 30,
+          display: "flex",
+          alignItems: "center",
+          gap: "clamp(1.5rem, 4vw, 3rem)",
+          animation: "fade-in 0.5s ease-out 0.7s forwards",
+          opacity: 0,
+        }}>
+          <Link href="/orbit" className="instrument-btn">
             {t.hero_cta}
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" />
             </svg>
           </Link>
-          <a href="#features" style={{
+          <a href="#systems" style={{
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: "0.6875rem",
-            color: "rgba(255,255,255,0.1)",
+            fontSize: "0.625rem",
+            color: "rgba(255,255,255,0.12)",
             textDecoration: "none",
             letterSpacing: "0.08em",
           }}>
             {t.learn_more}
-            <span style={{ display: "block", marginTop: 6, color: "rgba(37,99,235,0.25)", fontSize: "0.75rem" }}>↓</span>
+            <span style={{ display: "block", marginTop: 4, color: "rgba(59,130,246,0.2)", fontSize: "0.75rem" }}>↓</span>
           </a>
         </div>
 
-        {/* Bottom time-mark notches */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-16" style={{ zIndex: 10 }}>
-          {[0, 1, 2, 3].map(i => (
-            <div key={i} className="time-mark" style={{ animationDelay: `${i * 0.8}s` }} />
-          ))}
-        </div>
-
-        {/* Bottom scroll indicator — vertical rail */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2" style={{ zIndex: 10 }}>
-          <div style={{ width: 2, height: 56, background: "rgba(37,99,235,0.25)" }} />
-        </div>
-      </section>
-
-      <DiagonalSlashDivider />
-      <MarqueeStrip />
-      <DiagonalSlashDivider />
-
-      {/* ═══════════════════════════════════════════════════════
-          SECTION 2: CORE SYSTEMS (Features)
-          ════════════════════════════════════════════════════ */}
-      <section id="features" className="relative px-4 md:px-8 py-32 md:py-40 max-w-6xl mx-auto overflow-hidden" style={{ scrollMarginTop: 72 }}>
-        <BlueprintGrid dense />
-        <LightBeams />
-
-        {/* ── Section header ── */}
-        <div className="flex items-center gap-5 mb-24 relative" style={{ zIndex: 1 }}>
-          <div style={{ width: 48, height: 8, background: "#2563EB", boxShadow: "0 0 20px rgba(37,99,235,0.4)" }} />
-          <SectionStamp text={t.features_title} />
-          <div className="light-streak" style={{ flex: 1, height: 2 }} />
-        </div>
-
-        {/* ── Feature cards in avant-garde layout ── */}
-        <div className="relative" style={{ zIndex: 1 }}>
-          {/* Connecting vertical line network */}
-          <div className="industrial-rail industrial-rail--vertical" style={{
-            left: 40, top: 0, bottom: 0, width: 4,
-          }} />
-
-          {/* 01 — Orbital Clock */}
-          <div className="relative mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-              <div className="md:col-span-2 flex md:justify-end md:pr-12 mb-2 md:mb-0 relative">
-                <span className="section-number-brutalist" style={{ position: "relative", top: -20, zIndex: 0 }}>
-                  01
-                </span>
-                {/* Diamond marker on rail */}
-                <div className="geo-diamond" style={{ position: "absolute", left: 35, top: 24, zIndex: 2, width: 10, height: 10 }} />
-              </div>
-              <div className="md:col-span-8 relative" style={{ zIndex: 1 }}>
-                <FeatureCard num="01" title={t.feature_clock_title} desc={t.feature_clock_desc} />
-              </div>
-            </div>
-          </div>
-
-          {/* 02 — Six Methodologies */}
-          <div className="relative mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-              <div className="md:col-span-3 hidden md:block" />
-              <div className="md:col-span-2 flex md:justify-end md:pr-12 mb-2 md:mb-0 relative">
-                <span className="section-number-brutalist" style={{ position: "relative", top: -20, zIndex: 0 }}>
-                  02
-                </span>
-                <div className="geo-diamond geo-diamond--amber" style={{ position: "absolute", left: 35, top: 24, zIndex: 2, width: 10, height: 10 }} />
-              </div>
-              <div className="md:col-span-7 relative" style={{ zIndex: 1 }}>
-                <FeatureCard num="02" title={t.feature_methods_title} desc={t.feature_methods_desc} accentColor="#EAB308" />
-              </div>
-            </div>
-          </div>
-
-          {/* 03 — Focus Blocks */}
-          <div className="relative">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-              <div className="md:col-span-2 flex md:justify-end md:pr-12 mb-2 md:mb-0 relative">
-                <span className="section-number-brutalist" style={{ position: "relative", top: -20, zIndex: 0 }}>
-                  03
-                </span>
-                <div className="geo-diamond geo-diamond--hollow" style={{ position: "absolute", left: 36, top: 24, zIndex: 2 }} />
-              </div>
-              <div className="md:col-span-8 relative" style={{ zIndex: 1 }}>
-                <FeatureCard num="03" title={t.feature_focus_title} desc={t.feature_focus_desc} accentColor="#374151" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Surreal constellation lines */}
-        <div className="constellation-dot" style={{ top: "15%", right: "10%", animationDelay: "0s" }} />
-        <div className="constellation-dot" style={{ top: "40%", right: "5%", animationDelay: "1s" }} />
-        <div className="constellation-dot" style={{ bottom: "20%", right: "15%", animationDelay: "2s" }} />
-      </section>
-
-      <DiagonalSlashDivider />
-      <MarqueeStrip />
-      <DiagonalSlashDivider />
-
-      {/* ═══════════════════════════════════════════════════════
-          SECTION 3: WORKFLOW TIMELINE
-          ════════════════════════════════════════════════════ */}
-      <section className="relative px-4 md:px-8 py-32 md:py-40 max-w-4xl mx-auto overflow-hidden">
-        <BlueprintGrid />
-
-        {/* ── Section header ── */}
-        <div className="flex items-center gap-5 mb-24 relative" style={{ zIndex: 1 }}>
-          <div style={{ width: 48, height: 8, background: "#2563EB", boxShadow: "0 0 20px rgba(37,99,235,0.4)" }} />
-          <SectionStamp text={t.how_title} />
-          <div className="light-streak" style={{ flex: 1, height: 2 }} />
-        </div>
-
-        <div className="relative" style={{ zIndex: 1 }}>
-          {/* ── Heavy industrial rail ── */}
-          <div
-            className="industrial-rail industrial-rail--vertical"
-            style={{
-              left: "60px",
-              top: 40,
-              bottom: 40,
-              width: 6,
-              background: "rgba(37,99,235,0.12)",
-            }}
-          />
-          {/* Rail side-lines */}
-          <div style={{
-            position: "absolute", left: 54, top: 40, bottom: 40, width: 2,
-            background: "rgba(37,99,235,0.12)",
-          }} />
-          <div style={{
-            position: "absolute", left: 70, top: 40, bottom: 40, width: 1,
-            background: "rgba(255,255,255,0.06)",
-          }} />
-
-          {[
-            { time: "00:00", title: t.how_1_title, desc: t.how_1_desc },
-            { time: "06:00", title: t.how_2_title, desc: t.how_2_desc },
-            { time: "12:00", title: t.how_3_title, desc: t.how_3_desc },
-            { time: "18:00", title: t.how_4_title, desc: t.how_4_desc },
-          ].map((step, i) => (
-            <div key={i} className="relative flex items-start py-12 first:pt-14 last:pb-14">
-              {/* Time code — heavier industrial style */}
-              <div style={{
-                width: "60px",
-                flexShrink: 0,
-                textAlign: "right",
-                paddingRight: 32,
-                paddingTop: 4,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: "0.8125rem",
-                color: "rgba(255,255,255,0.14)",
-                letterSpacing: "0.06em",
-              }}>
-                {step.time}
-              </div>
-
-              {/* ── Diamond marker on rail ── */}
-              <div className="geo-diamond" style={{
-                position: "absolute",
-                left: 56,
-                top: 52,
-                zIndex: 2,
-              }} />
-
-              {/* ── Horizontal connector line ── */}
-              <div style={{
-                position: "absolute",
-                left: 74,
-                top: 58,
-                width: 32,
-                height: 1,
-                background: "rgba(37,99,235,0.12)",
-              }} />
-
-              {/* ── Content block in brutalist frame ── */}
-              <div style={{
-                flex: 1,
-                paddingLeft: 24,
-                borderLeft: "3px solid rgba(255,255,255,0.08)",
-                position: "relative",
-              }}>
-                {/* Angle bracket corner */}
-                <div style={{
-                  position: "absolute", top: 0, left: 0,
-                  width: 20, height: 20,
-                  borderTop: "2px solid rgba(37,99,235,0.30)",
-                  borderLeft: "2px solid rgba(37,99,235,0.30)",
-                }} />
-                <h3 style={{
-                  fontFamily: "'Clash Display', sans-serif",
-                  fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
-                  fontWeight: 600,
-                  color: "rgba(255,255,255,0.78)",
-                  marginBottom: 8,
-                  paddingTop: 8,
-                }}>
-                  {step.title}
-                </h3>
-                <p style={{
-                  fontFamily: "'Satoshi', sans-serif",
-                  fontSize: "0.875rem",
-                  lineHeight: 1.7,
-                  color: "rgba(255,255,255,0.2)",
-                  maxWidth: "85%",
-                }}>
-                  {step.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Floating time fragments near timeline */}
-        <div className="time-fragment time-fragment--sm" style={{
-          position: "absolute", left: "2%", top: "30%",
-          animationDelay: "2s", animationDuration: "14s",
-          ["--frag-rotate" as string]: "-8deg",
-          ["--frag-opacity" as string]: 0.16,
+        {/* Bottom indicator — thin vertical line */}
+        <div style={{
+          position: "absolute",
+          bottom: "clamp(2rem, 5vh, 3rem)",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 30,
         }}>
-          12:00
-        </div>
-        <div className="time-fragment time-fragment--amber time-fragment--sm" style={{
-          position: "absolute", right: "3%", bottom: "25%",
-          animationDelay: "5s", animationDuration: "16s",
-          ["--frag-rotate" as string]: "12deg",
-          ["--frag-opacity" as string]: 0.14,
-        }}>
-          24:00
+          <div style={{ width: 1, height: 40, background: "rgba(59,130,246,0.15)" }} />
         </div>
       </section>
 
-      <DiagonalSlashDivider />
+      {/* ══════════════════════════════════════════════
+          SECTION 2: SYSTEM COMPONENTS
+          ══════════════════════════════════════════════ */}
+      <section id="systems" className="relative px-4 md:px-8 py-28 md:py-36 max-w-5xl mx-auto overflow-hidden" style={{ scrollMarginTop: 72 }}>
+        <NearFieldBeams />
 
-      {/* ═══════════════════════════════════════════════════════
-          SECTION 4: ACTION ZONE (CTA)
-          ════════════════════════════════════════════════════ */}
-      <section className="relative px-4 py-36 md:py-44 overflow-hidden">
-        <BlueprintGrid />
-        <LightBeams />
-        <RadialLineBurst />
-
-        {/* Brutalist triple-frame container */}
-        <div className="max-w-4xl mx-auto relative" style={{ zIndex: 1 }}>
-          {/* Outer ghost frame */}
-          <div style={{
-            position: "absolute", inset: -24,
-            border: "2px solid rgba(37,99,235,0.10)",
-            pointerEvents: "none",
-          }} />
-          {/* Inner heavy frame */}
-          <div style={{
-            position: "absolute", inset: -12,
-            border: "4px solid rgba(255,255,255,0.08)",
-            pointerEvents: "none",
-          }} />
-          {/* Content box */}
-          <div style={{
-            borderTop: "6px solid rgba(37,99,235,0.35)",
-            borderBottom: "4px solid rgba(255,255,255,0.08)",
-            padding: "clamp(4rem, 10vw, 7rem) 0",
-            position: "relative",
-            background: "rgba(0,0,0,0.3)",
+        {/* Section header */}
+        <div className="flex items-center gap-5 mb-16 relative" style={{ zIndex: 25 }}>
+          <div style={{ width: 36, height: 2, background: "#3B82F6", boxShadow: "0 0 12px rgba(59,130,246,0.3)" }} />
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "0.625rem",
+            letterSpacing: "0.35em",
+            color: "rgba(255,255,255,0.1)",
+            textTransform: "uppercase",
           }}>
-            {/* Corner constructivist brackets */}
-            <div style={{ position: "absolute", top: -6, left: 0, width: 60, height: 6, background: "#2563EB" }} />
-            <div style={{ position: "absolute", bottom: -4, right: 0, width: 60, height: 4, background: "rgba(37,99,235,0.2)" }} />
+            {t.features_title}
+          </span>
+          <hr className="instrument-divider" style={{ flex: 1 }} />
+        </div>
 
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-12 px-8 md:px-16">
-              <div>
-                {/* Status indicator */}
-                <div className="flex items-center gap-3 mb-6">
-                  <div style={{ width: 12, height: 12, background: "#EAB308", boxShadow: "0 0 14px rgba(234,179,8,0.4)", transform: "rotate(45deg)" }} />
-                  <span style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: "0.6875rem",
-                    letterSpacing: "0.2em",
-                    color: "rgba(255,255,255,0.1)",
-                    textTransform: "uppercase" as const,
-                  }}>
-                    {t.cta_label}
-                  </span>
-                </div>
-                <p style={{
-                  fontFamily: "'Clash Display', sans-serif",
-                  fontSize: "clamp(1.5rem, 3vw, 2.25rem)",
-                  fontWeight: 600,
-                  color: "rgba(255,255,255,0.8)",
-                  borderLeft: "6px solid rgba(37,99,235,0.4)",
-                  paddingLeft: 24,
-                }}>
-                  {t.cta_body}
-                </p>
-              </div>
-              <Link href="/orbit" className="brutal-cta-heavy" style={{ whiteSpace: "nowrap" }}>
-                {t.cta_button}
-                <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" aria-hidden="true">
-                  <path d="M3 8h10M9 4l4 4-4 4" />
-                </svg>
-              </Link>
-            </div>
-          </div>
+        {/* Three panels */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative" style={{ zIndex: 25 }}>
+          <InstrumentPanel accent="blue" title={t.feature_clock_title} desc={t.feature_clock_desc} />
+          <InstrumentPanel accent="amber" title={t.feature_methods_title} desc={t.feature_methods_desc} />
+          <InstrumentPanel accent="violet" title={t.feature_focus_title} desc={t.feature_focus_desc} />
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════
+      {/* ══════════════════════════════════════════════
+          SECTION 3: DOCKING SEQUENCE
+          ══════════════════════════════════════════════ */}
+      <section className="relative px-4 md:px-8 py-28 md:py-36 max-w-4xl mx-auto overflow-hidden">
+        {/* Section header */}
+        <div className="flex items-center gap-5 mb-16 relative" style={{ zIndex: 25 }}>
+          <div style={{ width: 36, height: 2, background: "#3B82F6", boxShadow: "0 0 12px rgba(59,130,246,0.3)" }} />
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "0.625rem",
+            letterSpacing: "0.35em",
+            color: "rgba(255,255,255,0.1)",
+            textTransform: "uppercase",
+          }}>
+            {t.how_title}
+          </span>
+          <hr className="instrument-divider" style={{ flex: 1 }} />
+        </div>
+
+        {/* Timeline */}
+        <div className="relative" style={{ zIndex: 25 }}>
+          <SequenceTimeline steps={workflowSteps} />
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          SECTION 4: DOCKING CLEARANCE (CTA)
+          ══════════════════════════════════════════════ */}
+      <section className="relative px-4 py-28 md:py-36 max-w-3xl mx-auto">
+        <NearFieldBeams />
+        <div style={{ zIndex: 25, position: "relative" }}>
+          <DockingCTA
+            statusLabel={t.cta_label}
+            prompt={t.cta_body}
+            buttonText={t.cta_button}
+            href="/orbit"
+          />
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
           FOOTER
-          ════════════════════════════════════════════════════ */}
-      <footer style={{ borderTop: "4px solid rgba(255,255,255,0.08)", padding: "32px 0", background: "rgba(0,0,0,0.3)" }}>
-        <div className="max-w-6xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="geo-diamond geo-diamond--hollow" style={{ width: 8, height: 8 }} />
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.625rem", color: "rgba(255,255,255,0.12)", letterSpacing: "0.06em" }}>
-              {t.footer_text}
-            </span>
-          </div>
-          <div className="flex items-center gap-10">
-            <Link href="/docs" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.625rem", color: "rgba(255,255,255,0.15)", textDecoration: "none" }}>
+          ══════════════════════════════════════════════ */}
+      <footer style={{
+        borderTop: "1px solid rgba(255,255,255,0.05)",
+        padding: "28px 0",
+      }}>
+        <div className="max-w-5xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-3">
+          <span style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: "0.5625rem",
+            color: "rgba(255,255,255,0.1)",
+            letterSpacing: "0.06em",
+          }}>
+            {t.footer_text}
+          </span>
+          <div className="flex items-center gap-8">
+            <Link href="/docs" style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "0.5625rem",
+              color: "rgba(255,255,255,0.12)",
+              textDecoration: "none",
+              letterSpacing: "0.04em",
+            }}>
               {t.footer_docs}
             </Link>
-            <div style={{ width: 1, height: 12, background: "rgba(255,255,255,0.10)" }} />
-            <Link href="/orbit" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.625rem", color: "rgba(37,99,235,0.3)", textDecoration: "none" }}>
+            <div style={{ width: 1, height: 10, background: "rgba(255,255,255,0.08)" }} />
+            <Link href="/orbit" style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: "0.5625rem",
+              color: "rgba(59,130,246,0.25)",
+              textDecoration: "none",
+              letterSpacing: "0.04em",
+            }}>
               {t.footer_launch}
             </Link>
           </div>
