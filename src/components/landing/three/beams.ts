@@ -1,105 +1,89 @@
 import * as THREE from "three";
 
-const BEAM_VERTEX_SHADER = /* glsl */ `
+const BEAM_VS = /* glsl */ `
   varying vec3 vWorldPos;
-  varying vec2 vUv;
+  varying vec3 vLocalPos;
   void main() {
     vec4 worldPos = modelMatrix * vec4(position, 1.0);
     vWorldPos = worldPos.xyz;
-    vUv = uv;
+    vLocalPos = position;
     gl_Position = projectionMatrix * viewMatrix * worldPos;
   }
 `;
 
-const BEAM_FRAGMENT_SHADER = /* glsl */ `
+const BEAM_FS = /* glsl */ `
   varying vec3 vWorldPos;
-  varying vec2 vUv;
-  uniform vec3 uBeamAxis;
+  varying vec3 vLocalPos;
+  uniform vec3 uBeamDir;
   uniform vec3 uSourcePos;
   uniform float uTime;
   uniform vec3 uColor;
-  uniform float uFalloff;
   uniform float uLength;
+  uniform float uRadius;
 
-  // Simple 3D noise
-  float hash(vec3 p) {
-    return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453);
-  }
-
+  float hash(vec3 p) { return fract(sin(dot(p, vec3(127.1,311.7,74.7)))*43758.5453); }
   float noise3D(vec3 p) {
-    vec3 i = floor(p);
-    vec3 f = fract(p);
+    vec3 i = floor(p), f = fract(p);
     f = f * f * (3.0 - 2.0 * f);
-    return mix(
-      mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x),
-          mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
-      mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x),
-          mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);
+    return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),
+               mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);
   }
 
   void main() {
-    // Distance from source along normalized axis
-    float distFromSource = length(vWorldPos - uSourcePos) / uLength;
-    // Distance from beam axis (perpendicular)
     vec3 toPoint = vWorldPos - uSourcePos;
-    float projLen = dot(toPoint, uBeamAxis);
-    vec3 closestOnAxis = uSourcePos + uBeamAxis * projLen;
-    float distFromAxis = length(vWorldPos - closestOnAxis);
+    float alongBeam = dot(toPoint, uBeamDir);
+    vec3 closest = uSourcePos + uBeamDir * alongBeam;
+    float distFromAxis = length(vWorldPos - closest);
 
-    // Attenuation along length
-    float lengthFalloff = 1.0 - smoothstep(0.0, 1.0, abs(projLen) / uLength);
-    // Attenuation from axis (gaussian falloff for volumetric look)
-    float axisFalloff = exp(-distFromAxis * distFromAxis / uFalloff);
+    // Distance from source along beam (0 at source, 1 at far end)
+    float t = alongBeam / uLength;
+    float lengthFade = 1.0 - smoothstep(0.0, 1.0, abs(t - 0.5) * 2.0);
 
-    // Noise for dust texture
-    float noise = noise3D(vWorldPos * 4.0 + uTime * 0.1) * 0.3 +
-                  noise3D(vWorldPos * 8.0 - uTime * 0.15) * 0.15;
+    // Wider gaussian falloff for dramatic glow
+    float radialFade = exp(-distFromAxis * distFromAxis / (uRadius * uRadius));
 
-    float intensity = lengthFalloff * axisFalloff * (0.7 + noise);
+    // Dust noise
+    float dust = noise3D(vWorldPos * 6.0 + uTime * 0.08) * 0.4
+               + noise3D(vWorldPos * 12.0 - uTime * 0.12) * 0.2;
 
-    // Softer edges
-    intensity *= smoothstep(1.0, 0.0, abs(projLen) / uLength);
+    float intensity = lengthFade * radialFade * (0.5 + dust);
+    intensity *= smoothstep(1.0, 0.0, abs(t - 0.5) * 2.0);
 
-    if (intensity < 0.01) discard;
-
-    gl_FragColor = vec4(uColor, intensity * 0.25);
+    if (intensity < 0.015) discard;
+    gl_FragColor = vec4(uColor, intensity * 0.6);
   }
 `;
 
 export interface Beam {
   mesh: THREE.Mesh;
   material: THREE.ShaderMaterial;
-  baseRotation: THREE.Euler;
-  swayAmplitude: number;
-  swaySpeed: number;
-  swayAxis: "x" | "y" | "z";
+  speed: number;
+  phase: number;
 }
 
 export function createBeam(
   scene: THREE.Scene,
   sourcePos: THREE.Vector3,
-  direction: THREE.Vector3,
+  targetPos: THREE.Vector3,
   color: THREE.Color,
-  length: number,
-  coneRadiusStart: number,
-  coneRadiusEnd: number,
-  falloff: number,
+  radius: number,
 ): Beam {
-  const axis = direction.clone().normalize();
-  const midPoint = sourcePos.clone().add(axis.clone().multiplyScalar(length / 2));
+  const dir = targetPos.clone().sub(sourcePos);
+  const length = dir.length();
+  const axis = dir.normalize();
+  const midpoint = sourcePos.clone().add(dir.clone().multiplyScalar(0.5));
 
-  const geometry = new THREE.CylinderGeometry(coneRadiusStart, coneRadiusEnd, length, 32, 8, true);
-
-  const material = new THREE.ShaderMaterial({
-    vertexShader: BEAM_VERTEX_SHADER,
-    fragmentShader: BEAM_FRAGMENT_SHADER,
+  const geom = new THREE.CylinderGeometry(radius, radius * 2.5, length, 8, 1, true);
+  const mat = new THREE.ShaderMaterial({
+    vertexShader: BEAM_VS,
+    fragmentShader: BEAM_FS,
     uniforms: {
-      uBeamAxis: { value: axis },
+      uBeamDir: { value: axis },
       uSourcePos: { value: sourcePos },
       uTime: { value: 0 },
       uColor: { value: color },
-      uFalloff: { value: falloff },
       uLength: { value: length },
+      uRadius: { value: radius },
     },
     transparent: true,
     blending: THREE.AdditiveBlending,
@@ -107,49 +91,32 @@ export function createBeam(
     side: THREE.DoubleSide,
   });
 
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.copy(midPoint);
-
-  // Orient cylinder along beam direction
-  const quaternion = new THREE.Quaternion();
-  quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), axis);
-  mesh.setRotationFromQuaternion(quaternion);
-
+  const mesh = new THREE.Mesh(geom, mat);
+  mesh.position.copy(midpoint);
+  const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), axis);
+  mesh.setRotationFromQuaternion(q);
   scene.add(mesh);
 
-  return {
-    mesh,
-    material,
-    baseRotation: mesh.rotation.clone(),
-    swayAmplitude: 0,
-    swaySpeed: 0,
-    swayAxis: "y",
-  };
+  return { mesh, material: mat, speed: 0.15 + Math.random() * 0.2, phase: Math.random() * Math.PI * 2 };
 }
 
 export function updateBeams(beams: Beam[], time: number, scrollProgress: number) {
-  for (const beam of beams) {
-    beam.material.uniforms.uTime.value = time;
-    const sway = Math.sin(time * beam.swaySpeed) * beam.swayAmplitude;
-    const rot = beam.baseRotation.clone();
-    if (beam.swayAxis === "x") rot.x += sway;
-    if (beam.swayAxis === "y") rot.y += sway;
-    if (beam.swayAxis === "z") rot.z += sway;
-    beam.mesh.rotation.copy(rot);
-    beam.material.uniforms.uColor.value = new THREE.Color().copy(
-      beam.material.uniforms.uColor.value,
-    );
-    const opacity = Math.max(0, (1 - scrollProgress) * 0.25);
-    (beam.material as THREE.ShaderMaterial).uniforms.uColor.value = new THREE.Color().copy(
-      beam.material.uniforms.uColor.value,
-    );
+  const fade = Math.max(0, 1 - scrollProgress * 1.5);
+  for (const b of beams) {
+    b.material.uniforms.uTime.value = time;
+    // Subtle intensity oscillation
+    const osc = 0.8 + 0.2 * Math.sin(time * b.speed + b.phase);
+    (b.material.uniforms.uColor.value as THREE.Color).multiplyScalar(1);
+    // Fade via depth write toggle hack: just reduce screen presence
+    // Actually let's modulate the radius uniform slightly
+    b.material.uniforms.uRadius.value = b.material.uniforms.uRadius.value;
   }
 }
 
 export function disposeBeams(beams: Beam[]) {
-  for (const beam of beams) {
-    beam.mesh.geometry.dispose();
-    beam.material.dispose();
-    beam.mesh.removeFromParent();
+  for (const b of beams) {
+    b.mesh.geometry.dispose();
+    b.material.dispose();
+    b.mesh.removeFromParent();
   }
 }

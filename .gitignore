@@ -66,3 +66,6 @@ next-env.d.ts
 # agent skills & clawhub
 .agents/
 .clawhub/
+
+# playwright browser artifacts
+.playwright-mcp/

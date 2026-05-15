@@ -1,37 +1,44 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useThreeJSScene } from "@/hooks/useThreeJSScene";
 
-export default function ThreeHero() {
+interface ThreeHeroProps {
+  onWebGLActive?: (active: boolean) => void;
+}
+
+export default function ThreeHero({ onWebGLActive }: ThreeHeroProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { initScene, startAnimationLoop, dispose } = useThreeJSScene(canvasRef);
   const [webGLSupported, setWebGLSupported] = useState(true);
   const [sceneReady, setSceneReady] = useState(false);
 
+  const handleReady = useCallback(() => {
+    setSceneReady(true);
+    onWebGLActive?.(true);
+  }, [onWebGLActive]);
+
+  const { init, startLoop, dispose } = useThreeJSScene(canvasRef, handleReady);
+
   useEffect(() => {
-    // WebGL feature detection
     try {
       const testCanvas = document.createElement("canvas");
-      const gl =
-        testCanvas.getContext("webgl2") || testCanvas.getContext("webgl");
+      const gl = testCanvas.getContext("webgl2") || testCanvas.getContext("webgl");
       if (!gl) {
         setWebGLSupported(false);
+        onWebGLActive?.(false);
         return;
       }
     } catch {
       setWebGLSupported(false);
+      onWebGLActive?.(false);
       return;
     }
 
-    initScene();
-    startAnimationLoop();
-    setSceneReady(true);
+    init();
+    startLoop();
 
-    return () => {
-      dispose();
-    };
-  }, [initScene, startAnimationLoop, dispose]);
+    return () => { dispose(); };
+  }, [init, startLoop, dispose, onWebGLActive]);
 
   if (!webGLSupported) return null;
 
@@ -40,12 +47,10 @@ export default function ThreeHero() {
       ref={canvasRef}
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
+        top: 0, left: 0,
+        width: "100vw", height: "100vh",
         pointerEvents: "none",
-        zIndex: 0,
+        zIndex: 5,
         opacity: sceneReady ? 1 : 0,
         transition: "opacity 1.5s ease-in",
       }}

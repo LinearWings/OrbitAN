@@ -4,16 +4,18 @@ let particleTexture: THREE.Texture | null = null;
 
 function getParticleTexture(): THREE.Texture {
   if (particleTexture) return particleTexture;
-  const size = 64;
+  const size = 128;
   const canvas = document.createElement("canvas");
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext("2d")!;
+  // Sharp bright core with soft falloff
   const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
   gradient.addColorStop(0, "rgba(255,255,255,1)");
-  gradient.addColorStop(0.08, "rgba(255,255,255,0.95)");
-  gradient.addColorStop(0.25, "rgba(255,255,255,0.6)");
-  gradient.addColorStop(0.5, "rgba(255,255,255,0.15)");
+  gradient.addColorStop(0.02, "rgba(255,255,255,1)");
+  gradient.addColorStop(0.1, "rgba(255,255,255,0.85)");
+  gradient.addColorStop(0.3, "rgba(255,255,255,0.4)");
+  gradient.addColorStop(0.6, "rgba(255,255,255,0.06)");
   gradient.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, size, size);
@@ -28,83 +30,59 @@ export interface Particle {
   phase: number;
   speed: number;
   amplitude: number;
-  riseSpeed: number;
-  color: THREE.Color;
 }
 
-const COLORS = {
-  blue: new THREE.Color("#3B82F6"),
-  amber: new THREE.Color("#F59E0B"),
-  white: new THREE.Color("#FFFFFF"),
-};
+const COLORS = [
+  new THREE.Color("#3B82F6"),
+  new THREE.Color("#60A5FA"),
+  new THREE.Color("#93BBFD"),
+  new THREE.Color("#F59E0B"),
+  new THREE.Color("#FBBF24"),
+  new THREE.Color("#FFFFFF"),
+  new THREE.Color("#A5B4FC"),
+];
 
 export function createParticleField(scene: THREE.Scene): Particle[] {
   const texture = getParticleTexture();
   const particles: Particle[] = [];
-  const count = 200;
+  const count = 250;
 
   for (let i = 0; i < count; i++) {
-    const group = i < 120 ? "firefly" : i < 180 ? "star" : "dust";
     const material = new THREE.SpriteMaterial({
       map: texture,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
       depthTest: true,
       transparent: true,
-      opacity: group === "star" ? 0.5 : 0.7,
+      opacity: 0.9,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
     });
 
     const sprite = new THREE.Sprite(material);
+
+    // Distribute in a large ellipsoid shell
     const phi = Math.acos(2 * Math.random() - 1);
     const theta = Math.random() * Math.PI * 2;
-    const radius =
-      group === "firefly"
-        ? 4 + Math.random() * 6
-        : group === "star"
-          ? 15 + Math.random() * 10
-          : 3 + Math.random() * 4;
+    const baseRadius = 5 + Math.random() * 16;
 
-    const x = radius * Math.sin(phi) * Math.cos(theta);
-    const y = radius * Math.sin(phi) * Math.sin(theta);
-    const z = radius * Math.cos(phi);
+    const basePosition = new THREE.Vector3(
+      baseRadius * Math.sin(phi) * Math.cos(theta),
+      baseRadius * Math.sin(phi) * Math.sin(theta),
+      baseRadius * Math.cos(phi) * 0.6 - 2,
+    );
 
-    const basePosition = new THREE.Vector3(x, y, z);
-
-    const colorRand = Math.random();
-    const color =
-      group === "star"
-        ? colorRand < 0.3
-          ? COLORS.amber
-          : colorRand < 0.6
-            ? COLORS.blue
-            : COLORS.white
-        : colorRand < 0.7
-          ? COLORS.blue
-          : colorRand < 0.9
-            ? COLORS.amber
-            : COLORS.white;
-
-    material.color = color;
-
-    const size =
-      group === "firefly"
-        ? 0.04 + Math.random() * 0.1
-        : group === "star"
-          ? 0.02 + Math.random() * 0.04
-          : 0.06 + Math.random() * 0.12;
-    sprite.scale.set(size, size, 1);
+    // Larger sprites for visibility
+    const s = 0.15 + Math.random() * 0.6;
+    sprite.scale.set(s, s, 1);
     sprite.position.copy(basePosition);
 
     scene.add(sprite);
-
     particles.push({
       sprite,
       basePosition,
       phase: Math.random() * Math.PI * 2,
-      speed: 0.3 + Math.random() * 0.7,
-      amplitude: 0.1 + Math.random() * 0.4,
-      riseSpeed: 0.02 + Math.random() * 0.06,
-      color,
+      speed: 0.3 + Math.random() * 1.2,
+      amplitude: 0.15 + Math.random() * 0.7,
     });
   }
 
@@ -118,30 +96,20 @@ export function updateParticles(
   mouseY: number,
   scrollProgress: number,
 ) {
-  const parallaxX = mouseX * 0.5;
-  const parallaxY = mouseY * 0.3;
+  const parallaxX = mouseX * 2.0;
+  const parallaxY = mouseY * 1.5;
 
   for (const p of particles) {
-    const oscillation = Math.sin(time * p.speed + p.phase) * p.amplitude;
+    const osc = Math.sin(time * p.speed + p.phase) * p.amplitude;
+    const depthFactor = (p.basePosition.z + 8) / 12;
 
-    p.sprite.position.x =
-      p.basePosition.x + oscillation * 0.3 + parallaxX * (1 - p.basePosition.z / 15);
-    p.sprite.position.y =
-      p.basePosition.y +
-      Math.sin(time * 0.3 + p.phase) * p.amplitude * 0.5 +
-      (time * p.riseSpeed * 0.05) +
-      parallaxY * (1 - p.basePosition.z / 15);
-    p.sprite.position.z = p.basePosition.z + oscillation * 0.2;
+    p.sprite.position.x = p.basePosition.x + osc * 0.5 + parallaxX * depthFactor;
+    p.sprite.position.y = p.basePosition.y + Math.cos(time * 0.5 + p.phase) * p.amplitude * 0.4 + parallaxY * depthFactor;
+    p.sprite.position.z = p.basePosition.z + osc * 0.3;
 
-    // Opacity flicker
-    const flicker =
-      0.6 +
-      0.4 * Math.sin(time * p.speed * 1.5 + p.phase) * Math.sin(time * p.speed * 0.7 + p.phase);
-    const scrollFade = 1 - scrollProgress;
-    (p.sprite.material as THREE.SpriteMaterial).opacity = Math.max(
-      0,
-      flicker * scrollFade * 0.7,
-    );
+    const flicker = 0.3 + 0.7 * Math.abs(Math.sin(time * p.speed * 0.7 + p.phase));
+    const scrollFade = 1 - scrollProgress * 1.5;
+    (p.sprite.material as THREE.SpriteMaterial).opacity = Math.max(0, flicker * scrollFade * 0.85);
   }
 }
 

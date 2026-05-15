@@ -426,6 +426,7 @@ export default function LandingPage() {
 
   const [dateStr, setDateStr] = useState("");
   const [utcStr, setUtcStr] = useState("");
+  const [threeActive, setThreeActive] = useState(false);
 
   useEffect(() => {
     const now = new Date();
@@ -447,7 +448,7 @@ export default function LandingPage() {
   return (
     <div style={{ background: "#06080D", color: "rgba(255,255,255,0.85)" }}>
       {/* ══════ Deep Space Layer (global, fixed) — Three.js 3D Scene ══════ */}
-      <ThreeHero />
+      <ThreeHero onWebGLActive={setThreeActive} />
       {/* CSS fallback layers (behind Three.js canvas, visible when WebGL unsupported) */}
       <NebulaGlow />
       <StarField />
@@ -474,13 +475,15 @@ export default function LandingPage() {
         </div>
 
         {/* Central clock — CSS fallback (hidden when Three.js active) */}
-        <div style={{
-          position: "relative",
-          zIndex: 25,
-          animation: "fade-in 0.8s ease-out forwards",
-        }}>
-          <LiveClock />
-        </div>
+        {!threeActive && (
+          <div style={{
+            position: "relative",
+            zIndex: 25,
+            animation: "fade-in 0.8s ease-out forwards",
+          }}>
+            <LiveClock />
+          </div>
+        )}
 
         {/* Status indicators below clock */}
         <div style={{
