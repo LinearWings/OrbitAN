@@ -1,136 +1,134 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
+
+/* Lusion-quality interactive particle canvas.
+   120 particles, organic drift, mouse-aware,
+   constellation connections, glowing halos. */
 
 interface Particle {
   x: number; y: number;
   vx: number; vy: number;
-  r: number;
-  baseOpacity: number;
-  color: string;
+  size: number;
+  baseAlpha: number;
+  color: [number, number, number]; // RGB
   phase: number;
+  freq: number;
 }
 
-/* Canvas 2D interactive particle field — atmospheric hero visual.
-   Blue+amber particles, subtle connections, mouse-aware. */
+const BLUE: [number, number, number] = [59, 130, 246];
+const AMBER: [number, number, number] = [245, 158, 11];
+const WHITE: [number, number, number] = [180, 200, 240];
 
 export default function HeroVisual() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Particle[]>([]);
-  const mouseRef = useRef({ x: -999, y: -999 });
-  const animRef = useRef(0);
-
-  const init = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const dpr = Math.min(window.devicePixelRatio, 2);
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = `${w}px`;
-    canvas.style.height = `${h}px`;
-
-    const ctx = canvas.getContext("2d")!;
-    ctx.scale(dpr, dpr);
-
-    const count = 70;
-    const ps: Particle[] = [];
-    for (let i = 0; i < count; i++) {
-      const blue = Math.random() < 0.6;
-      ps.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25 - 0.08,
-        r: 0.6 + Math.random() * 2.2,
-        baseOpacity: 0.15 + Math.random() * 0.35,
-        color: blue ? "59,130,246" : "245,158,11",
-        phase: Math.random() * Math.PI * 2,
-      });
-    }
-    particlesRef.current = ps;
-  }, []);
+  const cRef = useRef<HTMLCanvasElement>(null);
+  const psRef = useRef<Particle[]>([]);
+  const mouseRef = useRef({ x: -500, y: -500, tx: -500, ty: -500 });
+  const rafRef = useRef(0);
 
   useEffect(() => {
-    init();
-
-    const onMouse = (e: MouseEvent) => {
-      mouseRef.current.x = e.clientX;
-      mouseRef.current.y = e.clientY;
-    };
-    const onResize = () => init();
-    window.addEventListener("mousemove", onMouse, { passive: true });
-    window.addEventListener("resize", onResize);
-
-    const canvas = canvasRef.current;
+    const canvas = cRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d")!;
-    const dpr = Math.min(window.devicePixelRatio, 2);
+
+    const setup = () => {
+      const dpr = Math.min(window.devicePixelRatio, 2);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    setup();
+
+    // Create particles
+    const ps: Particle[] = [];
+    for (let i = 0; i < 120; i++) {
+      const r = Math.random();
+      ps.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3 - 0.05,
+        size: 0.4 + Math.random() * 2.8,
+        baseAlpha: 0.08 + Math.random() * 0.35,
+        color: r < 0.55 ? BLUE : r < 0.75 ? AMBER : WHITE,
+        phase: Math.random() * Math.PI * 2,
+        freq: 0.3 + Math.random() * 0.8,
+      });
+    }
+    psRef.current = ps;
 
     let prevT = 0;
-    const draw = (t: number) => {
-      animRef.current = requestAnimationFrame(draw);
-      const dt = Math.min(50, t - prevT) / 1000;
+    const animate = (t: number) => {
+      rafRef.current = requestAnimationFrame(animate);
+      const dt = Math.min(60, t - prevT) / 1000;
       prevT = t;
 
       const w = window.innerWidth;
       const h = window.innerHeight;
-      ctx.clearRect(0, 0, w * dpr, h * dpr);
-      ctx.save();
-      ctx.scale(dpr, dpr);
-
-      const ps = particlesRef.current;
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
+      const tSec = t * 0.001;
 
-      // Update & draw particles
+      ctx.clearRect(0, 0, w, h);
+
+      // Update & draw
       for (const p of ps) {
-        p.x += p.vx * dt * 60;
-        p.y += p.vy * dt * 60;
-        if (p.x < -20) p.x = w + 20;
-        if (p.x > w + 20) p.x = -20;
-        if (p.y < -20) p.y = h + 20;
-        if (p.y > h + 20) p.y = -20;
+        // Organic drift
+        p.vx += (Math.sin(tSec * p.freq + p.phase) * 0.04) * dt;
+        p.vy += (Math.cos(tSec * p.freq * 0.7 + p.phase) * 0.04 - 0.015) * dt;
+        p.vx *= 0.998;
+        p.vy *= 0.998;
 
-        // Subtle mouse attraction
+        // Mouse attraction (gentle)
         const dx = mx - p.x;
         const dy = my - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 180 && mx > 0) {
-          const force = (1 - dist / 180) * 0.015;
-          p.vx += dx * force * dt;
-          p.vy += dy * force * dt;
-          // Damp
-          p.vx *= 0.995;
-          p.vy *= 0.995;
+        if (dist < 200 && mx > 0) {
+          const force = (1 - dist / 200) * 0.02 * dt;
+          p.vx += dx * force;
+          p.vy += dy * force;
         }
 
-        // Opacity pulse
-        const pulse = Math.sin(t * 0.001 + p.phase) * 0.3 + 0.7;
-        const alpha = p.baseOpacity * pulse;
+        p.x += p.vx * dt * 60;
+        p.y += p.vy * dt * 60;
 
-        // Draw glow circle
-        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-        gradient.addColorStop(0, `rgba(${p.color},${alpha})`);
-        gradient.addColorStop(0.3, `rgba(${p.color},${alpha * 0.5})`);
-        gradient.addColorStop(1, `rgba(${p.color},0)`);
-        ctx.fillStyle = gradient;
+        // Wrap
+        if (p.x < -30) p.x = w + 30;
+        if (p.x > w + 30) p.x = -30;
+        if (p.y < -30) p.y = h + 30;
+        if (p.y > h + 30) p.y = -30;
+
+        // Draw glow
+        const pulse = Math.sin(tSec * p.freq * 1.3 + p.phase) * 0.35 + 0.65;
+        const alpha = p.baseAlpha * pulse;
+        const [cr, cg, cb] = p.color;
+        const sz = p.size * 5;
+
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, sz);
+        grad.addColorStop(0, `rgba(${cr},${cg},${cb},${alpha})`);
+        grad.addColorStop(0.25, `rgba(${cr},${cg},${cb},${alpha * 0.5})`);
+        grad.addColorStop(0.6, `rgba(${cr},${cg},${cb},${alpha * 0.08})`);
+        grad.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
+        ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, sz, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Draw connections between nearby particles
+      // Constellation lines
       for (let i = 0; i < ps.length; i++) {
         for (let j = i + 1; j < ps.length; j++) {
           const dx = ps[i].x - ps[j].x;
           const dy = ps[i].y - ps[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 100) {
-            const alpha = (1 - dist / 100) * 0.06;
+          if (dist < 110) {
+            const alpha = (1 - dist / 110) * 0.05;
             ctx.strokeStyle = `rgba(59,130,246,${alpha})`;
-            ctx.lineWidth = 0.3;
+            ctx.lineWidth = 0.4;
             ctx.beginPath();
             ctx.moveTo(ps[i].x, ps[i].y);
             ctx.lineTo(ps[j].x, ps[j].y);
@@ -138,30 +136,37 @@ export default function HeroVisual() {
           }
         }
       }
-
-      ctx.restore();
     };
 
-    animRef.current = requestAnimationFrame(draw);
+    rafRef.current = requestAnimationFrame(animate);
+
+    const onMouse = (e: MouseEvent) => {
+      mouseRef.current.tx = e.clientX;
+      mouseRef.current.ty = e.clientY;
+    };
+    const onResize = () => setup();
+    window.addEventListener("mousemove", onMouse, { passive: true });
+    window.addEventListener("resize", onResize);
+
+    // Smooth mouse interpolation
+    const smoothMouse = () => {
+      mouseRef.current.x += (mouseRef.current.tx - mouseRef.current.x) * 0.08;
+      mouseRef.current.y += (mouseRef.current.ty - mouseRef.current.y) * 0.08;
+      requestAnimationFrame(smoothMouse);
+    };
+    const smId = requestAnimationFrame(smoothMouse);
+
     return () => {
-      cancelAnimationFrame(animRef.current);
+      cancelAnimationFrame(rafRef.current);
+      cancelAnimationFrame(smId);
       window.removeEventListener("mousemove", onMouse);
       window.removeEventListener("resize", onResize);
     };
-  }, [init]);
+  }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 0,
-      }}
-      aria-hidden="true"
-    />
+    <canvas ref={cRef} aria-hidden="true"
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%",
+        pointerEvents: "none", zIndex: 0, opacity: 0.85 }} />
   );
 }

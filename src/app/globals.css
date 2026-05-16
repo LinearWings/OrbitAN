@@ -496,7 +496,7 @@ html:has(.landing), body:has(.landing) {
 .l-hero {
   position: relative; min-height: 100vh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: clamp(1.5rem, 5vh, 4rem) clamp(1rem, 3vw, 2rem);
+  padding: clamp(2rem, 6vh, 5rem) clamp(1rem, 4vw, 3rem);
   text-align: center; overflow: hidden;
 }
 .l-hero-center {
@@ -570,7 +570,7 @@ html:has(.landing), body:has(.landing) {
   color: rgba(255,255,255,0.82);
   margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
 }
-.l-reel-line { display: block; }
+.l-reel-l { display: block; }
 
 .l-reel-desc {
   display: flex; justify-content: space-between; align-items: flex-end;
@@ -586,138 +586,138 @@ html:has(.landing), body:has(.landing) {
 /* ══════ FEATURED ══════ */
 .l-feat {
   position: relative; z-index: 1;
-  padding: clamp(4rem, 12vh, 8rem) clamp(1.25rem, 5vw, 4rem);
+  padding: clamp(7rem, 18vh, 14rem) clamp(1.5rem, 6vw, 5rem);
 }
-.l-feat-inner { max-width: 1150px; margin: 0 auto; }
+.l-feat-inner { max-width: 1300px; margin: 0 auto; }
 
 .l-feat-top {
   display: flex; justify-content: space-between; align-items: flex-start;
-  flex-wrap: wrap; gap: 1.5rem;
-  margin-bottom: clamp(3rem, 7vh, 5rem);
+  flex-wrap: wrap; gap: 2rem;
+  margin-bottom: clamp(4rem, 10vh, 8rem);
 }
 .l-feat-h3 {
   font-family: "Clash Display", sans-serif;
-  font-size: clamp(2rem, 4.5vw, 4.5rem);
-  font-weight: 600; line-height: 1.06; letter-spacing: -0.02em;
-  color: rgba(255,255,255,0.8);
+  font-size: clamp(2.2rem, 5vw, 5rem);
+  font-weight: 600; line-height: 1.04; letter-spacing: -0.025em;
+  color: rgba(255,255,255,0.78);
 }
 .l-feat-disc {
   font-family: "JetBrains Mono", monospace;
   font-size: 0.5rem; letter-spacing: 0.18em;
-  color: rgba(255,255,255,0.12); text-transform: uppercase;
-  max-width: 200px; line-height: 1.8;
+  color: rgba(255,255,255,0.08); text-transform: uppercase;
+  max-width: 260px; line-height: 2;
+  padding-top: 0.5rem;
 }
 
 .l-feat-grid {
   display: grid; grid-template-columns: 1fr;
-  border-top: 1px solid rgba(255,255,255,0.04);
+  border-top: 1px solid rgba(255,255,255,0.025);
+}
+@media (min-width: 768px) { .l-feat-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* Feature card — Lusion project-card style */
+.fcd {
+  padding: clamp(2.5rem, 5vw, 4.5rem) clamp(1.2rem, 3vw, 2.5rem);
+  border-bottom: 1px solid rgba(255,255,255,0.025);
+  transition: background 0.4s ease;
 }
 @media (min-width: 768px) {
-  .l-feat-grid { grid-template-columns: repeat(3, 1fr); }
+  .fcd { border-bottom: none; border-right: 1px solid rgba(255,255,255,0.025); }
+  .fcd:last-child { border-right: none; }
 }
-
-.l-fcard {
-  padding: clamp(2rem, 4vw, 3.5rem) clamp(1rem, 2.5vw, 2rem);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  transition: background 0.3s ease, border-color 0.3s ease;
-}
-@media (min-width: 768px) {
-  .l-fcard { border-bottom: none; border-right: 1px solid rgba(255,255,255,0.04); }
-  .l-fcard:last-child { border-right: none; }
-}
-.l-fcard:hover { background: rgba(255,255,255,0.012); border-color: rgba(59,130,246,0.1); }
-
-.l-fcard-top { margin-bottom: 1.5rem; }
-.l-fcard-n {
+.fcd:hover { background: rgba(255,255,255,0.01); }
+.fcd-line1 {
   font-family: "JetBrains Mono", monospace;
-  font-size: 0.625rem; letter-spacing: 0.15em; color: rgba(59,130,246,0.25);
+  font-size: 0.5rem; letter-spacing: 0.16em;
+  color: rgba(255,255,255,0.07); text-transform: uppercase;
+  margin-bottom: 1.8rem; line-height: 1.6;
 }
-.l-fcard-tag {
-  display: block;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 0.5rem; letter-spacing: 0.2em;
-  color: rgba(255,255,255,0.1); text-transform: uppercase;
-  margin-bottom: 0.85rem;
-}
-.l-fcard-h4 {
+.fcd-title {
   font-family: "Clash Display", sans-serif;
-  font-size: clamp(1.1rem, 1.7vw, 1.4rem);
-  font-weight: 600; line-height: 1.12; color: rgba(255,255,255,0.7);
-  margin-bottom: 0.65rem;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 600; line-height: 1.1; color: rgba(255,255,255,0.65);
+  margin-bottom: 0.75rem;
 }
-.l-fcard-p {
+.fcd-desc {
   font-family: "Satoshi", sans-serif;
-  font-size: 0.8125rem; line-height: 1.7; color: rgba(255,255,255,0.16);
+  font-size: 0.8125rem; line-height: 1.7; color: rgba(255,255,255,0.12);
 }
 
-/* ══════ TUNNEL (Step into a new world) ══════ */
+/* ══════ TUNNEL ══════ */
 .l-tunnel {
   position: relative; z-index: 1;
   background: #020408;
-  padding: clamp(5rem, 16vh, 12rem) clamp(1.25rem, 5vw, 4rem);
+  padding: clamp(7rem, 20vh, 16rem) clamp(1.5rem, 6vw, 5rem);
 }
-.l-tunnel-inner { max-width: 950px; margin: 0 auto; }
+.l-tunnel-inner { max-width: 1000px; margin: 0 auto; }
 
 .l-tunnel-title {
-  display: flex; flex-direction: column; gap: clamp(1.5rem, 4vh, 2.5rem);
+  display: flex; flex-direction: column;
+  gap: clamp(2rem, 5vh, 3.5rem);
 }
-.l-tunnel-line {
-  display: flex; align-items: center; gap: clamp(1rem, 3vw, 2rem);
-  padding-bottom: clamp(1rem, 2.5vh, 2rem);
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+.l-tunnel-row {
+  display: flex; align-items: center; gap: clamp(1.2rem, 4vw, 3rem);
+  padding-bottom: clamp(1.5rem, 3.5vh, 3rem);
+  border-bottom: 1px solid rgba(255,255,255,0.022);
 }
-.l-tunnel-line:last-child { border-bottom: none; padding-bottom: 0; }
+.l-tunnel-row:last-child { border-bottom: none; padding-bottom: 0; }
 .l-tunnel-time {
   font-family: "JetBrains Mono", monospace;
-  font-size: clamp(1rem, 2vw, 1.5rem);
-  color: rgba(245,158,11,0.3); letter-spacing: 0.05em;
-  min-width: 2.5rem;
+  font-size: clamp(1.2rem, 2.5vw, 2rem);
+  color: rgba(245,158,11,0.2); letter-spacing: 0.06em;
+  min-width: 3rem;
 }
 .l-tunnel-word {
   font-family: "Clash Display", sans-serif;
-  font-size: clamp(1.2rem, 2.5vw, 2rem);
-  font-weight: 600; color: rgba(255,255,255,0.6);
+  font-size: clamp(1.5rem, 3.2vw, 2.8rem);
+  font-weight: 600; color: rgba(255,255,255,0.5);
   white-space: nowrap;
 }
-.l-tunnel-pipe {
-  flex: 1; height: 1px; background: rgba(255,255,255,0.04);
-}
+.l-tunnel-pipe { flex: 1; height: 1px; background: rgba(255,255,255,0.022); }
 .l-tunnel-desc {
   font-family: "Satoshi", sans-serif;
   font-size: clamp(0.75rem, 1vw, 0.875rem);
-  color: rgba(255,255,255,0.12); max-width: 280px; text-align: right;
+  color: rgba(255,255,255,0.08); max-width: 260px; text-align: right;
   line-height: 1.5;
 }
+
+/* ══════ DUAL-LINK (character clone hover) ══════ */
+.dual-link {
+  display: inline-flex; text-decoration: none;
+  font-family: "Clash Display", sans-serif;
+  font-size: clamp(2.2rem, 6vw, 5.5rem);
+  font-weight: 600; letter-spacing: -0.02em; line-height: 1.04;
+  color: rgba(255,255,255,0.78);
+  margin-bottom: clamp(2.5rem, 5vh, 3.5rem);
+}
+.dl-wrap { display: inline-block; position: relative; }
+.dl-char { display: inline-block; position: relative; z-index: 2; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.dl-clone { display: inline-block; position: absolute; top: 0.3em; left: 0.18em; z-index: 1; color: rgba(59,130,246,0.1); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.dl-wrap:hover .dl-char { transform: translateY(-3px); }
+.dl-wrap:hover .dl-clone { transform: translateY(4px); }
 
 /* ══════ END CTA ══════ */
 .l-end {
   position: relative; z-index: 1;
   min-height: 90vh;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: clamp(3rem, 10vh, 7rem) clamp(1rem, 3vw, 2rem);
+  padding: clamp(4rem, 12vh, 8rem) clamp(1rem, 3vw, 2rem);
 }
 .l-end-inner {
   display: flex; flex-direction: column; align-items: center; text-align: center;
 }
-.l-end-crosses { margin-bottom: clamp(2rem, 5vh, 3.5rem); }
+.l-end-crosses { margin-bottom: clamp(2.5rem, 6vh, 4.5rem); }
 .l-end-p {
   font-family: "Satoshi", sans-serif;
   font-size: clamp(0.8125rem, 1.1vw, 0.9375rem);
-  color: rgba(255,255,255,0.15); margin-bottom: 0.5rem;
-}
-.l-end-h2 {
-  font-family: "Clash Display", sans-serif;
-  font-size: clamp(2rem, 5.5vw, 5rem);
-  font-weight: 600; letter-spacing: -0.02em; line-height: 1.04;
-  color: rgba(255,255,255,0.8);
-  margin-bottom: clamp(2.5rem, 5vh, 3.5rem);
+  color: rgba(255,255,255,0.12); margin-bottom: 0.5rem;
 }
 .l-end-status {
   display: flex; align-items: center; gap: 8px;
   margin-top: clamp(1.5rem, 3vh, 2.5rem);
   font-family: "JetBrains Mono", monospace;
   font-size: 0.5625rem; letter-spacing: 0.25em;
-  color: rgba(255,255,255,0.08); text-transform: uppercase;
+  color: rgba(255,255,255,0.06); text-transform: uppercase;
 }
 
 /* ══════ FOOTER ══════ */
