@@ -1,116 +1,93 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
 import LiveClock from "@/components/landing/LiveClock";
+import HeroVisual from "@/components/landing/HeroVisual";
 
-/* ═══════════════════════════════════════════
-   Lusion.co DNA → Dark Space Landing
-   Typography as architecture.
-   Content first. Motion with purpose.
-   ═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   Lusion.co structure replicated:
+   Hero → Reel-like → Featured-like → Tunnel → End CTA
+   Typography as architecture. Cross marks. Word animation.
+   ═══════════════════════════════════════════════════════ */
 
-/* ── Scroll reveal hook ── */
-function useScrollReveal() {
+/* ── Cross mark SVG ── */
+const Cross = ({ s = 11, o = 0.15 }: { s?: number; o?: number }) => (
+  <svg width={s} height={s} viewBox="0 0 14 14" fill="none"
+    stroke="currentColor" strokeWidth="1" style={{ opacity: o }} aria-hidden="true">
+    <path d="M7 0v14M0 7h14" />
+  </svg>
+);
+
+/* ── Scroll reveal ── */
+function useReveal(t = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
+  const [v, setV] = useState(false);
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  return { ref, visible };
+    const el = ref.current; if (!el) return;
+    const o = new IntersectionObserver(([e]) => { if (e.isIntersecting) setV(true); },
+      { threshold: t, rootMargin: "0px 0px -30px 0px" });
+    o.observe(el); return () => o.disconnect();
+  }, [t]);
+  return { ref, v };
 }
 
-/* ── Counter animation ── */
-function useCountUp(target: number, visible: boolean, duration = 1.2) {
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!visible) return;
-    let start = 0;
-    const step = (ts: number) => {
-      if (!start) start = ts;
-      const progress = Math.min(1, (ts - start) / (duration * 1000));
-      setValue(Math.floor(progress * target));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [target, visible, duration]);
-
-  return value;
-}
-
-/* ── Feature Card ── */
-function FeatureCard({
-  index,
-  tag,
-  title,
-  desc,
-  visible,
-}: {
-  index: number;
-  tag: string;
-  title: string;
-  desc: string;
-  visible: boolean;
-}) {
-  const count = useCountUp(99, visible);
+/* ── Word-by-word reveal text ── */
+function Words({ text, visible, className = "" }: { text: string; visible: boolean; className?: string }) {
   return (
-    <div
-      className="fc"
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(24px)",
-        transition: `opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1) ${index * 0.12}s`,
-      }}
-    >
-      <div className="fc-top">
-        <span className="fc-num">{String(index + 1).padStart(2, "0")}</span>
-        <span className="fc-stat">
-          {count}
-          <span className="fc-stat-unit">%</span>
-        </span>
-      </div>
-      <span className="fc-tag">{tag}</span>
-      <h3 className="fc-title">{title}</h3>
-      <p className="fc-desc">{desc}</p>
-      <div className="fc-line" />
-    </div>
+    <span className={className}>
+      {text.split(" ").map((w, i) => (
+        <span key={i} className="l-word" style={{
+          opacity: visible ? 1 : 0,
+          transform: visible ? "translateY(0)" : "translateY(0.3em)",
+          transition: `opacity 0.5s, transform 0.6s cubic-bezier(0.16,1,0.3,1)`,
+          transitionDelay: `${i * 0.03}s`,
+        }}>{w}{" "}</span>
+      ))}
+    </span>
   );
 }
 
-/* ── Page ── */
+/* ── Character-level dual-layer text (Lusion's "Let's Talk" effect) ── */
+function DualChars({ text, visible }: { text: string; visible: boolean }) {
+  return (
+    <span className="dual-chars">
+      {[...text].map((c, i) => (
+        <span key={i} className="dc-wrapper" style={{
+          opacity: visible ? 1 : 0,
+          transition: `opacity 0.3s ${i * 0.025}s`,
+        }}>
+          <span className="dc-char">{c}</span>
+          <span className="dc-clone" aria-hidden="true">{c}</span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   PAGE
+   ═══════════════════════════════════════════ */
 
 export default function LandingPage() {
   const lang = useLanguage();
   const t = getT(lang);
 
-  const [dateStr, setDateStr] = useState("");
-  const [utcStr, setUtcStr] = useState("");
-  const [currentTime, setCurrentTime] = useState("");
+  const [date, setDate] = useState("");
+  const [utc, setUtc] = useState("");
 
   useEffect(() => {
-    const now = new Date();
-    setDateStr(`${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, "0")}.${String(now.getDate()).padStart(2, "0")}`);
-    setUtcStr(`UTC${now.getTimezoneOffset() <= 0 ? "+" : ""}${-Math.floor(now.getTimezoneOffset() / 60)}`);
-    const tick = () => {
-      const d = new Date();
-      setCurrentTime(`${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`);
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
+    const n = new Date();
+    setDate(`${n.getFullYear()}.${String(n.getMonth()+1).padStart(2,"0")}.${String(n.getDate()).padStart(2,"0")}`);
+    setUtc(`UTC${n.getTimezoneOffset()<=0?"+":""}${-Math.floor(n.getTimezoneOffset()/60)}`);
   }, []);
+
+  const reel = useReveal(0.1);
+  const feat = useReveal(0.1);
+  const tunl = useReveal(0.08);
+  const endC = useReveal(0.05);
 
   const features = [
     { tag: "ORBIT ENGINE", title: t.feature_clock_title, desc: t.feature_clock_desc },
@@ -119,202 +96,218 @@ export default function LandingPage() {
   ];
 
   const steps = [
-    { time: "00", title: t.how_1_title, desc: t.how_1_desc },
-    { time: "06", title: t.how_2_title, desc: t.how_2_desc },
-    { time: "12", title: t.how_3_title, desc: t.how_3_desc },
-    { time: "18", title: t.how_4_title, desc: t.how_4_desc },
+    { t: "00", h: t.how_1_title, d: t.how_1_desc },
+    { t: "06", h: t.how_2_title, d: t.how_2_desc },
+    { t: "12", h: t.how_3_title, d: t.how_3_desc },
+    { t: "18", h: t.how_4_title, d: t.how_4_desc },
   ];
-
-  const featRef = useScrollReveal();
-  const workRef = useScrollReveal();
-  const ctaRef = useScrollReveal();
 
   return (
     <div className="landing">
-      {/* Background */}
-      <div className="landing-bg" aria-hidden="true" />
 
-      {/* ══════ HERO ══════ */}
-      <section className="hero">
-        <div className="hero-center">
-          {/* Clock as hero visual */}
-          <div className="hero-clock-wrap">
-            <div className="hero-orbit-ring" style={{ width: "110%", height: "110%", animationDuration: "60s" }} />
-            <div className="hero-orbit-ring" style={{ width: "125%", height: "125%", animationDuration: "80s", animationDirection: "reverse" }} />
-            <div className="hero-orbit-ring" style={{ width: "140%", height: "140%", animationDuration: "100s" }} />
+      {/* ═══════ HERO ═══════ */}
+      <section className="l-hero">
+        <HeroVisual />
+
+        {/* Center content */}
+        <div className="l-hero-center">
+          {/* Meta data row */}
+          <div className="l-hmeta">
+            <span>{date}</span><span className="l-hsep" />
+            <span>{utc}</span><span className="l-hsep" />
+            <span className="l-hdim">MISSION LOG #003</span>
+          </div>
+
+          {/* Clock — the hero visual anchor */}
+          <div className="l-clock">
+            <div className="l-orbit" style={{ width: "115%", height: "115%", animationDuration: "70s" }} />
+            <div className="l-orbit" style={{ width: "132%", height: "132%", animationDuration: "95s", animationDirection: "reverse" }} />
+            <div className="l-orbit" style={{ width: "150%", height: "150%", animationDuration: "120s" }} />
             <LiveClock />
           </div>
 
-          {/* Meta */}
-          <div className="hero-meta">
-            <span>{dateStr}</span>
-            <span className="hero-meta-sep" />
-            <span>{utcStr}</span>
-            <span className="hero-meta-sep" />
-            <span className="hero-meta-dim">{currentTime}</span>
-          </div>
-
           {/* Headline */}
-          <h1 className="hero-h1">{t.hero_title_1}</h1>
+          <h1 className="l-h1">{t.hero_title_1}</h1>
+          <p className="l-hero-p">{t.hero_desc}</p>
 
-          {/* Description */}
-          <p className="hero-p">{t.hero_desc}</p>
-
-          {/* CTA */}
-          <Link href="/orbit" className="cta">
-            <span className="cta-text">{t.hero_cta}</span>
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
-              <path d="M3 8h10M9 4l4 4-4 4" />
-            </svg>
+          <Link href="/orbit" className="l-cta">
+            <span className="l-cta-t">{t.hero_cta}</span>
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+              <path d="M3 8h10M9 4l4 4-4 4"/></svg>
           </Link>
         </div>
 
-        {/* Bottom scroll indicator */}
-        <div className="hero-bottom">
-          <div className="hero-cross-row" aria-hidden="true">
-            <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.12"><path d="M7 0v14M0 7h14"/></svg>
-            <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.12"><path d="M7 0v14M0 7h14"/></svg>
-            <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.12"><path d="M7 0v14M0 7h14"/></svg>
-            <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.12"><path d="M7 0v14M0 7h14"/></svg>
-            <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.12"><path d="M7 0v14M0 7h14"/></svg>
+        {/* Bottom */}
+        <div className="l-hero-bot">
+          <div className="l-crosses">
+            <Cross /><Cross /><Cross /><Cross /><Cross />
           </div>
-          <span className="hero-scroll">scroll to explore</span>
-          <div className="hero-scroll-bar" />
+          <span className="l-scroll">scroll to explore</span>
+          <div className="l-scroll-bar" />
         </div>
       </section>
 
-      {/* ══════ FEATURES ══════ */}
-      <section className="feat-section" id="features">
-        <div ref={featRef.ref} className="feat-inner">
-          <div className="sec-label">
-            <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.4"><path d="M7 0v14M0 7h14"/></svg>
-            <span>{t.features_title}</span>
-          </div>
-
-          <h2
-            className="sec-h2"
-            style={{
-              opacity: featRef.visible ? 1 : 0,
-              transform: featRef.visible ? "translateY(0)" : "translateY(20px)",
-              transition: "opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          >
-            {lang === "zh" ? "三大核心系统" : "Three Core Systems"}
+      {/* ═══════ REEL (Bold Ideas) ═══════ */}
+      <section className="l-reel">
+        <div ref={reel.ref} className="l-reel-inner">
+          <h2 className="l-reel-h2">
+            <span className="l-reel-line" style={{
+              opacity: reel.v ? 1 : 0,
+              transform: reel.v ? "translateY(0)" : "translateY(20px)",
+              transition: "opacity 0.7s, transform 0.7s cubic-bezier(0.16,1,0.3,1)",
+            }}>
+              {lang === "zh" ? "一日一轨道" : "A Day Is An Orbit"}
+            </span>
+            <span className="l-reel-line" style={{
+              opacity: reel.v ? 1 : 0,
+              transform: reel.v ? "translateY(0)" : "translateY(20px)",
+              transition: "opacity 0.7s 0.1s, transform 0.7s 0.1s cubic-bezier(0.16,1,0.3,1)",
+            }}>
+              {lang === "zh" ? "专注即引力" : "Focus Is Your Gravity"}
+            </span>
           </h2>
 
-          <div className="feat-grid">
+          <div className="l-reel-desc" style={{
+            opacity: reel.v ? 1 : 0,
+            transition: "opacity 0.6s 0.2s",
+          }}>
+            <p>{t.hero_desc}</p>
+            <Link href="/orbit" className="l-dot-cta" style={{ marginTop: "1.5rem" }}>
+              <span className="l-dot" />
+              <span className="l-dot-cta-t">{t.features_title}</span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.3 8h11.4m0 0L8.7 3M13.7 8l-5 5"/></svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ FEATURED WORK ═══════ */}
+      <section className="l-feat">
+        <div ref={feat.ref} className="l-feat-inner">
+          <div className="l-feat-top">
+            <h3 className="l-feat-h3" style={{
+              opacity: feat.v ? 1 : 0,
+              transform: feat.v ? "translateY(0)" : "translateY(16px)",
+              transition: "opacity 0.6s, transform 0.6s cubic-bezier(0.16,1,0.3,1)",
+            }}>
+              {lang === "zh" ? "三大核心系统" : "Three Core Systems"}
+            </h3>
+            <p className="l-feat-disc" style={{
+              opacity: feat.v ? 1 : 0,
+              transition: "opacity 0.5s 0.15s",
+            }}>
+              {lang === "zh"
+                ? "为轨道工作站打造的精密仪器，每一项都经过精心设计"
+                : "Precision instruments for your orbital workstation, each meticulously engineered."}
+            </p>
+          </div>
+
+          <div className="l-feat-grid">
             {features.map((f, i) => (
-              <FeatureCard key={i} index={i} tag={f.tag} title={f.title} desc={f.desc} visible={featRef.visible} />
+              <div key={i} className="l-fcard" style={{
+                opacity: feat.v ? 1 : 0,
+                transform: feat.v ? "translateY(0)" : "translateY(24px)",
+                transition: `opacity 0.55s ${0.1 + i * 0.08}s, transform 0.6s ${0.1 + i * 0.08}s cubic-bezier(0.16,1,0.3,1)`,
+              }}>
+                <div className="l-fcard-top">
+                  <span className="l-fcard-n">{String(i + 1).padStart(2, "0")}</span>
+                </div>
+                <span className="l-fcard-tag">{f.tag}</span>
+                <h4 className="l-fcard-h4">{f.title}</h4>
+                <p className="l-fcard-p">{f.desc}</p>
+              </div>
             ))}
           </div>
+
+          <div style={{ textAlign: "center", marginTop: "clamp(2.5rem, 6vh, 4.5rem)" }}>
+            <Link href="/orbit" className="l-dot-cta" style={{
+              opacity: feat.v ? 1 : 0,
+              transition: "opacity 0.4s 0.4s",
+            }}>
+              <span className="l-dot" />
+              <span className="l-dot-cta-t">{t.hero_cta}</span>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.3 8h11.4m0 0L8.7 3M13.7 8l-5 5"/></svg>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ══════ WORKFLOW ══════ */}
-      <section className="work-section" id="workflow">
-        <div ref={workRef.ref} className="work-inner">
-          <div className="sec-label">
-            <svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.4"><path d="M7 0v14M0 7h14"/></svg>
-            <span>{t.how_title}</span>
-          </div>
-
-          <h2
-            className="sec-h2"
-            style={{
-              opacity: workRef.visible ? 1 : 0,
-              transform: workRef.visible ? "translateY(0)" : "translateY(20px)",
-              transition: "opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          >
-            {lang === "zh" ? "进入轨道的四个步骤" : "Four Steps to Orbit"}
-          </h2>
-
-          <div className="work-grid">
+      {/* ═══════ TUNNEL (Step into a new world) ═══════ */}
+      <section className="l-tunnel">
+        <div ref={tunl.ref} className="l-tunnel-inner">
+          {/* Sequential steps like Lusion's "Step into a new world and let your imagination run wild" */}
+          <div className="l-tunnel-title">
             {steps.map((s, i) => (
-              <div
-                key={i}
-                className="work-card"
-                style={{
-                  opacity: workRef.visible ? 1 : 0,
-                  transform: workRef.visible ? "translateY(0)" : "translateY(16px)",
-                  transition: `opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1) ${i * 0.1}s`,
-                }}
-              >
-                <span className="work-time">{s.time}</span>
-                <div className="work-dot" />
-                <h4 className="work-title">{s.title}</h4>
-                <p className="work-desc">{s.desc}</p>
+              <div key={i} className="l-tunnel-line" style={{
+                opacity: tunl.v ? 1 : 0,
+                transform: tunl.v ? "translateY(0)" : "translateY(12px)",
+                transition: `opacity 0.5s ${i * 0.12}s, transform 0.5s ${i * 0.12}s cubic-bezier(0.16,1,0.3,1)`,
+              }}>
+                <span className="l-tunnel-time">{s.t}</span>
+                <span className="l-tunnel-word">{s.h}</span>
+                <span className="l-tunnel-pipe" />
+                <span className="l-tunnel-desc">{s.d}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══════ END CTA (Lusion-style dark block with massive text) ══════ */}
-      <section className="end-section">
-        <div ref={ctaRef.ref} className="end-inner">
-          <div className="end-cross-row" aria-hidden="true">
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.15"><path d="M7 0v14M0 7h14"/></svg>
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.15"><path d="M7 0v14M0 7h14"/></svg>
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.15"><path d="M7 0v14M0 7h14"/></svg>
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.15"><path d="M7 0v14M0 7h14"/></svg>
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.15"><path d="M7 0v14M0 7h14"/></svg>
+      {/* ═══════ END CTA ═══════ */}
+      <section className="l-end">
+        <div ref={endC.ref} className="l-end-inner">
+          {/* Cross decorations */}
+          <div className="l-crosses l-end-crosses">
+            <Cross s={13} o={0.1} /><Cross s={13} o={0.1} /><Cross s={13} o={0.1} />
+            <Cross s={13} o={0.1} /><Cross s={13} o={0.1} />
           </div>
 
-          <p
-            className="end-p"
-            style={{
-              opacity: ctaRef.visible ? 1 : 0,
-              transition: "opacity 0.6s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          >
+          <p className="l-end-p" style={{
+            opacity: endC.v ? 1 : 0,
+            transition: "opacity 0.5s",
+          }}>
             {t.cta_body}
           </p>
 
-          <h2
-            className="end-h2"
-            style={{
-              opacity: ctaRef.visible ? 1 : 0,
-              transform: ctaRef.visible ? "translateY(0)" : "translateY(16px)",
-              transition: "opacity 0.8s 0.1s cubic-bezier(0.16,1,0.3,1), transform 0.8s 0.1s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          >
-            {lang === "zh" ? "准备进入轨道" : "Ready to Enter Orbit"}
+          {/* Character-level animated CTA — Lusion's "Let's Talk" style */}
+          <h2 className="l-end-h2">
+            <DualChars
+              text={lang === "zh" ? "准备进入轨道" : "Ready to Enter Orbit"}
+              visible={endC.v}
+            />
           </h2>
 
-          <Link
-            href="/orbit"
-            className="cta cta-lg"
-            style={{
-              opacity: ctaRef.visible ? 1 : 0,
-              transition: "opacity 0.5s 0.25s cubic-bezier(0.16,1,0.3,1)",
-            }}
-          >
-            <span className="cta-text">{t.cta_button}</span>
-            <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
-              <path d="M3 8h10M9 4l4 4-4 4" />
-            </svg>
+          <Link href="/orbit" className="l-cta l-cta-lg" style={{
+            opacity: endC.v ? 1 : 0,
+            transition: "opacity 0.4s 0.5s",
+          }}>
+            <span className="l-cta-t">{t.cta_button}</span>
+            <svg width="17" height="17" viewBox="0 0 16 16" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+              <path d="M3 8h10M9 4l4 4-4 4"/></svg>
           </Link>
 
-          <div
-            className="end-status"
-            style={{
-              opacity: ctaRef.visible ? 1 : 0,
-              transition: "opacity 0.4s 0.35s ease",
-            }}
-          >
-            <span className="end-dot" />
+          <div className="l-end-status" style={{
+            opacity: endC.v ? 1 : 0,
+            transition: "opacity 0.3s 0.6s",
+          }}>
+            <span className="l-dot l-dot-amber" />
             {t.cta_label}
           </div>
         </div>
       </section>
 
-      {/* ══════ FOOTER ══════ */}
-      <footer className="footer">
+      {/* ═══════ FOOTER ═══════ */}
+      <footer className="l-footer">
         <span>{t.footer_text}</span>
-        <div className="footer-right">
+        <div className="l-footer-r">
           <Link href="/docs">{t.footer_docs}</Link>
-          <span className="footer-sep" />
+          <span className="l-fsep" />
           <Link href="/orbit">{t.footer_launch}</Link>
         </div>
       </footer>
