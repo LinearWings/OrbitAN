@@ -412,14 +412,14 @@ button:active, a:active, [role="button"]:active {
 }
 
 /* ══════════════════════════════════════════
-   LANDING — Timepiece + extreme minimalism
+   LANDING — Orbital Timepiece
    ══════════════════════════════════════════ */
 
 .landing{min-height:100vh;overflow-x:hidden;background:#06080D}
 html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!important;height:auto!important}
 .l-cr{display:flex;gap:clamp(2.5rem,6vw,5rem);color:rgba(255,255,255,.06)}
 
-/* Pill CTA (Lusion: white, 74px radius, 7px dot) */
+/* Pill CTA */
 .l-pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border-radius:74px;padding:9px 17px 9px 15px;text-decoration:none;transition:transform .2s ease}
 .l-pill:hover{transform:scale(1.03)}.l-pill:active{transform:scale(.98)}
 .l-pill-d{width:7px;height:7px;border-radius:50%;background:#000;flex-shrink:0}
@@ -513,6 +513,3 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-ftr-r{display:flex;align-items:center;gap:10px}
 .l-ftr-s{width:1px;height:5px;background:rgba(255,255,255,.02)}
 
-/* ══════════════════════════════════════════════════════════════
-   LANDING — Lusion precision
-   ══════════════════════════════════════════════════════════════ */
