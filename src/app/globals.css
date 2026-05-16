@@ -416,10 +416,17 @@ button:active, a:active, [role="button"]:active {
    Typography as architecture. Precision spacing. Motion with restraint.
    ══════════════════════════════════════════════════════════════ */
 
-/* ── Root ── */
+/* ── Landing root overrides ── */
 .landing {
   min-height: 100vh; overflow-x: hidden;
   background: #06080D; color: rgba(255,255,255,0.85);
+}
+
+/* Allow scrolling on landing page (overrides global overflow:hidden) */
+html:has(.landing), body:has(.landing) {
+  overflow: auto !important;
+  overflow-x: hidden !important;
+  height: auto !important;
 }
 
 /* ── Word animation ── */
