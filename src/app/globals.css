@@ -437,7 +437,8 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .oc-time{font-family:"Clash Display",sans-serif;font-size:clamp(2.5rem,5vw,3.8rem);font-weight:500;color:#3B82F6;line-height:.9;letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .oc-colon{opacity:.4;animation:oc-blink 2s step-end infinite}
 @keyframes oc-blink{0%,100%{opacity:.4}50%{opacity:.08}}
-.oc-pct{font-family:"JetBrains Mono",monospace;font-size:.5rem;letter-spacing:.2em;color:rgba(255,255,255,.08);text-transform:uppercase}
+.oc-sec{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:rgba(245,158,11,.25);letter-spacing:.15em;font-variant-numeric:tabular-nums}
+.oc-pct{font-family:"JetBrains Mono",monospace;font-size:.5rem;letter-spacing:.2em;color:rgba(255,255,255,.06);text-transform:uppercase;margin-top:.2rem}
 
 .l-h1{font-family:"Clash Display",sans-serif;font-size:clamp(1.6rem,2.5vw,2rem);font-weight:500;line-height:1.15;color:rgba(255,255,255,.6);max-width:18ch;margin-bottom:.5em}
 .l-hp{font-family:"Satoshi",sans-serif;font-size:clamp(.875rem,1.1vw,.9375rem);line-height:1.7;color:rgba(255,255,255,.14);max-width:400px;margin-bottom:clamp(1.5rem,3.5vh,2.5rem)}
@@ -466,6 +467,16 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-fcd-t{font-family:"JetBrains Mono",monospace;font-size:.5rem;letter-spacing:.16em;color:rgba(255,255,255,.05);text-transform:uppercase;margin-bottom:1.8rem;line-height:1.6}
 .l-fcd-h{font-family:"Clash Display",sans-serif;font-size:clamp(1.25rem,2vw,1.75rem);font-weight:500;line-height:1.1;color:rgba(255,255,255,.5);margin-bottom:.75rem}
 .l-fcd-d{font-family:"Satoshi",sans-serif;font-size:.8125rem;line-height:1.7;color:rgba(255,255,255,.08)}
+
+/* Tunnel */
+.l-tun{position:relative;z-index:1;background:#020408;padding:clamp(6rem,16vh,12rem) clamp(1.5rem,6vw,5rem)}
+.l-tun-inn{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(1.5rem,4vh,3rem)}
+.l-tun-r{display:flex;align-items:center;gap:clamp(1rem,3vw,2.5rem);padding-bottom:clamp(1.2rem,3vh,2.5rem);border-bottom:1px solid rgba(255,255,255,.02)}
+.l-tun-r:last-child{border-bottom:none;padding-bottom:0}
+.l-tun-t{font-family:"JetBrains Mono",monospace;font-size:clamp(.9rem,1.8vw,1.3rem);color:rgba(245,158,11,.18);letter-spacing:.08em;min-width:4rem}
+.l-tun-h{font-family:"Clash Display",sans-serif;font-size:clamp(1.2rem,2.5vw,2rem);font-weight:500;color:rgba(255,255,255,.45);white-space:nowrap}
+.l-tun-p{flex:1;height:1px;background:rgba(255,255,255,.018)}
+.l-tun-d{font-family:"Satoshi",sans-serif;font-size:clamp(.7rem,.9vw,.8rem);color:rgba(255,255,255,.06);max-width:240px;text-align:right;line-height:1.5}
 
 .l-end{position:relative;z-index:1;min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(4rem,12vh,8rem) clamp(1rem,3vw,2rem)}
 .l-end-inn{display:flex;flex-direction:column;align-items:center;text-align:center}

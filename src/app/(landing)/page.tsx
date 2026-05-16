@@ -10,11 +10,11 @@ import { getT } from "@/lib/i18n";
    Every value measured. Every element intentional.
    ═══════════════════════════════════════════════════════ */
 
-/* ── LIVE ORBIT CLOCK: SVG 24h progress ring + digital readout ── */
+/* ── LIVE ORBIT CLOCK ── */
 function OrbitClock() {
   const [t, setT] = useState(new Date());
   useEffect(() => {
-    const i = setInterval(() => setT(new Date()), 200);
+    const i = setInterval(() => setT(new Date()), 167);
     return () => clearInterval(i);
   }, []);
 
@@ -23,54 +23,101 @@ function OrbitClock() {
   const s = t.getSeconds();
   const ms = t.getMilliseconds();
   const dayFrac = (h * 3600 + m * 60 + s + ms / 1000) / 86400;
-  const circ = 2 * Math.PI * 130;
+  const circ = 2 * Math.PI * 140;
   const offset = circ * (1 - dayFrac);
-  const secondAngle = ((s + ms / 1000) / 60) * 360;
+  const secAngle = ((s + ms / 1000) / 60) * 360;
+  const minAngle = ((m + s / 60) / 60) * 360;
+  const hourAngle = ((h % 12 + m / 60) / 12) * 360;
+
+  // Hour labels
+  const hourLabels = ["00","03","06","09","12","15","18","21"];
 
   return (
     <div className="oc">
-      {/* 24h progress ring */}
-      <svg viewBox="0 0 280 280" className="oc-svg" aria-hidden="true">
-        {/* Tick marks: 24 hour marks */}
-        {Array.from({ length: 24 }).map((_, i) => {
-          const ang = (i / 24) * Math.PI * 2 - Math.PI / 2;
-          const isMajor = i % 6 === 0;
-          const inner = isMajor ? 115 : 122;
-          const outer = 132;
+      <svg viewBox="0 0 320 320" className="oc-svg" aria-hidden="true">
+        <defs>
+          <radialGradient id="ocGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.08"/>
+            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+        {/* Subtle glow behind ring */}
+        <circle cx="160" cy="160" r="150" fill="url(#ocGlow)"/>
+
+        {/* 60 minute ticks */}
+        {Array.from({ length: 60 }).map((_, i) => {
+          const a = (i / 60) * Math.PI * 2 - Math.PI / 2;
+          const isHour = i % 5 === 0;
+          const isQuarter = i % 15 === 0;
+          const ir = isQuarter ? 128 : isHour ? 132 : 138;
           return (
             <line key={i}
-              x1={140 + inner * Math.cos(ang)} y1={140 + inner * Math.sin(ang)}
-              x2={140 + outer * Math.cos(ang)} y2={140 + outer * Math.sin(ang)}
-              stroke={isMajor ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.04)"}
-              strokeWidth={isMajor ? 0.5 : 0.3}/>
+              x1={160 + ir * Math.cos(a)} y1={160 + ir * Math.sin(a)}
+              x2={160 + 146 * Math.cos(a)} y2={160 + 146 * Math.sin(a)}
+              stroke={isQuarter ? "rgba(255,255,255,0.2)" : isHour ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.03)"}
+              strokeWidth={isQuarter ? 0.6 : isHour ? 0.4 : 0.2}/>
           );
         })}
-        {/* Progress arc */}
-        <circle cx="140" cy="140" r="130" fill="none"
-          stroke="#3B82F6" strokeWidth="0.6" strokeLinecap="round"
+
+        {/* Hour labels */}
+        {hourLabels.map((label, i) => {
+          const a = (i * 3 / 24) * Math.PI * 2 - Math.PI / 2;
+          const r = 118;
+          return (
+            <text key={i} x={160 + r * Math.cos(a)} y={160 + r * Math.sin(a)}
+              textAnchor="middle" dominantBaseline="central"
+              fill="rgba(255,255,255,0.12)"
+              fontFamily="JetBrains Mono, monospace" fontSize="7" letterSpacing="1">
+              {label}
+            </text>
+          );
+        })}
+
+        {/* 24h progress arc */}
+        <circle cx="160" cy="160" r="140" fill="none"
+          stroke="#3B82F6" strokeWidth="0.7" strokeLinecap="round"
           strokeDasharray={`${circ} ${circ}`}
           strokeDashoffset={offset}
-          style={{ transition: "stroke-dashoffset 0.3s linear" }}
-          transform="rotate(-90 140 140)"/>
-        {/* Second hand — thin radial line */}
-        <line x1="140" y1="140"
-          x2={140 + 125 * Math.cos((secondAngle - 90) * Math.PI / 180)}
-          y2={140 + 125 * Math.sin((secondAngle - 90) * Math.PI / 180)}
-          stroke="rgba(245,158,11,0.3)" strokeWidth="0.4" strokeLinecap="round"/>
-        {/* Center dot */}
-        <circle cx="140" cy="140" r="2" fill="#3B82F6" opacity="0.6"/>
+          style={{ transition: "stroke-dashoffset 0.5s linear", filter: "drop-shadow(0 0 3px rgba(59,130,246,0.3))" }}
+          transform="rotate(-90 160 160)"/>
+
+        {/* Progress dot */}
+        {dayFrac > 0.001 && (
+          <circle cx={160 + 140 * Math.cos(dayFrac * Math.PI * 2 - Math.PI / 2)}
+            cy={160 + 140 * Math.sin(dayFrac * Math.PI * 2 - Math.PI / 2)}
+            r="3" fill="#3B82F6" opacity="0.9"
+            style={{ filter: "drop-shadow(0 0 4px rgba(59,130,246,0.5))" }}/>
+        )}
+
+        {/* Hour hand */}
+        <line x1="160" y1="160"
+          x2={160 + 85 * Math.cos((hourAngle - 90) * Math.PI / 180)}
+          y2={160 + 85 * Math.sin((hourAngle - 90) * Math.PI / 180)}
+          stroke="rgba(255,255,255,0.4)" strokeWidth="0.8" strokeLinecap="round"/>
+        {/* Minute hand */}
+        <line x1="160" y1="160"
+          x2={160 + 110 * Math.cos((minAngle - 90) * Math.PI / 180)}
+          y2={160 + 110 * Math.sin((minAngle - 90) * Math.PI / 180)}
+          stroke="rgba(255,255,255,0.25)" strokeWidth="0.5" strokeLinecap="round"/>
+        {/* Second hand */}
+        <line x1="160" y1="160"
+          x2={160 + 120 * Math.cos((secAngle - 90) * Math.PI / 180)}
+          y2={160 + 120 * Math.sin((secAngle - 90) * Math.PI / 180)}
+          stroke="#F59E0B" strokeWidth="0.4" strokeLinecap="round" opacity="0.6"/>
+
+        {/* Center */}
+        <circle cx="160" cy="160" r="2.5" fill="#3B82F6"/>
+        <circle cx="160" cy="160" r="1" fill="#fff" opacity="0.5"/>
       </svg>
 
-      {/* Digital readout */}
+      {/* Digital time overlaid */}
       <div className="oc-digital">
         <span className="oc-time">
           {String(h).padStart(2,"0")}<span className="oc-colon">:</span>
-          {String(m).padStart(2,"0")}<span className="oc-colon">:</span>
-          {String(s).padStart(2,"0")}
+          {String(m).padStart(2,"0")}
         </span>
-        <span className="oc-pct">
-          MISSION TIME {(dayFrac * 100).toFixed(1)}%
-        </span>
+        <span className="oc-sec">{String(s).padStart(2,"0")}</span>
+        <span className="oc-pct">MISSION ELAPSED {(dayFrac*100).toFixed(1)}%</span>
       </div>
     </div>
   );
@@ -195,6 +242,25 @@ export default function LandingPage() {
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.3 8h11.4m0 0L8.7 3M13.7 8l-5 5"/></svg>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ═══ TUNNEL: time-coded workflow ═══ */}
+      <section className="l-tun">
+        <div className="l-tun-inn">
+          {[
+            { t: "00:00", h: t.how_1_title, d: t.how_1_desc },
+            { t: "06:00", h: t.how_2_title, d: t.how_2_desc },
+            { t: "12:00", h: t.how_3_title, d: t.how_3_desc },
+            { t: "18:00", h: t.how_4_title, d: t.how_4_desc },
+          ].map((s, i) => (
+            <div key={i} className="l-tun-r">
+              <span className="l-tun-t">{s.t}</span>
+              <span className="l-tun-h">{s.h}</span>
+              <span className="l-tun-p"/>
+              <span className="l-tun-d">{s.d}</span>
+            </div>
+          ))}
         </div>
       </section>
 
