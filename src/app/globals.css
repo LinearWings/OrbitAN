@@ -427,9 +427,10 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-pill-t{font-family:"Clash Display",sans-serif;font-size:.75rem;font-weight:600;color:#000;text-transform:uppercase;letter-spacing:.03em}
 
 /* Hero */
-.l-hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(2rem,5vh,3.5rem) clamp(1rem,3vw,2.5rem);text-align:center;overflow:hidden}
-.l-hero-inn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1}
-.l-meta{display:flex;align-items:center;gap:14px;font-family:"JetBrains Mono",monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(255,255,255,.12);text-transform:uppercase;margin-bottom:clamp(1rem,3vh,2rem)}
+.l-hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.l-hero-over{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:clamp(2rem,5vh,3.5rem) clamp(1rem,3vw,2.5rem);pointer-events:none}
+.l-hero-over .l-btn,.l-hero-over .l-btn2,.l-hero-over a{pointer-events:auto}
+.l-meta{display:flex;align-items:center;gap:14px;font-family:"JetBrains Mono",monospace;font-size:.56rem;letter-spacing:.2em;color:rgba(255,255,255,.18);text-transform:uppercase;margin-bottom:clamp(.6rem,2vh,1.2rem);text-shadow:0 0 20px rgba(0,0,0,.5)}
 .l-msep{width:1px;height:6px;background:rgba(255,255,255,.05)}
 .l-md{color:rgba(255,255,255,.06)}
 .l-h1{font-family:"Clash Display",sans-serif;font-size:clamp(1.6rem,2.5vw,2rem);font-weight:500;line-height:1.15;color:rgba(255,255,255,.55);max-width:18ch;margin-bottom:.5em}
@@ -444,10 +445,10 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-scrb{width:1px;height:28px;background:rgba(255,255,255,.03)}
 
 /* Timepiece */
-.tp{position:relative;display:flex;align-items:center;justify-content:center;width:min(58vw,48vh);height:min(58vw,48vh);margin-bottom:clamp(1.2rem,3.5vh,2.5rem)}
-.tp-svg{position:absolute;inset:0;width:100%;height:100%}
-.tp-digital{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:.15rem}
-.tp-time{font-family:"Clash Display",sans-serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:500;color:#3B82F6;line-height:.9;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.tp{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:0}
+.tp-svg{position:absolute;width:min(85vw,85vh);height:min(85vw,85vh);top:50%;left:50%;transform:translate(-50%,-50%)}
+.tp-digital{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:.15rem}
+.tp-time{font-family:"Clash Display",sans-serif;font-size:clamp(2.5rem,5.5vw,4.5rem);font-weight:500;color:#3B82F6;line-height:.9;letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .tp-col{opacity:.35;animation:tp-blink 2s step-end infinite}
 @keyframes tp-blink{0%,100%{opacity:.35}50%{opacity:.06}}
 .tp-sec{font-family:"JetBrains Mono",monospace;font-size:.6rem;color:rgba(245,158,11,.2);letter-spacing:.15em;font-variant-numeric:tabular-nums}
