@@ -34,8 +34,11 @@ function WheelColumn({
   const ref = useRef<HTMLDivElement>(null);
   const valueRef = useRef(value);
   const onChangeRef = useRef(onChange);
-  valueRef.current = value;
-  onChangeRef.current = onChange;
+
+  useEffect(() => {
+    valueRef.current = value;
+    onChangeRef.current = onChange;
+  }, [value, onChange]);
 
   useEffect(() => {
     const el = ref.current;
@@ -93,7 +96,10 @@ function TimeWheelPicker({
 }) {
   const [h, m] = time.split(":").map(Number);
   const onNudgeRef = useRef(onNudge);
-  onNudgeRef.current = onNudge;
+
+  useEffect(() => {
+    onNudgeRef.current = onNudge;
+  }, [onNudge]);
 
   const setHour = useCallback((v: number) => {
     // Only change the hour, keep the current minute
@@ -150,6 +156,7 @@ export default function InlineTaskCreator({
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [newCustomName, setNewCustomName] = useState("");
   const [newCustomColor, setNewCustomColor] = useState(CUSTOM_TYPE_PALETTE[0] ?? "#EC4899");
+  const [customTypeError, setCustomTypeError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const customNameRef = useRef<HTMLInputElement>(null);
   const typeColor = getTaskColor(type);
@@ -165,13 +172,15 @@ export default function InlineTaskCreator({
 
   // Load custom types from storage
   useEffect(() => {
-    setCustomTypes(loadCustomTypes());
+    if (!isOpen) return;
+    const frame = requestAnimationFrame(() => setCustomTypes(loadCustomTypes()));
+    return () => cancelAnimationFrame(frame);
   }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setName(""); setType("work"); setShowCustomForm(false); setNewCustomName(""); setNewCustomColor(CUSTOM_TYPE_PALETTE[0] ?? "#EC4899");
+      setName(""); setType("work"); setShowCustomForm(false); setNewCustomName(""); setNewCustomColor(CUSTOM_TYPE_PALETTE[0] ?? "#EC4899"); setCustomTypeError("");
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [isOpen]);
@@ -182,10 +191,6 @@ export default function InlineTaskCreator({
   const effectiveEndTime = isMobile
     ? (pendingEndTime ?? "10:00")
     : pendingEndTime;
-
-  const timeForCreate = isMobile
-    ? { start: effectiveStartTime, end: effectiveEndTime }
-    : { start: pendingStartTime, end: pendingEndTime };
 
   const duration = (effectiveStartTime && effectiveEndTime)
     ? (timeToMinutes(effectiveEndTime) - timeToMinutes(effectiveStartTime) + 1440) % 1440
@@ -208,13 +213,22 @@ export default function InlineTaskCreator({
 
   // All available types: built-in + custom
   const allTypes = [...BUILT_IN_TYPES, ...customTypes.map((ct) => ct.name)];
+  const trimmedCustomName = newCustomName.trim();
+  const customTypeExists = allTypes.some((existing) =>
+    existing.trim().toLowerCase() === trimmedCustomName.toLowerCase(),
+  );
 
   // Custom type creation
   const handleAddCustomType = useCallback(() => {
     const nameTrimmed = newCustomName.trim();
-    if (!nameTrimmed) return;
-    // Check for duplicate name
-    if (allTypes.includes(nameTrimmed)) return;
+    if (!nameTrimmed) {
+      setCustomTypeError("请输入类别名称");
+      return;
+    }
+    if (customTypeExists) {
+      setCustomTypeError("类别名称已存在");
+      return;
+    }
 
     const newType: CustomTypeDef = {
       id: uid(),
@@ -227,7 +241,8 @@ export default function InlineTaskCreator({
     setType(nameTrimmed);
     setShowCustomForm(false);
     setNewCustomName("");
-  }, [newCustomName, newCustomColor, customTypes, allTypes]);
+    setCustomTypeError("");
+  }, [newCustomName, newCustomColor, customTypes, customTypeExists]);
 
   // Pick next available color from palette
   const getNextColor = useCallback((): string => {
@@ -240,6 +255,7 @@ export default function InlineTaskCreator({
 
   const handleOpenCustomForm = useCallback(() => {
     setNewCustomColor(getNextColor());
+    setCustomTypeError("");
     setShowCustomForm(true);
     setTimeout(() => customNameRef.current?.focus(), 100);
   }, [getNextColor]);
@@ -309,7 +325,6 @@ export default function InlineTaskCreator({
                   const color = getTaskColor(t);
                   const label = getTaskLabel(t);
                   const sel = type === t;
-                  const isCustom = customTypes.some((ct) => ct.name === t);
                   const customDef = customTypes.find((ct) => ct.name === t);
                   const dotColor = customDef ? customDef.color : color;
                   return (
@@ -372,10 +387,15 @@ export default function InlineTaskCreator({
                     <input
                       ref={customNameRef}
                       value={newCustomName}
-                      onChange={(e) => setNewCustomName(e.target.value)}
+                      onChange={(e) => {
+                        setNewCustomName(e.target.value);
+                        setCustomTypeError("");
+                      }}
+                      aria-invalid={!!customTypeError || customTypeExists}
+                      aria-describedby="custom-type-error"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") { e.preventDefault(); handleAddCustomType(); }
-                        if (e.key === "Escape") { setShowCustomForm(false); }
+                        if (e.key === "Escape") { setShowCustomForm(false); setCustomTypeError(""); }
                       }}
                       placeholder="类别名称…"
                       className="flex-1 bg-transparent outline-none text-white/70 placeholder-white/15 text-[0.7rem] font-medium"
@@ -384,12 +404,13 @@ export default function InlineTaskCreator({
                     <button
                       type="button"
                       onClick={handleAddCustomType}
-                      disabled={!newCustomName.trim()}
+                      disabled={!trimmedCustomName || customTypeExists}
                       className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200"
                       style={{
-                        background: newCustomName.trim() ? "#EAB308" : "rgba(255,255,255,0.08)",
-                        color: newCustomName.trim() ? "#000" : "rgba(255,255,255,0.2)",
+                        background: trimmedCustomName && !customTypeExists ? "#EAB308" : "rgba(255,255,255,0.08)",
+                        color: trimmedCustomName && !customTypeExists ? "#000" : "rgba(255,255,255,0.2)",
                       }}
+                      aria-label="保存自定义类别"
                     >
                       <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                         <polyline points="1,5 4,8 9,1" />
@@ -397,7 +418,7 @@ export default function InlineTaskCreator({
                     </button>
                     <button
                       type="button"
-                      onClick={() => setShowCustomForm(false)}
+                      onClick={() => { setShowCustomForm(false); setCustomTypeError(""); }}
                       className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200"
                       style={{
                         background: "rgba(255,255,255,0.06)",
@@ -410,6 +431,11 @@ export default function InlineTaskCreator({
                       </svg>
                     </button>
                   </div>
+                  {(customTypeError || customTypeExists) && (
+                    <div id="custom-type-error" className="mt-1 text-[0.65rem] text-red-300/80">
+                      {customTypeError || "类别名称已存在"}
+                    </div>
+                  )}
 
                   {/* Color swatches */}
                   <div className="flex items-center gap-1.5 mt-2">

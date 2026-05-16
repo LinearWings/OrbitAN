@@ -23,6 +23,8 @@ pnpm lint       # ESLint
 
 Requires **Node.js ≥18** and **pnpm**.
 
+GitHub Pages production builds use the `/OrbitAN` base path automatically. Local dev runs from `/` for simpler testing.
+
 ---
 
 ## Features / 功能特性
