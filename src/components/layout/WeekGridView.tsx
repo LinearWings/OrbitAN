@@ -7,7 +7,6 @@ import { getTaskColor, getTaskLabel } from "@/utils/colors";
 import FocusBlockCard from "@/components/focus/FocusBlockCard";
 import type { FocusBlock, FocusMethodId } from "@/types/focus";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { FOCUS_METHOD_COLORS } from "@/data/focus-defaults";
 
 const HOUR_START = 0;
 const HOUR_END = 24;
@@ -27,7 +26,51 @@ interface WeekGridViewProps {
   deleteHighlight?: { id: string; type: "task" | "focus" } | null;
 }
 
-export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId, onSelectBlock, onOpenMethodology, onDeleteStart, deleteHighlight }: WeekGridViewProps) {
+interface TimedLayoutItem {
+  startMs: number;
+  endMs: number;
+  col: number;
+  span: number;
+}
+
+function assignConflictLanes<T extends TimedLayoutItem>(items: T[]): T[] {
+  const sorted = [...items].sort((a, b) => a.startMs - b.startMs || a.endMs - b.endMs);
+  const groups: T[][] = [];
+  let group: T[] = [];
+  let groupEnd = -Infinity;
+
+  for (const item of sorted) {
+    if (group.length === 0 || item.startMs < groupEnd) {
+      group.push(item);
+      groupEnd = Math.max(groupEnd, item.endMs);
+      continue;
+    }
+
+    groups.push(group);
+    group = [item];
+    groupEnd = item.endMs;
+  }
+
+  if (group.length > 0) groups.push(group);
+
+  for (const conflictGroup of groups) {
+    const laneEnds: number[] = [];
+    for (const item of conflictGroup) {
+      let lane = 0;
+      while (lane < laneEnds.length && (laneEnds[lane] ?? 0) > item.startMs) lane++;
+      if (lane === laneEnds.length) laneEnds.push(item.endMs);
+      else laneEnds[lane] = item.endMs;
+      item.col = lane;
+    }
+
+    const laneCount = Math.max(1, laneEnds.length);
+    for (const item of conflictGroup) item.span = laneCount;
+  }
+
+  return sorted;
+}
+
+export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight }: WeekGridViewProps) {
   const { state } = useAppContext();
   const today = getToday();
   const [zoomPx, setZoomPx] = useState(DEFAULT_PX);
@@ -91,19 +134,7 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
         };
       });
 
-      const sorted = positions.sort((a, b) => a.startMs - b.startMs);
-      const lanes: number[] = [];
-      for (const t of sorted) {
-        let lane = 0;
-        while (lane < lanes.length && (lanes[lane] ?? 0) > t.startMs) lane++;
-        if (lane === lanes.length) lanes.push(t.endMs);
-        else lanes[lane] = t.endMs;
-        t.col = lane;
-      }
-      const totalLanes = lanes.length;
-      for (const t of sorted) t.span = totalLanes;
-
-      perDay.push(sorted);
+      perDay.push(assignConflictLanes(positions));
     });
     return perDay;
   }, [week, state.tasks, zoomPx]);
@@ -130,19 +161,7 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
         };
       });
 
-      const sorted = positions.sort((a, b) => a.startMs - b.startMs);
-      const lanes: number[] = [];
-      for (const f of sorted) {
-        let lane = 0;
-        while (lane < lanes.length && (lanes[lane] ?? 0) > f.startMs) lane++;
-        if (lane === lanes.length) lanes.push(f.endMs);
-        else lanes[lane] = f.endMs;
-        f.col = lane;
-      }
-      const totalLanes = lanes.length;
-      for (const f of sorted) f.span = totalLanes;
-
-      perDay.push(sorted);
+      perDay.push(assignConflictLanes(positions));
     });
     return perDay;
   }, [week, state.focusBlocks, zoomPx, isOrbitMode]);

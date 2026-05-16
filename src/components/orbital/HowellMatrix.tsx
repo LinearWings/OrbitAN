@@ -165,7 +165,9 @@ function QuadrantCard({
                   {new Date(it.createdAt).toLocaleDateString()}
                 </span>
                 <button
-                  className="invisible group-hover:visible text-white/30 hover:text-white/80 transition-colors"
+                  type="button"
+                  aria-label={`删除 ${it.content}`}
+                  className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus:opacity-100 text-white/30 hover:text-white/80 transition-all"
                   onClick={() => onDelete(it.id)}
                 >
                   <CloseIcon size={14} />

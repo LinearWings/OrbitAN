@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { CloseIcon, ArrowLeftIcon } from "@/components/ui/Icons";
 import MethodSelector from "./MethodSelector";
@@ -34,22 +34,74 @@ export default function MethodologyDrawer({
   methodId,
   onSelectMethod,
 }: MethodologyDrawerProps) {
-  const [visible, setVisible] = useState(false);
-  const [animating, setAnimating] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (isOpen) {
-      setVisible(true);
-      requestAnimationFrame(() => setAnimating(true));
-    } else {
-      setAnimating(false);
-      const t = setTimeout(() => setVisible(false), 300);
-      return () => clearTimeout(t);
-    }
+    if (!isOpen) return;
+
+    previousFocusRef.current = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const focusTimer = window.setTimeout(() => {
+      const firstFocusable = drawerRef.current?.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      firstFocusable?.focus();
+    }, 60);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.body.style.overflow = previousOverflow;
+      previousFocusRef.current?.focus();
+    };
   }, [isOpen]);
 
-  if (!visible) return null;
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = drawerRef.current
+        ? Array.from(drawerRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        )).filter((el) => el.getClientRects().length > 0)
+        : [];
+
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0]!;
+      const last = focusable[focusable.length - 1]!;
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose, isOpen]);
+
+  if (!isOpen) return null;
 
   const showMethodSelector = !methodId;
 
@@ -59,18 +111,22 @@ export default function MethodologyDrawer({
         className="fixed inset-0 z-[90] transition-opacity duration-300"
         style={{
           background: "rgba(0,0,0,0.4)",
-          opacity: animating ? 1 : 0,
         }}
         onClick={onClose}
       />
       <div
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="methodology-drawer-title"
+        onClick={(e) => e.stopPropagation()}
         className={isMobile
           ? "fixed bottom-0 inset-x-0 z-[91] transition-transform duration-300 ease-out overflow-hidden rounded-t-3xl"
           : "fixed top-0 right-0 h-full z-[91] transition-transform duration-300 ease-out overflow-hidden"
         }
         style={isMobile ? {
           height: "85vh",
-          transform: animating ? "translateY(0)" : "translateY(100%)",
+          transform: "translateY(0)",
           background: "rgba(10,10,15,0.96)",
           borderTop: "1px solid rgba(255,255,255,0.08)",
           backdropFilter: "blur(24px)",
@@ -78,7 +134,7 @@ export default function MethodologyDrawer({
           boxShadow: "0 -8px 32px rgba(0,0,0,0.4)",
         } : {
           width: "min(480px, 85vw)",
-          transform: animating ? "translateX(0)" : "translateX(100%)",
+          transform: "translateX(0)",
           background: "rgba(10,10,15,0.96)",
           borderLeft: "1px solid rgba(255,255,255,0.08)",
           backdropFilter: "blur(24px)",
@@ -93,10 +149,15 @@ export default function MethodologyDrawer({
         )}
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] shrink-0">
-            <h2 className="font-clash text-lg font-semibold text-white/90">
+            <h2 id="methodology-drawer-title" className="font-clash text-lg font-semibold text-white/90">
               {showMethodSelector ? "选择方法论" : "方法面板"}
             </h2>
-            <button onClick={onClose} className="text-white/30 hover:text-white/70 text-sm">
+            <button
+              type="button"
+              aria-label="关闭方法论面板"
+              onClick={onClose}
+              className="text-white/30 hover:text-white/70 text-sm"
+            >
               <CloseIcon size={14} />
             </button>
           </div>
