@@ -912,74 +912,14 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	  100%{transform:translateY(-35vh) scale(.3);opacity:0}
 	}
 
-	/* ── Floating Timestamps — Depth of Field ── */
+	/* ── Timestamp Grid Background ── */
 	.l-fts{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-	.l-fts-layer{position:absolute;inset:0}
-	.l-fts-num{position:absolute;font-family:"JetBrains Mono",monospace;white-space:nowrap;will-change:transform;animation-timing-function:linear;animation-iteration-count:infinite}
-
-	/* Bokeh — deep background, heavy blur, violet */
-	.l-fts-bokeh{font-size:clamp(2.5rem,5vw,5rem);color:rgba(139,92,246,.08);font-weight:200;filter:blur(10px);letter-spacing:.12em}
-
-	/* Mid-field — slight blur, blue-white */
-	.l-fts-mid{font-size:clamp(1rem,2vw,1.8rem);color:rgba(148,163,184,.15);font-weight:350;filter:blur(3px);letter-spacing:.06em}
-
-	/* Foreground — razor sharp, amber, fast */
-	.l-fts-fore{font-size:clamp(.65rem,1.2vw,.9rem);color:rgba(245,158,11,.30);font-weight:500;filter:none;letter-spacing:.1em}
-
-	/* Hero — live clock centerpiece */
-	.l-fts-hero-wrap{
-	  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-	  display:flex;flex-direction:column;align-items:center;
-	}
-	.l-fts-hero{
-	  font-family:"Clash Display",sans-serif;
-	  font-size:clamp(4rem,10vw,10rem);
-	  font-weight:500;line-height:.9;letter-spacing:-.03em;
-	  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-	  white-space:nowrap;user-select:none;
-	}
-	/* Chromatic aberration — red channel offset */
-	.l-fts-hero-ca-r{
-	  color:rgba(239,68,68,.15);
-	  transform:translate(calc(-50% + 3px), calc(-50% + 0px));
-	  filter:blur(1.5px);
-	  z-index:0;
-	}
-	/* Chromatic aberration — blue channel offset */
-	.l-fts-hero-ca-b{
-	  color:rgba(59,130,246,.15);
-	  transform:translate(calc(-50% - 3px), calc(-50% + 0px));
-	  filter:blur(1.5px);
-	  z-index:0;
-	}
-	/* Main hero text */
-	.l-fts-hero-main{
-	  color:rgba(255,255,255,.85);
-	  filter:drop-shadow(0 0 40px rgba(245,158,11,.25)) drop-shadow(0 0 80px rgba(59,130,246,.15));
-	  z-index:2;
-	}
-	/* Blinking colon */
-	.l-fts-hero-colon{animation:l-fts-colon 2s step-end infinite}
-	@keyframes l-fts-colon{0%,100%{opacity:1}50%{opacity:.15}}
-	/* Seconds indicator — small amber numeral below */
-	.l-fts-hero-sec{
+	.l-fts-grid{position:absolute;top:0;left:0}
+	.l-fts-cell{
+	  display:flex;align-items:center;justify-content:center;
 	  font-family:"JetBrains Mono",monospace;
-	  font-size:clamp(.7rem,1.5vw,1rem);
-	  color:rgba(245,158,11,.35);
-	  letter-spacing:.2em;
-	  position:relative;z-index:3;
-	  margin-top:clamp(5rem,11vw,11rem);
-	}
-
-	@keyframes l-fts-float-up{
-	  0%{transform:translateY(0) translateX(0);opacity:.2}
-	  40%{opacity:1}
-	  100%{transform:translateY(-100vh) translateX(var(--drift,0));opacity:0}
-	}
-	@keyframes l-fts-float-down{
-	  0%{transform:translateY(0) translateX(0);opacity:0}
-	  60%{opacity:1}
-	  100%{transform:translateY(100vh) translateX(var(--drift,0));opacity:.2}
+	  white-space:nowrap;user-select:none;
+	  transition:opacity .6s ease;
 	}
 
 /* ── Responsive ── */
