@@ -639,29 +639,57 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 }
 
 /* CTAs — bottom center */
+/* CTA — mid-bottom engineering control */
 .l-hero-actions{
-  position:absolute;left:50%;bottom:8%;
+  position:absolute;left:50%;top:78%;
   transform:translateX(-50%);
-  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  display:flex;flex-direction:column;align-items:center;gap:clamp(.6rem,1.5vh,1rem);
 }
+.l-hero-actions-rule{
+  width:clamp(120px,20vw,200px);height:1px;
+  background:rgba(255,255,255,.04);
+}
+.l-hero-actions-row{
+  display:flex;align-items:center;gap:clamp(.8rem,2vw,1.4rem);
+}
+.l-hero-actions-sep{
+  width:4px;height:4px;border-radius:50%;
+  background:rgba(255,255,255,.1);
+}
+
+/* Primary CTA — Enter Orbit */
 .l-hero-btn{
-  display:inline-flex;align-items:center;gap:8px;
-  border-radius:50px;padding:10px 22px;font-size:.6875rem;
-  font-family:"Clash Display",sans-serif;font-weight:600;
-  text-decoration:none;text-transform:uppercase;letter-spacing:.04em;
-  transition:transform .15s ease,background .2s ease;
+  display:inline-flex;align-items:center;gap:10px;
+  text-decoration:none;transition:all .25s ease;
 }
-.l-hero-btn:hover{transform:scale(1.03)}
-.l-hero-btn:active{transform:scale(.97)}
-.l-hero-btn-primary{background:#fff;color:#000}
-.l-hero-btn-primary:hover{background:rgba(255,255,255,.9)}
-.l-hero-btn-secondary{background:rgba(255,255,255,.08);color:rgba(255,255,255,.45)}
-.l-hero-btn-secondary:hover{background:rgba(255,255,255,.14)}
-.l-hero-btn-dot{width:6px;height:6px;border-radius:50%;background:#F59E0B}
-.l-hero-btn-dots{display:inline-flex;gap:2px;margin-left:2px}
-.l-hero-btn-dots::before,.l-hero-btn-dots::after{
-  content:"";width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.4;
+.l-hero-btn-primary{
+  background:rgba(255,255,255,.95);color:#0A0A0F;
+  padding:clamp(.55rem,1.2vh,.75rem) clamp(1rem,2vw,1.5rem);
+  font-family:"Clash Display",sans-serif;font-size:clamp(.65rem,1vw,.75rem);
+  font-weight:600;letter-spacing:.06em;text-transform:uppercase;
 }
+.l-hero-btn-primary:hover{
+  background:#fff;transform:translateY(-1px);
+  box-shadow:0 8px 30px rgba(245,158,11,.2),0 0 60px rgba(59,130,246,.08);
+}
+.l-hero-btn-label{display:inline-flex;align-items:center;gap:8px}
+.l-hero-btn-dot{width:7px;height:7px;border-radius:50%;background:#F59E0B;box-shadow:0 0 8px rgba(245,158,11,.4)}
+.l-hero-btn-arrow{flex-shrink:0;opacity:.5}
+
+/* Secondary CTA — Learn More */
+.l-hero-btn-secondary{
+  color:rgba(255,255,255,.3);
+  font-family:"JetBrains Mono",monospace;
+  font-size:clamp(.5rem,.7vw,.58rem);
+  letter-spacing:.15em;text-transform:uppercase;
+  padding:clamp(.5rem,1vh,.65rem) 0;
+  gap:6px;
+}
+.l-hero-btn-secondary:hover{color:rgba(255,255,255,.55)}
+.l-hero-btn-chevron{flex-shrink:0;opacity:.4}
+
+/* Engineering arrow decoration */
+.l-hero-arrow{pointer-events:none;opacity:.6}
 
 /* ── Scroll Indicator ── */
 /* ── Scroll Indicator ── */
@@ -918,6 +946,13 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 }
 .l-footer-sep{width:1px;height:8px;background:rgba(255,255,255,.03)}
 
+/* ── Section Arrow Dividers ── */
+	.l-section-arrow{
+	  display:flex;justify-content:center;align-items:center;gap:clamp(.5rem,1vw,1rem);
+	  padding:clamp(1rem,3vh,2rem) 0;opacity:.5;pointer-events:none;
+	}
+	.l-darr{flex-shrink:0}
+
 /* ── System Components Deck ── */
 	.l-engine{position:relative;z-index:1;padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem)}
 	.l-engine-inner{max-width:1100px;margin:0 auto}
@@ -947,22 +982,39 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	  100%{transform:translateY(-35vh) scale(.3);opacity:0}
 	}
 
-	/* ── Timestamp Grid Background ── */
-	.l-fts{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+	/* ── Interactive Timestamp Matrix ── */
+	.l-fts{position:absolute;inset:0;overflow:hidden;pointer-events:auto;z-index:0}
 	.l-fts-grid{position:absolute;top:0;left:0}
 	.l-fts-cell{
 	  display:flex;align-items:center;justify-content:center;
 	  font-family:"JetBrains Mono",monospace;
-	  white-space:nowrap;user-select:none;
-	  transition:opacity .6s ease;
+	  white-space:nowrap;user-select:none;cursor:crosshair;
+	  transition:color .25s ease,opacity .25s ease,text-shadow .25s ease;
+	  position:relative;
+	}
+	/* Hover — brighten with amber glow */
+	.l-fts-cell:hover{
+	  color:rgba(245,158,11,.85) !important;
+	  text-shadow:0 0 18px rgba(245,158,11,.5),0 0 40px rgba(245,158,11,.2);
+	  z-index:1;
+	  font-weight:600 !important;
+	}
+	/* Adjacent row cells get subtle boost via general sibling on row hover */
+	.l-fts-cell:hover ~ .l-fts-cell,
+	.l-fts-cell:has(~ .l-fts-cell:hover){
+	  /* Not easily done in pure CSS for grid neighbors */
+	}
+	/* Anchor time cells — always slightly brighter */
+	.l-fts-cell[data-anchor="true"]{
+	  font-weight:500;
 	}
 
 /* ── Responsive ── */
 @media(max-width:767px){
   .l-hero-glyph{font-size:70%} .l-hero-logo{left:32%}
   .l-hero-desc{font-size:.65rem;left:3%;bottom:16%}
-  .l-hero-actions{flex-direction:column;width:100%}
-  .l-hero-btn{width:100%;justify-content:center}
+  .l-hero-actions{top:75%}.l-hero-actions-row{gap:.6rem}
+  .l-hero-btn-primary{padding:.5rem 1rem;font-size:.6rem}
   .l-methods-grid{grid-template-columns:1fr}
   .l-focus-inner{flex-direction:column}
   .l-focus-clock{width:100%;max-width:280px;margin:0 auto}

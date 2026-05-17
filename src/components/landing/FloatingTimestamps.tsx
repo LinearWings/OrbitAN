@@ -1,64 +1,69 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
-/* ── Deterministic seeded grid ── */
+/* ── Deterministic base times ── */
 function seed(i: number, s: number): number {
   return ((i * 127 + s * 31 + 773) % 1000) / 1000;
 }
 
-interface Stamp {
-  hhmm: string;
-  size: number;
+interface Cell {
+  hh: string;
+  mm: string;
+  baseOpacity: number;
   color: string;
+  size: number;
   weight: number;
-  letterSpacing: number;
 }
 
-const ANCHOR_HOURS = new Set(["00:00", "06:00", "12:00", "18:00"]);
+const COLS = 12;
+const ROWS = 16;
+const TOTAL = COLS * ROWS; // 192
 
-const GRID: Stamp[] = Array.from({ length: 96 }, (_, i) => {
+const ANCHOR_HOURS = new Set(["00", "06", "12", "18"]);
+
+const CELLS: Cell[] = Array.from({ length: TOTAL }, (_, i) => {
   const h = Math.floor(seed(i, 1) * 24);
   const m = Math.floor(seed(i, 2) * 12) * 5;
-  const hhmm = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-
-  const isAnchor = ANCHOR_HOURS.has(hhmm);
+  const hh = String(h).padStart(2, "0");
+  const mm = String(m).padStart(2, "0");
+  const isAnchor = ANCHOR_HOURS.has(hh);
   const r = seed(i, 3);
 
-  // Anchor times — bright amber
-  // Regular — blue/violet with higher base alpha
-  const alpha = isAnchor
-    ? 0.35 + r * 0.18   // 0.35–0.53
-    : 0.10 + r * 0.12;  // 0.10–0.22
-
-  const size = isAnchor
-    ? 0.9 + r * 0.35
-    : 0.58 + r * 0.4;
-
+  const baseOpacity = isAnchor ? 0.2 + r * 0.1 : 0.06 + r * 0.08;
+  const size = isAnchor ? 0.75 + r * 0.25 : 0.52 + r * 0.28;
   const color = isAnchor
-    ? `rgba(245,158,11,${alpha.toFixed(3)})`
+    ? `rgba(245,158,11,${baseOpacity.toFixed(3)})`
     : r > 0.5
-      ? `rgba(59,130,246,${alpha.toFixed(3)})`
-      : `rgba(139,92,246,${alpha.toFixed(3)})`;
+      ? `rgba(59,130,246,${baseOpacity.toFixed(3)})`
+      : `rgba(139,92,246,${baseOpacity.toFixed(3)})`;
 
   return {
-    hhmm,
-    size,
+    hh,
+    mm,
+    baseOpacity,
     color,
-    weight: isAnchor ? 500 : 300 + Math.floor(r * 200),
-    letterSpacing: isAnchor ? 0.14 : 0.05 + r * 0.08,
+    size,
+    weight: isAnchor ? 500 : 280 + Math.floor(r * 220),
   };
 });
-
-const COLS = 8;
-const ROWS = 12;
 
 export function FloatingTimestamps() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
+  const [ss, setSs] = useState(() => String(new Date().getSeconds()).padStart(2, "0"));
 
+  // Live seconds
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setSs(String(new Date().getSeconds()).padStart(2, "0"));
+    }, 1000);
+    return () => clearInterval(iv);
+  }, []);
+
+  // Mouse parallax
   const handleMouseMove = useCallback((e: MouseEvent) => {
     const el = containerRef.current;
     if (!el) return;
@@ -72,18 +77,16 @@ export function FloatingTimestamps() {
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-
     el.addEventListener("mousemove", handleMouseMove, { passive: true });
 
     const tick = () => {
       const g = gridRef.current;
       if (!g) { rafRef.current = requestAnimationFrame(tick); return; }
-      const ox = (mouseRef.current.x - 0.5) * 6;
-      const oy = (mouseRef.current.y - 0.5) * 6;
+      const ox = (mouseRef.current.x - 0.5) * 4;
+      const oy = (mouseRef.current.y - 0.5) * 4;
       g.style.transform = `translate(${ox}px, ${oy}px)`;
       rafRef.current = requestAnimationFrame(tick);
     };
-
     rafRef.current = requestAnimationFrame(tick);
     return () => {
       el.removeEventListener("mousemove", handleMouseMove);
@@ -100,24 +103,24 @@ export function FloatingTimestamps() {
           display: "grid",
           gridTemplateColumns: `repeat(${COLS}, 1fr)`,
           gridTemplateRows: `repeat(${ROWS}, 1fr)`,
-          width: "106%",
-          height: "106%",
-          margin: "-3%",
+          width: "104%",
+          height: "104%",
+          margin: "-2%",
           transition: "transform 0.15s linear",
         }}
       >
-        {GRID.map((s, i) => (
+        {CELLS.map((cell, i) => (
           <span
             key={i}
             className="l-fts-cell"
             style={{
-              fontSize: `${s.size}rem`,
-              color: s.color,
-              fontWeight: s.weight,
-              letterSpacing: `${s.letterSpacing}em`,
+              fontSize: `${cell.size}rem`,
+              color: cell.color,
+              fontWeight: cell.weight,
             }}
+            data-anchor={ANCHOR_HOURS.has(cell.hh) ? "true" : undefined}
           >
-            {s.hhmm}
+            {cell.hh}:{cell.mm}:{ss}
           </span>
         ))}
       </div>
