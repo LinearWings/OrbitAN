@@ -8,9 +8,7 @@ export default function TitleHeader({ onOpenDocs }: { onOpenDocs?: () => void })
   return (
     <div className={`absolute ${isMobile ? 'top-3 left-4' : 'top-8 left-8'} z-40 select-none`}>
       <div className="flex items-center gap-3">
-        <div style={{ width: isMobile ? "150px" : "280px" }}>
-          <OrbitanLogo variant="nav" />
-        </div>
+        <OrbitanLogo variant="nav" />
 
         {!isMobile && onOpenDocs && (
           <button

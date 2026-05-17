@@ -598,7 +598,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-hero-v2-content a{pointer-events:auto}
 /* ── OrbitAN Logo ── */
 	.l-logo-hero{width:clamp(380px,55vw,600px)}
-	.l-logo-nav{width:180px;flex-shrink:0}
+	.l-logo-nav{width:clamp(200px,30vw,340px);flex-shrink:0}
 	.l-logo-svg{display:block}
 
 /* ── Hero Orbital Constellation ── */
