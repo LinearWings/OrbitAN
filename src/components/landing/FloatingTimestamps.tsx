@@ -1,57 +1,50 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
-/* ── Deterministic timestamp seeds ── */
-function seedTime(index: number): { hhmm: string; x: number; y: number; dur: number; delay: number; drift: number; dir: number } {
-  // Simple multiplicative hash for pseudo-random but deterministic values
-  const hash = (i: number, s: number) => ((i * 127 + s * 31 + 773) % 1000) / 1000;
+/* ── Deterministic seeded timestamps per layer ── */
+function seed(index: number, salt: number): number {
+  return ((index * 127 + salt * 31 + 773) % 1000) / 1000;
+}
 
-  const h = Math.floor(hash(index, 1) * 24);
-  const m = Math.floor(hash(index, 2) * 12) * 5; // multiples of 5 for cleaner times
-  const hhmm = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-
+function makeStamp(index: number) {
+  const h = Math.floor(seed(index, 1) * 24);
+  const m = Math.floor(seed(index, 2) * 12) * 5;
   return {
-    hhmm,
-    x: hash(index, 3) * 94 + 3,     // 3%–97%
-    y: hash(index, 4) * 100,         // 0%–100%
-    dur: hash(index, 5) * 20 + 15,   // 15–35s base (layer adjusts)
-    delay: hash(index, 6) * 10,      // 0–10s
-    drift: hash(index, 7) * 20 - 10, // −10% to +10% X drift
-    dir: hash(index, 8) > 0.5 ? 1 : -1, // float up or down
+    hhmm: `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`,
+    x: seed(index, 3) * 92 + 4,
+    y: seed(index, 4) * 96 + 2,
+    dur: seed(index, 5) * 20 + 18,
+    delay: seed(index, 6) * 12,
+    drift: seed(index, 7) * 24 - 12,
+    dir: seed(index, 8) > 0.5 ? 1 : -1,
   };
 }
 
-/* ── Layer config ── */
-interface LayerConfig {
-  count: number;
-  cls: string;       // CSS class suffix
-  parallax: number;  // mouse parallax multiplier
-  durationMul: number; // duration multiplier
-}
+/* ── Three depth-of-field layers ── */
+const BOKEH = Array.from({ length: 10 }, (_, i) => makeStamp(i));
+const MIDFIELD = Array.from({ length: 16 }, (_, i) => makeStamp(i + 30));
+const FOREGROUND = Array.from({ length: 22 }, (_, i) => makeStamp(i + 60));
 
-const LAYERS: LayerConfig[] = [
-  { count: 12, cls: "l-fts-deep", parallax: 0.08, durationMul: 2.5 },
-  { count: 20, cls: "l-fts-mid",  parallax: 0.2,  durationMul: 1.5 },
-  { count: 28, cls: "l-fts-top",  parallax: 0.45, durationMul: 1.0 },
-];
-
-let globalIndex = 0;
-const TIMESTAMPS = LAYERS.map((layer) => {
-  const stamps = [];
-  for (let i = 0; i < layer.count; i++) {
-    stamps.push({ ...seedTime(globalIndex), layerCls: layer.cls, parallax: layer.parallax, durationMul: layer.durationMul });
-    globalIndex++;
-  }
-  return stamps;
-});
-
-/* ── Component ── */
 export function FloatingTimestamps() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const layersRef = useRef<(HTMLDivElement | null)[]>([null, null, null]);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const bokehRef = useRef<HTMLDivElement>(null);
+  const midRef = useRef<HTMLDivElement>(null);
+  const foreRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
+
+  // Live clock for hero timestamp
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const iv = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(iv);
+  }, []);
+
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     const el = containerRef.current;
@@ -71,15 +64,23 @@ export function FloatingTimestamps() {
 
     const tick = () => {
       const { x, y } = mouseRef.current;
-      const layers = layersRef.current;
-      for (let i = 0; i < LAYERS.length; i++) {
-        const l = layers[i];
+      const ox = (x - 0.5);
+      const oy = (y - 0.5);
+
+      // Each layer responds at different intensity — depth-of-field parallax
+      const layers: [React.RefObject<HTMLDivElement | null>, number][] = [
+        [bokehRef, 0.06],
+        [midRef, 0.15],
+        [foreRef, 0.35],
+        [heroRef, 0.12],
+      ];
+
+      for (const [ref, p] of layers) {
+        const l = ref.current;
         if (!l) continue;
-        const p = LAYERS[i].parallax;
-        const ox = (x - 0.5) * p * 30;
-        const oy = (y - 0.5) * p * 30;
-        l.style.transform = `translate(${ox}px, ${oy}px)`;
+        l.style.transform = `translate(${ox * p * 40}px, ${oy * p * 40}px)`;
       }
+
       rafRef.current = requestAnimationFrame(tick);
     };
 
@@ -92,31 +93,78 @@ export function FloatingTimestamps() {
 
   return (
     <div ref={containerRef} className="l-fts" aria-hidden="true">
-      {TIMESTAMPS.map((layerStamps, li) => (
-        <div
-          key={li}
-          ref={(el) => { layersRef.current[li] = el; }}
-          className={`l-fts-layer ${layerStamps[0].layerCls}`}
-          style={{ transition: "transform 0.15s linear" }}
-        >
-          {layerStamps.map((s, i) => (
-            <span
-              key={i}
-              className={`l-fts-num ${s.layerCls}`}
-              style={{
-                left: `${s.x}%`,
-                top: `${s.y}%`,
-                animationDuration: `${s.dur * s.durationMul}s`,
-                animationDelay: `${-s.delay}s`,
-                ["--drift" as string]: `${s.drift}%`,
-                animationName: s.dir === 1 ? "l-fts-float-up" : "l-fts-float-down",
-              }}
-            >
-              {s.hhmm}
-            </span>
-          ))}
-        </div>
-      ))}
+      {/* ── Layer 0: Bokeh — deep background, heavily blurred ── */}
+      <div ref={bokehRef} className="l-fts-layer" style={{ transition: "transform 0.2s linear" }}>
+        {BOKEH.map((s, i) => (
+          <span
+            key={i}
+            className="l-fts-num l-fts-bokeh"
+            style={{
+              left: `${s.x}%`,
+              top: `${s.y}%`,
+              animationDuration: `${s.dur * 2.2}s`,
+              animationDelay: `${-s.delay}s`,
+              ["--drift" as string]: `${s.drift}%`,
+              animationName: s.dir === 1 ? "l-fts-float-up" : "l-fts-float-down",
+            }}
+          >
+            {s.hhmm}
+          </span>
+        ))}
+      </div>
+
+      {/* ── Layer 1: Mid-field — slight blur, medium scale ── */}
+      <div ref={midRef} className="l-fts-layer" style={{ transition: "transform 0.15s linear" }}>
+        {MIDFIELD.map((s, i) => (
+          <span
+            key={i}
+            className="l-fts-num l-fts-mid"
+            style={{
+              left: `${s.x}%`,
+              top: `${s.y}%`,
+              animationDuration: `${s.dur * 1.4}s`,
+              animationDelay: `${-s.delay}s`,
+              ["--drift" as string]: `${s.drift}%`,
+              animationName: s.dir === 1 ? "l-fts-float-up" : "l-fts-float-down",
+            }}
+          >
+            {s.hhmm}
+          </span>
+        ))}
+      </div>
+
+      {/* ── Layer 2: Foreground — sharp, fast, high contrast ── */}
+      <div ref={foreRef} className="l-fts-layer" style={{ transition: "transform 0.1s linear" }}>
+        {FOREGROUND.map((s, i) => (
+          <span
+            key={i}
+            className="l-fts-num l-fts-fore"
+            style={{
+              left: `${s.x}%`,
+              top: `${s.y}%`,
+              animationDuration: `${s.dur}s`,
+              animationDelay: `${-s.delay}s`,
+              ["--drift" as string]: `${s.drift}%`,
+              animationName: s.dir === 1 ? "l-fts-float-up" : "l-fts-float-down",
+            }}
+          >
+            {s.hhmm}
+          </span>
+        ))}
+      </div>
+
+      {/* ── HERO: live clock — razor-sharp, chromatic aberration, glass ── */}
+      <div ref={heroRef} className="l-fts-hero-wrap" style={{ transition: "transform 0.2s linear" }}>
+        {/* Chromatic aberration ghosts */}
+        <span className="l-fts-hero l-fts-hero-ca-r" aria-hidden="true">{hh}:{mm}</span>
+        <span className="l-fts-hero l-fts-hero-ca-b" aria-hidden="true">{hh}:{mm}</span>
+        {/* Main text */}
+        <span className="l-fts-hero l-fts-hero-main">
+          {hh}<span className="l-fts-hero-colon">:</span>{mm}
+        </span>
+        {/* Seconds ring */}
+        <span className="l-fts-hero-sec">{ss}</span>
+      </div>
     </div>
   );
 }
