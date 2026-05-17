@@ -679,7 +679,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 }
 .l-hero-btn-label{display:inline-flex;align-items:center;gap:10px}
 .l-hero-btn-dot{width:8px;height:8px;border-radius:50%;background:#F59E0B;box-shadow:0 0 12px rgba(245,158,11,.6)}
-.l-hero-btn-arrow{flex-shrink:0;opacity:.65}
+
 
 /* Secondary CTA */
 .l-hero-btn-secondary{
@@ -694,10 +694,10 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   color:rgba(255,255,255,.75);
   border-bottom-color:rgba(255,255,255,.2);
 }
-.l-hero-btn-chevron{flex-shrink:0;opacity:.55}
+
 
 /* Engineering arrow decoration */
-.l-hero-arrow{pointer-events:none;opacity:.6}
+
 
 /* ── Scroll Indicator ── */
 /* ── Scroll Indicator ── */
