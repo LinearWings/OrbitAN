@@ -991,7 +991,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 	/* ── Interactive Timestamp Matrix ── */
 	.l-fts{position:absolute;inset:0;overflow:hidden;pointer-events:auto;z-index:0}
-	.l-fts-grid{position:absolute;top:0;left:0;-webkit-mask-image:radial-gradient(ellipse 40% 30% at 49% 42%,transparent 0%,transparent 48%,#000 65%);mask-image:radial-gradient(ellipse 40% 30% at 49% 42%,transparent 0%,transparent 48%,#000 65%)}
+	.l-fts-grid{position:absolute;top:0;left:0}
 	.l-fts-cell{
 	  display:flex;align-items:center;justify-content:center;
 	  font-family:"JetBrains Mono",monospace;

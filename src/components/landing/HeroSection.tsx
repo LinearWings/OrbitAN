@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
@@ -47,11 +48,12 @@ export function HeroSection() {
   const t = getT(lang);
   const { ref, visible } = useReveal(0.05);
   const isZh = lang === "zh";
+  const logoRef = useRef<HTMLDivElement>(null);
 
   return (
     <section className="l-hero-v2" ref={ref}>
       <div className="l-hero-v2-canvas-wrap">
-        <FloatingTimestamps />
+        <FloatingTimestamps logoRef={logoRef} />
 
         <div
           className="l-hero-stage"
@@ -108,6 +110,7 @@ export function HeroSection() {
 
           {/* OrbitAN Logo — centered between the two columns */}
           <div
+            ref={logoRef}
             className="l-hero-logo"
             style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s 0.35s" }}
           >

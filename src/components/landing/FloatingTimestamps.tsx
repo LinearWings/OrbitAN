@@ -59,7 +59,9 @@ function getNeighbors(idx: number, cols: number, rows: number, dist: number): nu
 const NEIGHBORS_D1: number[][] = Array.from({ length: TOTAL }, (_, i) => getNeighbors(i, COLS, ROWS, 1));
 const NEIGHBORS_D2: number[][] = Array.from({ length: TOTAL }, (_, i) => getNeighbors(i, COLS, ROWS, 2));
 
-export function FloatingTimestamps() {
+interface Props { logoRef: React.RefObject<HTMLDivElement | null>; }
+
+export function FloatingTimestamps({ logoRef }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const cellRefs = useRef<(HTMLSpanElement | null)[]>([]);
@@ -75,6 +77,37 @@ export function FloatingTimestamps() {
     const iv = setInterval(() => setSs(String(new Date().getSeconds()).padStart(2, "0")), 1000);
     return () => clearInterval(iv);
   }, []);
+
+  // Dynamically compute mask to clear logo bbox from timestamp matrix
+  useEffect(() => {
+    const logo = logoRef.current;
+    const grid = gridRef.current;
+    if (!logo || !grid) return;
+
+    const update = () => {
+      const r = logo.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const left = (r.left / vw) * 100;
+      const top = (r.top / vh) * 100;
+      const w = (r.width / vw) * 100;
+      const h = (r.height / vh) * 100;
+      const pad = 1.08;
+      const cx = left + w / 2;
+      const cy = top + h / 2;
+      const rx = (w / 2) * pad;
+      const ry = (h / 2) * pad;
+      const mask = `radial-gradient(ellipse ${rx}% ${ry}% at ${cx}% ${cy}%, transparent 0%, transparent 75%, #000 100%)`;
+      grid.style.maskImage = mask;
+      grid.style.webkitMaskImage = mask;
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(logo);
+    window.addEventListener("resize", update);
+    return () => { ro.disconnect(); window.removeEventListener("resize", update); };
+  }, [logoRef]);
 
   // Mouse parallax
   const handleMouseMove = useCallback((e: MouseEvent) => {
