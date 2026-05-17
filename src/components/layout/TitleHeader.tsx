@@ -1,41 +1,16 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { OrbitanLogo } from "@/components/landing/OrbitanLogo";
 
 export default function TitleHeader({ onOpenDocs }: { onOpenDocs?: () => void }) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   return (
     <div className={`absolute ${isMobile ? 'top-3 left-4' : 'top-8 left-8'} z-40 select-none`}>
-      {/* OrbitAN wordmark */}
       <div className="flex items-center gap-3">
-        <div className="relative">
-          {/* Orbital ring accent */}
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" className="text-white/20">
-            <ellipse cx="14" cy="14" rx="12" ry="5" stroke="currentColor" strokeWidth="1.2" opacity="0.4" />
-            <ellipse cx="14" cy="14" rx="12" ry="5" stroke="currentColor" strokeWidth="0.4" opacity="0.2"
-              strokeDasharray="2 3" transform="rotate(15, 14, 14)" />
-            <circle cx="14" cy="9" r="1.8" fill="#EAB308" opacity="0.7" />
-          </svg>
+        <div style={{ width: isMobile ? "120px" : "200px" }}>
+          <OrbitanLogo variant="nav" />
         </div>
-        <h1 className="flex items-baseline leading-none tracking-[-0.02em] font-bold"
-          style={{ fontSize: isMobile ? "clamp(1.2rem, 4vw, 1.6rem)" : "clamp(1.6rem, 2.8vw, 2.8rem)" }}
-        >
-          <span className="font-clash text-white/90" style={{ fontFamily: "'Clash Display', sans-serif" }}>
-            Orbit
-          </span>
-          <span
-            className="font-clash ml-[0.02em]"
-            style={{
-              fontFamily: "'Clash Display', sans-serif",
-              background: "linear-gradient(135deg, #EAB308 0%, #2563EB 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            AN
-          </span>
-        </h1>
 
         {!isMobile && onOpenDocs && (
           <button
