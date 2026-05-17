@@ -85,15 +85,17 @@ html, body {
 body {
   background-color: #06080D;
   background-image:
-    /* Tyndall beams — diagonal volumetric light shafts */
-    linear-gradient(22deg, rgba(59,130,246,.07) 0%, transparent 28%, transparent 72%, rgba(99,102,241,.05) 100%),
-    linear-gradient(160deg, rgba(245,158,11,.035) 0%, transparent 35%, transparent 75%, rgba(59,130,246,.05) 100%),
-    linear-gradient(65deg, transparent 15%, rgba(99,102,241,.04) 45%, transparent 70%),
-    linear-gradient(-15deg, transparent 60%, rgba(245,158,11,.02) 85%, transparent 100%),
-    /* Nebula glows */
-    radial-gradient(ellipse at 30% 20%, rgba(59,130,246,.10) 0%, transparent 55%),
-    radial-gradient(ellipse at 70% 40%, rgba(99,102,241,.06) 0%, transparent 55%),
-    radial-gradient(ellipse at 50% 80%, rgba(59,130,246,.08) 0%, transparent 55%);
+    /* Tyndall beams — boosted 2-3x */
+    linear-gradient(22deg, rgba(59,130,246,.16) 0%, transparent 25%, transparent 68%, rgba(99,102,241,.10) 100%),
+    linear-gradient(160deg, rgba(245,158,11,.09) 0%, transparent 30%, transparent 70%, rgba(59,130,246,.12) 100%),
+    linear-gradient(65deg, transparent 10%, rgba(99,102,241,.12) 40%, transparent 65%),
+    linear-gradient(-15deg, transparent 52%, rgba(245,158,11,.07) 80%, transparent 100%),
+    linear-gradient(110deg, transparent 72%, rgba(59,130,246,.09) 88%, transparent 100%),
+    /* Nebula glows — boosted */
+    radial-gradient(ellipse at 30% 20%, rgba(59,130,246,.20) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 40%, rgba(99,102,241,.14) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(59,130,246,.16) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 60%, rgba(245,158,11,.08) 0%, transparent 45%);
   background-attachment: fixed;
 }
 
@@ -104,7 +106,7 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-  opacity: .035;
+  opacity: .055;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 256px 256px;
@@ -596,7 +598,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-hero-v2-content .l-hero-btn,
 .l-hero-v2-content a{pointer-events:auto}
 /* ── OrbitAN Logo ── */
-	.l-logo-hero{width:clamp(240px,38vw,340px);margin-bottom:clamp(1rem,2vh,2rem)}
+	.l-logo-hero{width:clamp(320px,50vw,460px);margin-bottom:clamp(1rem,2vh,2rem)}
 	.l-logo-nav{width:130px;flex-shrink:0}
 	.l-logo-svg{display:block}
 
@@ -639,54 +641,59 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 }
 
 /* CTAs — bottom center */
-/* CTA — mid-bottom engineering control */
+/* CTA — mid-bottom, prominent */
 .l-hero-actions{
   position:absolute;left:50%;top:78%;
   transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:clamp(.6rem,1.5vh,1rem);
+  display:flex;flex-direction:column;align-items:center;gap:clamp(.8rem,2vh,1.4rem);
+  pointer-events:auto;
 }
 .l-hero-actions-rule{
-  width:clamp(120px,20vw,200px);height:1px;
-  background:rgba(255,255,255,.04);
+  width:clamp(180px,30vw,280px);height:1px;
+  background:rgba(255,255,255,.10);
 }
 .l-hero-actions-row{
-  display:flex;align-items:center;gap:clamp(.8rem,2vw,1.4rem);
+  display:flex;align-items:center;gap:clamp(1rem,2.5vw,1.8rem);
 }
 .l-hero-actions-sep{
-  width:4px;height:4px;border-radius:50%;
-  background:rgba(255,255,255,.1);
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(255,255,255,.2);
 }
 
-/* Primary CTA — Enter Orbit */
+/* Primary CTA */
 .l-hero-btn{
   display:inline-flex;align-items:center;gap:10px;
-  text-decoration:none;transition:all .25s ease;
+  text-decoration:none;transition:all .3s cubic-bezier(.16,1,.3,1);
 }
 .l-hero-btn-primary{
-  background:rgba(255,255,255,.95);color:#0A0A0F;
-  padding:clamp(.55rem,1.2vh,.75rem) clamp(1rem,2vw,1.5rem);
-  font-family:"Clash Display",sans-serif;font-size:clamp(.65rem,1vw,.75rem);
+  background:#fff;color:#0A0A0F;
+  padding:clamp(.65rem,1.5vh,.9rem) clamp(1.3rem,2.8vw,2rem);
+  font-family:"Clash Display",sans-serif;font-size:clamp(.72rem,1.2vw,.85rem);
   font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  box-shadow:0 0 0 0 rgba(245,158,11,0);
 }
 .l-hero-btn-primary:hover{
-  background:#fff;transform:translateY(-1px);
-  box-shadow:0 8px 30px rgba(245,158,11,.2),0 0 60px rgba(59,130,246,.08);
+  background:#fff;transform:translateY(-2px);
+  box-shadow:0 14px 45px rgba(245,158,11,.3),0 0 90px rgba(59,130,246,.15);
 }
-.l-hero-btn-label{display:inline-flex;align-items:center;gap:8px}
-.l-hero-btn-dot{width:7px;height:7px;border-radius:50%;background:#F59E0B;box-shadow:0 0 8px rgba(245,158,11,.4)}
-.l-hero-btn-arrow{flex-shrink:0;opacity:.5}
+.l-hero-btn-label{display:inline-flex;align-items:center;gap:10px}
+.l-hero-btn-dot{width:8px;height:8px;border-radius:50%;background:#F59E0B;box-shadow:0 0 12px rgba(245,158,11,.6)}
+.l-hero-btn-arrow{flex-shrink:0;opacity:.65}
 
-/* Secondary CTA — Learn More */
+/* Secondary CTA */
 .l-hero-btn-secondary{
-  color:rgba(255,255,255,.3);
+  color:rgba(255,255,255,.45);
   font-family:"JetBrains Mono",monospace;
-  font-size:clamp(.5rem,.7vw,.58rem);
-  letter-spacing:.15em;text-transform:uppercase;
+  font-size:clamp(.58rem,.85vw,.65rem);
+  letter-spacing:.2em;text-transform:uppercase;
   padding:clamp(.5rem,1vh,.65rem) 0;
-  gap:6px;
+  border-bottom:1px solid transparent;gap:8px;
 }
-.l-hero-btn-secondary:hover{color:rgba(255,255,255,.55)}
-.l-hero-btn-chevron{flex-shrink:0;opacity:.4}
+.l-hero-btn-secondary:hover{
+  color:rgba(255,255,255,.75);
+  border-bottom-color:rgba(255,255,255,.2);
+}
+.l-hero-btn-chevron{flex-shrink:0;opacity:.55}
 
 /* Engineering arrow decoration */
 .l-hero-arrow{pointer-events:none;opacity:.6}
@@ -948,8 +955,8 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 /* ── Section Arrow Dividers ── */
 	.l-section-arrow{
-	  display:flex;justify-content:center;align-items:center;gap:clamp(.5rem,1vw,1rem);
-	  padding:clamp(1rem,3vh,2rem) 0;opacity:.5;pointer-events:none;
+	  display:flex;justify-content:center;align-items:center;gap:clamp(.8rem,1.8vw,1.8rem);
+	  padding:clamp(1.5rem,4vh,3rem) 0;opacity:1;pointer-events:none;
 	}
 	.l-darr{flex-shrink:0}
 
@@ -971,7 +978,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	}
 	.l-evap-p{
 	  position:absolute;bottom:-4px;width:2px;height:2px;
-	  border-radius:50%;background:rgba(245,158,11,.5);
+	  border-radius:50%;background:rgba(245,158,11,.7);
 	  box-shadow:0 0 4px rgba(245,158,11,.3);
 	  animation:l-evap-rise linear infinite;
 	}
@@ -989,22 +996,17 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	  display:flex;align-items:center;justify-content:center;
 	  font-family:"JetBrains Mono",monospace;
 	  white-space:nowrap;user-select:none;cursor:crosshair;
-	  transition:color .25s ease,opacity .25s ease,text-shadow .25s ease;
-	  position:relative;
+	  transition:all .2s ease;
+	  position:relative;line-height:1;
 	}
-	/* Hover — brighten with amber glow */
 	.l-fts-cell:hover{
-	  color:rgba(245,158,11,.85) !important;
-	  text-shadow:0 0 18px rgba(245,158,11,.5),0 0 40px rgba(245,158,11,.2);
-	  z-index:1;
-	  font-weight:600 !important;
+	  color:#F59E0B !important;
+	  text-shadow:0 0 24px rgba(245,158,11,.7),0 0 50px rgba(245,158,11,.35);
+	  z-index:2;font-weight:700 !important;
+	  transform:scale(1.15);
+	  background:rgba(245,158,11,.08);
+	  border-radius:2px;
 	}
-	/* Adjacent row cells get subtle boost via general sibling on row hover */
-	.l-fts-cell:hover ~ .l-fts-cell,
-	.l-fts-cell:has(~ .l-fts-cell:hover){
-	  /* Not easily done in pure CSS for grid neighbors */
-	}
-	/* Anchor time cells — always slightly brighter */
 	.l-fts-cell[data-anchor="true"]{
 	  font-weight:500;
 	}
