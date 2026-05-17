@@ -64,12 +64,11 @@ export function OrbitanLogo({ variant = "hero" }: LogoProps) {
 
         {/* ── WORDMARK — "rbitAN" flows directly from the ring-O ── */}
         {/* The ring IS the O, so the text starts with "rbit" */}
-        <text x="80" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="500" fontSize="42" fill="#fff" letterSpacing="-0.5">rbit</text>
-        <text x="186" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="42" fill="#F59E0B" letterSpacing="-0.5">A</text>
-        <text x="228" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="400" fontSize="42" fill="rgba(255,255,255,0.22)" letterSpacing="-0.5">N</text>
+        <text x="80" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="500" fontSize="42" fill="#60A5FA" letterSpacing="-0.5">rbit</text>
+        <text x="164" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="42" fill="#F59E0B" letterSpacing="-0.5">A</text>
+        <text x="198" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="400" fontSize="42" fill="rgba(255,255,255,0.22)" letterSpacing="-0.5">N</text>
 
-        {/* Subtle baseline under wordmark */}
-        <line x1="80" y1="78" x2="273" y2="78" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5"/>
+        <line x1="80" y1="78" x2="243" y2="78" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5"/>
 
         {/* ── TAGLINE ── */}
         {isHero && (<>
