@@ -20,25 +20,25 @@ export function FocusBlocksDemo() {
     <section className="l-focus" ref={ref}>
       <div className="l-focus-inner">
         <div className="l-focus-clock">
-          <svg viewBox="0 0 200 200" className="l-focus-clock-svg">
+          <svg viewBox="0 0 220 220" className="l-focus-clock-svg">
             <defs>
               <filter id="focusGlow">
                 <feGaussianBlur stdDeviation="2" result="blur" />
                 <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
               </filter>
             </defs>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
-            <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
-            <circle cx="100" cy="100" r="40" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="0.5" />
+            <circle cx="110" cy="110" r="85" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+            <circle cx="110" cy="110" r="65" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
+            <circle cx="110" cy="110" r="45" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="0.5" />
 
             {FOCUS_METHODS.map((m, i) => {
-              const r = 85 + i * 4;
+              const r = 90 + i * 3.5;
               const startAngle = (i / 6) * Math.PI * 2 - Math.PI / 2;
-              const sweep = (0.25 + (i / FOCUS_METHODS.length) * 0.25) * Math.PI * 2;
-              const x1 = 100 + r * Math.cos(startAngle);
-              const y1 = 100 + r * Math.sin(startAngle);
-              const x2 = 100 + r * Math.cos(startAngle + sweep);
-              const y2 = 100 + r * Math.sin(startAngle + sweep);
+              const sweep = (0.22 + (i / FOCUS_METHODS.length) * 0.22) * Math.PI * 2;
+              const x1 = 110 + r * Math.cos(startAngle);
+              const y1 = 110 + r * Math.sin(startAngle);
+              const x2 = 110 + r * Math.cos(startAngle + sweep);
+              const y2 = 110 + r * Math.sin(startAngle + sweep);
               const largeArc = sweep > Math.PI ? 1 : 0;
               return (
                 <path
@@ -54,9 +54,9 @@ export function FocusBlocksDemo() {
               );
             })}
 
-            <line x1="100" y1="100" x2="100" y2="35" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="100" y1="100" x2="145" y2="100" stroke="rgba(255,255,255,0.18)" strokeWidth="1" strokeLinecap="round" />
-            <circle cx="100" cy="100" r="3" fill="#3B82F6" />
+            <line x1="110" y1="110" x2="110" y2="40" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="110" y1="110" x2="160" y2="110" stroke="rgba(255,255,255,0.18)" strokeWidth="1" strokeLinecap="round" />
+            <circle cx="110" cy="110" r="3" fill="#3B82F6" />
           </svg>
         </div>
 
