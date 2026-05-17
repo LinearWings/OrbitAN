@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
 import { useReveal } from "@/hooks/useScrollProgress";
-import { HeroCanvas } from "./HeroCanvas";
+import { FloatingTimestamps } from "./FloatingTimestamps";
 import { ScrollIndicator } from "./ScrollIndicator";
 
 export function HeroSection() {
@@ -15,7 +15,7 @@ export function HeroSection() {
   return (
     <section className="l-hero-v2" ref={ref}>
       <div className="l-hero-v2-canvas-wrap">
-        <HeroCanvas />
+        <FloatingTimestamps />
         <ScrollIndicator />
         {/* Time evaporation particles */}
         <div className="l-evap" aria-hidden="true">

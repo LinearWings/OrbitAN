@@ -893,7 +893,25 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	  100%{transform:translateY(-35vh) scale(.3);opacity:0}
 	}
 
-	/* ── Responsive ── */
+	/* ── Floating Timestamps ── */
+	.l-fts{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+	.l-fts-layer{position:absolute;inset:0}
+	.l-fts-num{position:absolute;font-family:"JetBrains Mono",monospace;white-space:nowrap;will-change:transform;animation-timing-function:linear;animation-iteration-count:infinite}
+	.l-fts-deep.l-fts-num{font-size:2.5rem;color:rgba(99,102,241,.04);font-weight:300}
+	.l-fts-mid.l-fts-num{font-size:1.3rem;color:rgba(255,255,255,.06);font-weight:400}
+	.l-fts-top.l-fts-num{font-size:.75rem;color:rgba(245,158,11,.12);font-weight:500;letter-spacing:.08em}
+	@keyframes l-fts-float-up{
+	  0%{transform:translateY(0) translateX(0);opacity:.3}
+	  50%{opacity:1}
+	  100%{transform:translateY(-100vh) translateX(var(--drift,0));opacity:.1}
+	}
+	@keyframes l-fts-float-down{
+	  0%{transform:translateY(0) translateX(0);opacity:.1}
+	  50%{opacity:1}
+	  100%{transform:translateY(100vh) translateX(var(--drift,0));opacity:.3}
+	}
+
+/* ── Responsive ── */
 @media(max-width:767px){
   .l-hero-v2-h1{font-size:clamp(1.75rem,8vw,3rem)}
   .l-hero-v2-desc{font-size:.8125rem}
