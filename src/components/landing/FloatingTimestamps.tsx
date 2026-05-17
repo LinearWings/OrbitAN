@@ -2,16 +2,15 @@
 
 import { useEffect, useRef, useCallback } from "react";
 
-/* ── Deterministic time grid ── */
+/* ── Deterministic seeded grid ── */
 function seed(i: number, s: number): number {
   return ((i * 127 + s * 31 + 773) % 1000) / 1000;
 }
 
 interface Stamp {
   hhmm: string;
-  opacity: number;
-  size: number;   // rem
-  color: string;  // CSS color
+  size: number;
+  color: string;
   weight: number;
   letterSpacing: number;
 }
@@ -24,31 +23,30 @@ const GRID: Stamp[] = Array.from({ length: 96 }, (_, i) => {
   const hhmm = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 
   const isAnchor = ANCHOR_HOURS.has(hhmm);
-
-  // Anchor times — bright amber, larger
-  // Regular — dim blue/violet gradient
   const r = seed(i, 3);
-  const opacity = isAnchor
-    ? 0.22 + r * 0.12
-    : 0.04 + r * 0.08;
+
+  // Anchor times — bright amber
+  // Regular — blue/violet with higher base alpha
+  const alpha = isAnchor
+    ? 0.35 + r * 0.18   // 0.35–0.53
+    : 0.10 + r * 0.12;  // 0.10–0.22
 
   const size = isAnchor
-    ? 0.85 + r * 0.3
-    : 0.55 + r * 0.35;
+    ? 0.9 + r * 0.35
+    : 0.58 + r * 0.4;
 
   const color = isAnchor
-    ? `rgba(245,158,11,${opacity})`
+    ? `rgba(245,158,11,${alpha.toFixed(3)})`
     : r > 0.5
-      ? `rgba(59,130,246,${opacity})`
-      : `rgba(99,102,241,${opacity})`;
+      ? `rgba(59,130,246,${alpha.toFixed(3)})`
+      : `rgba(139,92,246,${alpha.toFixed(3)})`;
 
   return {
     hhmm,
-    opacity,
     size,
     color,
     weight: isAnchor ? 500 : 300 + Math.floor(r * 200),
-    letterSpacing: isAnchor ? 0.12 : 0.04 + r * 0.06,
+    letterSpacing: isAnchor ? 0.14 : 0.05 + r * 0.08,
   };
 });
 
@@ -80,8 +78,8 @@ export function FloatingTimestamps() {
     const tick = () => {
       const g = gridRef.current;
       if (!g) { rafRef.current = requestAnimationFrame(tick); return; }
-      const ox = (mouseRef.current.x - 0.5) * 8;
-      const oy = (mouseRef.current.y - 0.5) * 8;
+      const ox = (mouseRef.current.x - 0.5) * 6;
+      const oy = (mouseRef.current.y - 0.5) * 6;
       g.style.transform = `translate(${ox}px, ${oy}px)`;
       rafRef.current = requestAnimationFrame(tick);
     };
@@ -102,9 +100,9 @@ export function FloatingTimestamps() {
           display: "grid",
           gridTemplateColumns: `repeat(${COLS}, 1fr)`,
           gridTemplateRows: `repeat(${ROWS}, 1fr)`,
-          width: "110%",
-          height: "110%",
-          margin: "-5%",
+          width: "106%",
+          height: "106%",
+          margin: "-3%",
           transition: "transform 0.15s linear",
         }}
       >
@@ -117,7 +115,6 @@ export function FloatingTimestamps() {
               color: s.color,
               fontWeight: s.weight,
               letterSpacing: `${s.letterSpacing}em`,
-              opacity: s.opacity,
             }}
           >
             {s.hhmm}
