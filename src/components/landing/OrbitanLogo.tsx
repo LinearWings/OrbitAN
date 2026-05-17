@@ -72,8 +72,8 @@ export function OrbitanLogo({ variant = "hero" }: LogoProps) {
 
         {/* ── TAGLINE ── */}
         {isHero && (<>
-          <text x="135" y="100" fontFamily="'JetBrains Mono', monospace" fontWeight="400" fontSize="7.8" fill="rgba(255,255,255,0.12)" letterSpacing="5.5" textAnchor="middle">ORBITAL · SCHEDULE · SYSTEM</text>
-          <line x1="30" y1="106" x2="240" y2="106" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5"/>
+          <text x="135" y="100" fontFamily="'JetBrains Mono', monospace" fontWeight="400" fontSize="5" fill="rgba(255,255,255,0.12)" letterSpacing="2.5" textAnchor="middle">ORBITAL · SCHEDULE · SYSTEM</text>
+          <line x1="62" y1="106" x2="208" y2="106" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5"/>
         </>)}
       </svg>
     </div>
