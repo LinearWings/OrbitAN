@@ -6,7 +6,7 @@ export function OrbitanLogo({ variant = "hero" }: LogoProps) {
   const isHero = variant === "hero";
   return (
     <div className={isHero ? "l-logo-hero" : "l-logo-nav"} aria-label="OrbitAN" role="img">
-      <svg viewBox={isHero ? "0 0 300 130" : "0 0 520 130"} fill="none" xmlns="http://www.w3.org/2000/svg" className="l-logo-svg" style={{ width: "100%", height: "auto" }}>
+      <svg viewBox={isHero ? "-17 0 300 130" : "0 0 520 130"} fill="none" xmlns="http://www.w3.org/2000/svg" className="l-logo-svg" style={{ width: "100%", height: "auto" }}>
         <defs>
           <filter id="lg-soft" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur in="SourceGraphic" stdDeviation="2.5"/></filter>
           <filter id="lg-med" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur in="SourceGraphic" stdDeviation="4.5"/></filter>
