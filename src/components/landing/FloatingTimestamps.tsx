@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 
 function seed(i: number, s: number): number {
   return ((i * 127 + s * 31 + 773) % 1000) / 1000;
 }
 
-interface Cell {
+const COLS = 16;
+const ROWS = 20;
+const TOTAL = COLS * ROWS;
+const ANCHOR_HOURS = new Set(["00", "06", "12", "18"]);
+
+interface CellData {
   hh: string;
   mm: string;
   color: string;
@@ -15,56 +20,143 @@ interface Cell {
   isAnchor: boolean;
 }
 
-const COLS = 16;
-const ROWS = 20;
-const TOTAL = COLS * ROWS; // 320
-
-const ANCHOR_HOURS = new Set(["00", "06", "12", "18"]);
-
-const CELLS: Cell[] = Array.from({ length: TOTAL }, (_, i) => {
+const CELLS: CellData[] = Array.from({ length: TOTAL }, (_, i) => {
   const h = Math.floor(seed(i, 1) * 24);
   const m = Math.floor(seed(i, 2) * 12) * 5;
   const hh = String(h).padStart(2, "0");
   const mm = String(m).padStart(2, "0");
   const isAnchor = ANCHOR_HOURS.has(hh);
   const r = seed(i, 3);
-
-  const alpha = isAnchor
-    ? 0.30 + r * 0.14
-    : 0.09 + r * 0.10;
-
-  const size = isAnchor
-    ? 0.62 + r * 0.2
-    : 0.40 + r * 0.22;
-
+  const alpha = isAnchor ? 0.30 + r * 0.14 : 0.09 + r * 0.10;
+  const size = isAnchor ? 0.62 + r * 0.2 : 0.40 + r * 0.22;
   const color = isAnchor
     ? `rgba(245,158,11,${alpha.toFixed(3)})`
     : r > 0.5
       ? `rgba(59,130,246,${alpha.toFixed(3)})`
       : `rgba(139,92,246,${alpha.toFixed(3)})`;
-
   return { hh, mm, color, size, weight: isAnchor ? 500 : 300 + Math.floor(r * 200), isAnchor };
 });
+
+/* ── Compute neighbor indices (up to distance 2) ── */
+function getNeighbors(idx: number, cols: number, rows: number, dist: number): number[] {
+  const row = Math.floor(idx / cols);
+  const col = idx % cols;
+  const result: number[] = [];
+  for (let dr = -dist; dr <= dist; dr++) {
+    for (let dc = -dist; dc <= dist; dc++) {
+      if (dr === 0 && dc === 0) continue;
+      const r = row + dr;
+      const c = col + dc;
+      if (r >= 0 && r < rows && c >= 0 && c < cols) {
+        result.push(r * cols + c);
+      }
+    }
+  }
+  return result;
+}
+
+// Precompute neighbor maps for distance 1 and 2
+const NEIGHBORS_D1: number[][] = Array.from({ length: TOTAL }, (_, i) => getNeighbors(i, COLS, ROWS, 1));
+const NEIGHBORS_D2: number[][] = Array.from({ length: TOTAL }, (_, i) => getNeighbors(i, COLS, ROWS, 2));
 
 export function FloatingTimestamps() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const cellRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const rafRef = useRef<number>(0);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
   const [ss, setSs] = useState(() => String(new Date().getSeconds()).padStart(2, "0"));
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const hoveredRef = useRef<number | null>(null);
+  const glowCellsRef = useRef<Set<number>>(new Set());
 
+  // Live seconds
   useEffect(() => {
     const iv = setInterval(() => setSs(String(new Date().getSeconds()).padStart(2, "0")), 1000);
     return () => clearInterval(iv);
   }, []);
 
+  // Mouse parallax
   const handleMouseMove = useCallback((e: MouseEvent) => {
     const el = containerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    mouseRef.current = {
-      x: (e.clientX - rect.left) / rect.width,
-      y: (e.clientY - rect.top) / rect.height,
+    mouseRef.current = { x: (e.clientX - rect.left) / rect.width, y: (e.clientY - rect.top) / rect.height };
+
+    // Detect which cell is under cursor
+    const g = gridRef.current;
+    if (!g) return;
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    const col = Math.floor(x * COLS);
+    const row = Math.floor(y * ROWS);
+    if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
+      const idx = row * COLS + col;
+      if (hoveredRef.current !== idx) {
+        hoveredRef.current = idx;
+        setHoveredIdx(idx);
+      }
+    } else if (hoveredRef.current !== null) {
+      hoveredRef.current = null;
+      setHoveredIdx(null);
+    }
+  }, []);
+
+  // Apply glow classes to neighbors
+  useEffect(() => {
+    // Clear all glows
+    for (const ci of glowCellsRef.current) {
+      const el = cellRefs.current[ci];
+      if (el) {
+        el.style.removeProperty('--glow');
+        el.classList.remove('l-fts-near', 'l-fts-far');
+      }
+    }
+    glowCellsRef.current.clear();
+
+    if (hoveredIdx === null) return;
+
+    // Hovered cell
+    const hEl = cellRefs.current[hoveredIdx];
+    if (hEl) {
+      hEl.style.setProperty('--glow', '1');
+      hEl.classList.add('l-fts-hover');
+      glowCellsRef.current.add(hoveredIdx);
+    }
+
+    // Distance-1 neighbors
+    for (const ni of NEIGHBORS_D1[hoveredIdx]) {
+      const el = cellRefs.current[ni];
+      if (el) {
+        el.style.setProperty('--glow', '0.35');
+        el.classList.add('l-fts-near');
+        glowCellsRef.current.add(ni);
+      }
+    }
+
+    // Distance-2 neighbors (only those not already in D1)
+    const d1Set = new Set(NEIGHBORS_D1[hoveredIdx]);
+    for (const ni of NEIGHBORS_D2[hoveredIdx]) {
+      if (d1Set.has(ni)) continue;
+      const el = cellRefs.current[ni];
+      if (el) {
+        el.style.setProperty('--glow', '0.12');
+        el.classList.add('l-fts-far');
+        glowCellsRef.current.add(ni);
+      }
+    }
+  }, [hoveredIdx]);
+
+  // Cleanup classes on unmount
+  useEffect(() => {
+    const refs = cellRefs.current;
+    return () => {
+      for (const el of refs) {
+        if (el) {
+          el.style.removeProperty('--glow');
+          el.classList.remove('l-fts-hover', 'l-fts-near', 'l-fts-far');
+        }
+      }
     };
   }, []);
 
@@ -103,6 +195,7 @@ export function FloatingTimestamps() {
         {CELLS.map((cell, i) => (
           <span
             key={i}
+            ref={(el) => { cellRefs.current[i] = el; }}
             className="l-fts-cell"
             style={{
               fontSize: `${cell.size}rem`,
