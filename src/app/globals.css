@@ -598,7 +598,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-hero-v2-content .l-hero-btn,
 .l-hero-v2-content a{pointer-events:auto}
 /* ── OrbitAN Logo ── */
-	.l-logo-hero{width:clamp(320px,50vw,460px);margin-bottom:clamp(1rem,2vh,2rem)}
+	.l-logo-hero{width:clamp(380px,55vw,600px);margin-bottom:clamp(1rem,2vh,2rem)}
 	.l-logo-nav{width:130px;flex-shrink:0}
 	.l-logo-svg{display:block}
 
@@ -744,7 +744,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   display:flex;flex-direction:column;gap:1rem;
   transition:background .3s ease;
 }
-.l-method-card:hover{background:rgba(10,10,18,1);border-color:rgba(255,255,255,.06);transform:translateY(-2px);box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 0 1px rgba(99,102,241,.04) inset}.l-method-card:hover .l-method-name{transform:translateX(2px)}.l-method-card:hover .l-method-preview{border-color:rgba(255,255,255,.08);box-shadow:0 0 30px rgba(0,0,0,.3) inset}
+.l-method-card:hover{background:rgba(10,10,18,1);border-color:rgba(255,255,255,.05)}.l-method-card:hover .l-method-preview{border-color:rgba(255,255,255,.06)}
 .l-method-tag{
   font-family:"JetBrains Mono",monospace;font-size:.45rem;
   letter-spacing:.14em;text-transform:uppercase;
@@ -815,7 +815,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   .l-focus-clock{flex:0 0 280px}
   .l-focus-content{flex:1;padding-left:clamp(2rem,4vw,4rem)}
 }
-.l-focus-clock{width:200px;height:200px;flex-shrink:0;transition:transform .6s cubic-bezier(.34,1.56,.64,1)}
+.l-focus-clock{width:200px;height:200px;flex-shrink:0}
 .l-focus-clock-svg{width:100%;height:100%}
 .l-focus-h2{
   font-family:"Clash Display",sans-serif;
@@ -828,13 +828,13 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   color:rgba(255,255,255,.26);max-width:420px;
   margin-bottom:clamp(1.2rem,3vh,2rem);
 }
-.l-focus-clock:hover{transform:scale(1.03) rotate(2deg)}.l-focus-legend{display:flex;flex-wrap:wrap;gap:12px}
+.l-focus-legend{display:flex;flex-wrap:wrap;gap:12px}
 .l-focus-legend-item{
   display:flex;align-items:center;gap:6px;
   font-family:"JetBrains Mono",monospace;font-size:.5rem;
   letter-spacing:.1em;color:rgba(255,255,255,.24);text-transform:uppercase;
 }
-.l-focus-legend-dot{width:8px;height:8px;border-radius:50%;transition:box-shadow .4s ease}.l-focus-legend-item:hover{color:rgba(255,255,255,.45);background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.04);transform:translateX(3px)}.l-focus-legend-item:hover .l-focus-legend-dot{box-shadow:0 0 10px currentColor}
+.l-focus-legend-dot{width:8px;height:8px;border-radius:50%;transition:box-shadow .5s ease}.l-focus-legend-item:hover{color:rgba(255,255,255,.4)}.l-focus-legend-item:hover .l-focus-legend-dot{box-shadow:0 0 8px currentColor}
 
 /* ── Keyboard Navigation Section ── */
 .l-keys-section{
@@ -863,7 +863,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.03);
   border-radius:12px;transition:background .2s ease,border-color .2s ease;
 }
-.l-keys-card:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);transform:translateY(-3px);box-shadow:0 10px 40px rgba(0,0,0,.45),0 0 0 1px rgba(99,102,241,.06) inset,0 0 50px rgba(99,102,241,.03)}.l-keys-card:hover .l-keys-kbd{transform:scale(1.05);color:rgba(255,255,255,.35)}
+.l-keys-card:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}.l-keys-card:hover .l-keys-kbd{color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.15)}
 .l-keys-keys{display:flex;gap:4px;align-items:center}
 .l-keys-kbd{
   font-family:"JetBrains Mono",monospace;font-size:.625rem;
@@ -965,9 +965,9 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	.l-engine-inner{max-width:1100px;margin:0 auto}
 	.l-engine-deck{display:grid;grid-template-columns:1fr;gap:1px;background:rgba(255,255,255,.025);border-radius:16px;overflow:hidden}
 	@media(min-width:768px){.l-engine-deck{grid-template-columns:repeat(3,1fr)}}
-	.l-engine-card{background:#0A0A0F;padding:clamp(2rem,4vw,3.5rem);display:flex;flex-direction:column;gap:1.25rem;transition:all .5s cubic-bezier(.16,1,.3,1);border:1px solid transparent}
-	.l-engine-card:hover{background:rgba(10,10,15,1);border-color:rgba(255,255,255,.06);transform:translateY(-3px);box-shadow:0 12px 50px rgba(0,0,0,.4),0 0 0 1px rgba(99,102,241,.08) inset,0 0 60px rgba(99,102,241,.04)}.l-engine-card:hover .l-engine-card-icon{transform:scale(1.05)}.l-engine-card:hover .l-engine-card-h{color:rgba(255,255,255,.7)}
-	.l-engine-card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:"Clash Display",sans-serif;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+	.l-engine-card{background:#0A0A0F;padding:clamp(2rem,4vw,3.5rem);display:flex;flex-direction:column;gap:1.25rem;transition:background .7s ease,border-color .7s ease;border:1px solid transparent}
+	.l-engine-card:hover{background:rgba(12,12,20,1);border-color:rgba(255,255,255,.05)}.l-engine-card:hover .l-engine-card-h{color:rgba(255,255,255,.65)}
+	.l-engine-card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:"Clash Display",sans-serif;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 	.l-engine-card-h{font-family:"Clash Display",sans-serif;font-size:clamp(1.125rem,1.8vw,1.5rem);font-weight:600;line-height:1.1;color:rgba(255,255,255,.55);transition:color .4s ease}
 	.l-engine-card-d{font-family:"Satoshi",sans-serif;font-size:.8125rem;line-height:1.7;color:rgba(255,255,255,.22)}
 
@@ -991,7 +991,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 	/* ── Interactive Timestamp Matrix ── */
 	.l-fts{position:absolute;inset:0;overflow:hidden;pointer-events:auto;z-index:0}
-	.l-fts-grid{position:absolute;top:0;left:0;-webkit-mask-image:radial-gradient(ellipse 30% 24% at 40% 38%,transparent 0%,transparent 52%,#000 72%);mask-image:radial-gradient(ellipse 30% 24% at 40% 38%,transparent 0%,transparent 52%,#000 72%)}
+	.l-fts-grid{position:absolute;top:0;left:0;-webkit-mask-image:radial-gradient(ellipse 34% 26% at 50% 32%,transparent 0%,transparent 50%,#000 68%);mask-image:radial-gradient(ellipse 34% 26% at 50% 32%,transparent 0%,transparent 50%,#000 68%)}
 	.l-fts-cell{
 	  display:flex;align-items:center;justify-content:center;
 	  font-family:"JetBrains Mono",monospace;
@@ -1024,7 +1024,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 /* ── Responsive ── */
 @media(max-width:767px){
-  .l-hero-glyph{font-size:70%} .l-hero-logo{left:32%}
+  .l-hero-glyph{font-size:70%} .l-hero-logo{left:50%}
   .l-hero-desc{font-size:.65rem;left:3%;bottom:16%}
   .l-hero-actions{top:75%}.l-hero-actions-row{gap:.6rem}
   .l-hero-btn-primary{padding:.5rem 1rem;font-size:.6rem}
