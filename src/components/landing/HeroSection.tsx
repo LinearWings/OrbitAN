@@ -7,9 +7,37 @@ import { useReveal } from "@/hooks/useScrollProgress";
 import { FloatingTimestamps } from "./FloatingTimestamps";
 import { ScrollIndicator } from "./ScrollIndicator";
 
-/* ── Chinese characters split for yin-yang block treatment ── */
-const ZH_CHARS_L1 = ["轨", "划", "分", "秒"];
-const ZH_CHARS_L2 = ["注", "定", "乾", "坤"];
+/* ── Orbital constellation: each character is a celestial body ── */
+interface Glyph {
+  char: string;
+  x: string;   // % from left
+  y: string;   // % from top
+  size: string; // clamp()
+  opacity: number;
+  weight: number;
+  rotate?: number; // deg
+}
+
+const CN_GLYPHS: Glyph[] = [
+  // "轨" — MASSIVE anchor, top-left bleeding out, watermark scale
+  { char: "轨", x: "-3%", y: "-5%", size: "clamp(8rem,20vw,18rem)", opacity: 0.06, weight: 700, rotate: -8 },
+  // Primary constellation
+  { char: "划", x: "8%",  y: "18%", size: "clamp(2.5rem,5vw,4.5rem)", opacity: 0.55, weight: 600 },
+  { char: "分", x: "48%", y: "6%",  size: "clamp(1.8rem,3.5vw,3.2rem)", opacity: 0.4, weight: 500 },
+  { char: "秒", x: "72%", y: "22%", size: "clamp(2.2rem,4.5vw,4rem)", opacity: 0.5, weight: 600, rotate: 5 },
+  { char: "注", x: "58%", y: "52%", size: "clamp(3rem,6vw,5.5rem)", opacity: 0.6, weight: 700 },
+  { char: "定", x: "15%", y: "60%", size: "clamp(1.6rem,3vw,2.8rem)", opacity: 0.45, weight: 500, rotate: -4 },
+  { char: "乾", x: "78%", y: "68%", size: "clamp(2rem,3.8vw,3.5rem)", opacity: 0.5, weight: 600 },
+  { char: "坤", x: "22%", y: "82%", size: "clamp(2.8rem,5.5vw,5rem)", opacity: 0.55, weight: 700 },
+];
+
+const EN_GLYPHS: { text: string; x: string; y: string; size: string; opacity: number }[] = [
+  { text: "TIME",   x: "5%",  y: "12%", size: "clamp(.7rem,1.5vw,1.2rem)", opacity: 0.25 },
+  { text: "ORBITED",x: "50%", y: "18%", size: "clamp(.6rem,1.3vw,1rem)", opacity: 0.2 },
+  { text: "FOCUS",  x: "65%", y: "60%", size: "clamp(.7rem,1.5vw,1.2rem)", opacity: 0.25 },
+  { text: "DETER-", x: "10%", y: "70%", size: "clamp(.55rem,1.2vw,.9rem)", opacity: 0.18 },
+  { text: "MINED",  x: "12%", y: "76%", size: "clamp(.55rem,1.2vw,.9rem)", opacity: 0.18 },
+];
 
 export function HeroSection() {
   const lang = useLanguage();
@@ -23,95 +51,86 @@ export function HeroSection() {
       <div className="l-hero-v2-canvas-wrap">
         <FloatingTimestamps />
 
-        <div className="l-hero-v2-content">
-          {/* ── OrbitAN Logo Wordmark ── */}
+        {/* ── Orbital Constellation Layout ── */}
+        <div
+          className="l-hero-stage"
+          style={{
+            opacity: visible ? 1 : 0,
+            transition: "opacity 0.8s 0.1s",
+          }}
+        >
+          {/* Chinese glyphs — scattered across the canvas */}
+          {isZh
+            ? CN_GLYPHS.map((g, i) => (
+                <span
+                  key={i}
+                  className="l-hero-glyph"
+                  style={{
+                    left: g.x,
+                    top: g.y,
+                    fontSize: g.size,
+                    opacity: g.opacity,
+                    fontWeight: g.weight,
+                    transform: g.rotate ? `rotate(${g.rotate}deg)` : undefined,
+                    transition: `opacity 0.6s ${0.15 + i * 0.08}s, transform 0.7s ${0.15 + i * 0.08}s cubic-bezier(0.16,1,0.3,1)`,
+                  }}
+                >
+                  {g.char}
+                </span>
+              ))
+            : EN_GLYPHS.map((g, i) => (
+                <span
+                  key={i}
+                  className="l-hero-glyph l-hero-glyph-en"
+                  style={{
+                    left: g.x,
+                    top: g.y,
+                    fontSize: g.size,
+                    opacity: g.opacity,
+                    transition: `opacity 0.6s ${0.15 + i * 0.08}s`,
+                  }}
+                >
+                  {g.text}
+                </span>
+              ))}
+
+          {/* OrbitAN Logo — precise anchor at strategic position */}
           <div
             className="l-hero-logo"
             style={{
               opacity: visible ? 1 : 0,
-              transform: visible ? "translateY(0)" : "translateY(16px)",
-              transition: "opacity 0.6s 0.05s, transform 0.6s 0.05s cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "opacity 0.5s 0.3s",
             }}
             aria-label="OrbitAN"
           >
             <span className="l-hero-logo-o">O</span>
-            <span className="l-hero-logo-r">R</span>
-            <span className="l-hero-logo-b">B</span>
-            <span className="l-hero-logo-i">I</span>
-            <span className="l-hero-logo-t">T</span>
+            <span className="l-hero-logo-r">r</span>
+            <span className="l-hero-logo-b">b</span>
+            <span className="l-hero-logo-i">i</span>
+            <span className="l-hero-logo-t">t</span>
             <span className="l-hero-logo-a">A</span>
             <span className="l-hero-logo-n">N</span>
           </div>
 
-          {/* ── Headline: yin-yang character blocks ── */}
-          <h1
-            className="l-hero-h1"
-            style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? "translateY(0)" : "translateY(20px)",
-              transition: "opacity 0.7s 0.15s, transform 0.7s 0.15s cubic-bezier(0.16, 1, 0.3, 1)",
-            }}
-          >
-            {isZh ? (
-              <>
-                <span className="l-hero-h1-row">
-                  {ZH_CHARS_L1.map((ch, i) => (
-                    <span key={i} className={`l-hero-block ${i % 2 === 0 ? "l-hero-block-yang" : "l-hero-block-yin"}`}>
-                      {ch}
-                    </span>
-                  ))}
-                </span>
-                <span className="l-hero-h1-row">
-                  {ZH_CHARS_L2.map((ch, i) => (
-                    <span key={i} className={`l-hero-block ${i % 2 === 0 ? "l-hero-block-yin" : "l-hero-block-yang"}`}>
-                      {ch}
-                    </span>
-                  ))}
-                </span>
-              </>
-            ) : (
-              <>
-                <span className="l-hero-h1-row l-hero-h1-en">TIME ORBITED</span>
-                <span className="l-hero-h1-row l-hero-h1-en">FOCUS DETERMINED</span>
-              </>
-            )}
-          </h1>
-
-          {/* ── English subtitle ── */}
-          <p
-            className="l-hero-sub"
-            style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? "translateY(0)" : "translateY(14px)",
-              transition: "opacity 0.6s 0.25s, transform 0.6s 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
-            }}
-          >
-            {isZh
-              ? "T I M E   O R B I T E D   ·   F O C U S   D E T E R M I N E D"
-              : "轨划分秒 · 注定乾坤"}
-          </p>
-
-          {/* ── Description ── */}
+          {/* Description — minimal, bottom-left corner */}
           <p
             className="l-hero-desc"
             style={{
               opacity: visible ? 1 : 0,
-              transform: visible ? "translateY(0)" : "translateY(12px)",
-              transition: "opacity 0.5s 0.35s, transform 0.5s 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "opacity 0.5s 0.55s",
             }}
           >
             {isZh
-              ? "六种经典时间管理方法论，轨道化你的每一天。"
-              : "Six time-management methodologies. Orbitalize your every day."}
+              ? "轨划分秒 · 注定乾坤"
+              : "TIME ORBITED · FOCUS DETERMINED"}
           </p>
 
-          {/* ── CTA Buttons ── */}
+          {/* CTAs — bottom center */}
           <div
             className="l-hero-actions"
             style={{
               opacity: visible ? 1 : 0,
-              transform: visible ? "translateY(0)" : "translateY(10px)",
-              transition: "opacity 0.5s 0.45s, transform 0.5s 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+              transition: "opacity 0.5s 0.65s",
             }}
           >
             <Link href="/orbit" className="l-hero-btn l-hero-btn-primary">

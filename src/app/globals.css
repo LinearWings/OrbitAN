@@ -598,76 +598,59 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 }
 .l-hero-v2-content .l-hero-btn,
 .l-hero-v2-content a{pointer-events:auto}
-/* ── Hero Typography ── */
+/* ── Hero Orbital Constellation ── */
 
-/* OrbitAN Logo Wordmark */
-.l-hero-logo{
-  display:flex;align-items:center;gap:clamp(.15rem,.5vw,.35rem);
+/* Full canvas stage for absolute-positioned glyphs */
+.l-hero-stage{
+  position:absolute;inset:0;z-index:2;
+  pointer-events:none;
+}
+.l-hero-stage a,.l-hero-stage .l-hero-btn{pointer-events:auto}
+
+/* Individual character glyph — celestial body */
+.l-hero-glyph{
+  position:absolute;
   font-family:"Clash Display",sans-serif;
-  font-size:clamp(1.6rem,3.5vw,2.8rem);font-weight:600;
-  letter-spacing:-.02em;margin-bottom:clamp(1.5rem,3vh,2.5rem);
+  color:#fff;line-height:1;
   user-select:none;
+  filter:drop-shadow(0 0 30px rgba(59,130,246,.15));
+}
+.l-hero-glyph-en{
+  font-family:"JetBrains Mono",monospace;
+  letter-spacing:.15em;text-transform:uppercase;
+  filter:none;color:rgba(255,255,255,.6);
+}
+
+/* OrbitAN Logo — tight, precise, positioned at 42%/44% */
+.l-hero-logo{left:32%;
+  position:absolute;left:38%;top:40%;
+  display:flex;align-items:baseline;gap:clamp(.08rem,.2vw,.2rem);
+  font-family:"Clash Display",sans-serif;
+  font-size:clamp(1.4rem,3vw,2.4rem);font-weight:600;
+  letter-spacing:-.02em;user-select:none;
 }
 .l-hero-logo-o{color:#3B82F6}
-.l-hero-logo-r{color:rgba(255,255,255,.85)}
-.l-hero-logo-b{color:rgba(255,255,255,.85)}
+.l-hero-logo-r,.l-hero-logo-b{color:rgba(255,255,255,.75)}
 .l-hero-logo-i{color:#F59E0B}
-.l-hero-logo-t{color:rgba(255,255,255,.85)}
-.l-hero-logo-a{color:rgba(255,255,255,.6)}
-.l-hero-logo-n{color:rgba(255,255,255,.45)}
+.l-hero-logo-t{color:rgba(255,255,255,.55)}
+.l-hero-logo-a{color:rgba(255,255,255,.35)}
+.l-hero-logo-n{color:rgba(255,255,255,.2)}
 
-/* Headline — yin-yang character blocks */
-.l-hero-h1{
-  display:flex;flex-direction:column;align-items:center;gap:clamp(.5rem,1.2vh,1rem);
-  margin-bottom:clamp(1rem,2.5vh,1.8rem);
-}
-.l-hero-h1-row{display:flex;gap:clamp(.35rem,1vw,.7rem)}
-.l-hero-block{
-  font-family:"Clash Display",sans-serif;
-  font-size:clamp(2rem,5vw,4rem);font-weight:600;
-  line-height:1;letter-spacing:.02em;
-  padding:clamp(.15rem,.4vw,.3rem) clamp(.4rem,1vw,.7rem);
-  border-radius:4px;
-}
-/* Yang — light surface, dark text */
-.l-hero-block-yang{
-  background:rgba(255,255,255,.9);
-  color:#0A0A0F;
-}
-/* Yin — transparent, light text, hairline border */
-.l-hero-block-yin{
-  background:transparent;
-  color:rgba(255,255,255,.7);
-  border:1px solid rgba(255,255,255,.12);
-}
-
-/* English headline variant */
-.l-hero-h1-en{
-  font-family:"Clash Display",sans-serif;
-  font-size:clamp(1.5rem,3.5vw,3rem);font-weight:500;
-  letter-spacing:.12em;color:rgba(255,255,255,.65);
-}
-
-/* Subtitle — wide-spaced */
-.l-hero-sub{
-  font-family:"JetBrains Mono",monospace;
-  font-size:clamp(.45rem,.7vw,.55rem);
-  letter-spacing:.22em;color:rgba(255,255,255,.15);
-  text-transform:uppercase;
-  margin-bottom:clamp(.8rem,2vh,1.2rem);
-}
-
-/* Description */
+/* Description — bottom-left */
 .l-hero-desc{
-  font-family:"Satoshi",sans-serif;
-  font-size:clamp(.8rem,1vw,.9rem);line-height:1.7;
-  color:rgba(255,255,255,.22);max-width:440px;
-  text-align:center;
-  margin-bottom:clamp(1.2rem,3vh,2rem);
+  position:absolute;left:5%;bottom:18%;
+  font-family:"Clash Display",sans-serif;
+  font-size:clamp(.7rem,1.2vw,.9rem);
+  color:rgba(255,255,255,.25);
+  letter-spacing:.04em;max-width:18ch;
 }
 
-/* CTA Actions */
-.l-hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+/* CTAs — bottom center */
+.l-hero-actions{
+  position:absolute;left:50%;bottom:8%;
+  transform:translateX(-50%);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
 .l-hero-btn{
   display:inline-flex;align-items:center;gap:8px;
   border-radius:50px;padding:10px 22px;font-size:.6875rem;
@@ -679,14 +662,15 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-hero-btn:active{transform:scale(.97)}
 .l-hero-btn-primary{background:#fff;color:#000}
 .l-hero-btn-primary:hover{background:rgba(255,255,255,.9)}
-.l-hero-btn-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
-.l-hero-btn-secondary:hover{background:rgba(255,255,255,.15)}
+.l-hero-btn-secondary{background:rgba(255,255,255,.08);color:rgba(255,255,255,.45)}
+.l-hero-btn-secondary:hover{background:rgba(255,255,255,.14)}
 .l-hero-btn-dot{width:6px;height:6px;border-radius:50%;background:#F59E0B}
 .l-hero-btn-dots{display:inline-flex;gap:2px;margin-left:2px}
 .l-hero-btn-dots::before,.l-hero-btn-dots::after{
   content:"";width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.4;
 }
 
+/* ── Scroll Indicator ── */
 /* ── Scroll Indicator ── */
 .l-scroll-indicator{
   position:absolute;bottom:16px;left:0;right:0;z-index:5;
@@ -982,8 +966,8 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 /* ── Responsive ── */
 @media(max-width:767px){
-  .l-hero-block{font-size:clamp(1.5rem,7vw,3rem)}
-  .l-hero-desc{font-size:.75rem}
+  .l-hero-glyph{font-size:70%} .l-hero-logo{left:28%;font-size:clamp(1rem,5vw,1.8rem)}
+  .l-hero-desc{font-size:.65rem;left:3%;bottom:16%}
   .l-hero-actions{flex-direction:column;width:100%}
   .l-hero-btn{width:100%;justify-content:center}
   .l-methods-grid{grid-template-columns:1fr}
