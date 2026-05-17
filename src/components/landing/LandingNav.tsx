@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
+import { OrbitanLogo } from "./OrbitanLogo";
 
 export function LandingNav() {
   const lang = useLanguage();
@@ -11,7 +12,7 @@ export function LandingNav() {
   return (
     <nav className="l-nav" aria-label="Main navigation">
       <Link href="/" className="l-nav-logo" aria-label="OrbitAN Home">
-        OrbitAN
+        <OrbitanLogo variant="nav" />
       </Link>
 
       <span className="l-nav-tagline">

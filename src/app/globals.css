@@ -598,6 +598,11 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 }
 .l-hero-v2-content .l-hero-btn,
 .l-hero-v2-content a{pointer-events:auto}
+/* ── OrbitAN Logo ── */
+	.l-logo-hero{width:clamp(240px,38vw,340px);margin-bottom:clamp(1rem,2vh,2rem)}
+	.l-logo-nav{width:130px;flex-shrink:0}
+	.l-logo-svg{display:block}
+
 /* ── Hero Orbital Constellation ── */
 
 /* Full canvas stage for absolute-positioned glyphs */
@@ -621,20 +626,11 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   filter:none;color:rgba(255,255,255,.6);
 }
 
-/* OrbitAN Logo — tight, precise, positioned at 42%/44% */
-.l-hero-logo{left:32%;
+/* OrbitAN Logo — positioned at 38%/40% */
+.l-hero-logo{
   position:absolute;left:38%;top:40%;
-  display:flex;align-items:baseline;gap:clamp(.08rem,.2vw,.2rem);
-  font-family:"Clash Display",sans-serif;
-  font-size:clamp(1.4rem,3vw,2.4rem);font-weight:600;
-  letter-spacing:-.02em;user-select:none;
+  user-select:none;
 }
-.l-hero-logo-o{color:#3B82F6}
-.l-hero-logo-r,.l-hero-logo-b{color:rgba(255,255,255,.75)}
-.l-hero-logo-i{color:#F59E0B}
-.l-hero-logo-t{color:rgba(255,255,255,.55)}
-.l-hero-logo-a{color:rgba(255,255,255,.35)}
-.l-hero-logo-n{color:rgba(255,255,255,.2)}
 
 /* Description — bottom-left */
 .l-hero-desc{
@@ -966,7 +962,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 /* ── Responsive ── */
 @media(max-width:767px){
-  .l-hero-glyph{font-size:70%} .l-hero-logo{left:28%;font-size:clamp(1rem,5vw,1.8rem)}
+  .l-hero-glyph{font-size:70%} .l-hero-logo{left:32%}
   .l-hero-desc{font-size:.65rem;left:3%;bottom:16%}
   .l-hero-actions{flex-direction:column;width:100%}
   .l-hero-btn{width:100%;justify-content:center}

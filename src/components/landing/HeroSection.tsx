@@ -6,6 +6,7 @@ import { getT } from "@/lib/i18n";
 import { useReveal } from "@/hooks/useScrollProgress";
 import { FloatingTimestamps } from "./FloatingTimestamps";
 import { ScrollIndicator } from "./ScrollIndicator";
+import { OrbitanLogo } from "./OrbitanLogo";
 
 /* ── Orbital constellation: each character is a celestial body ── */
 interface Glyph {
@@ -94,22 +95,15 @@ export function HeroSection() {
                 </span>
               ))}
 
-          {/* OrbitAN Logo — precise anchor at strategic position */}
+          {/* OrbitAN Logo */}
           <div
             className="l-hero-logo"
             style={{
               opacity: visible ? 1 : 0,
               transition: "opacity 0.5s 0.3s",
             }}
-            aria-label="OrbitAN"
           >
-            <span className="l-hero-logo-o">O</span>
-            <span className="l-hero-logo-r">r</span>
-            <span className="l-hero-logo-b">b</span>
-            <span className="l-hero-logo-i">i</span>
-            <span className="l-hero-logo-t">t</span>
-            <span className="l-hero-logo-a">A</span>
-            <span className="l-hero-logo-n">N</span>
+            <OrbitanLogo variant="hero" />
           </div>
 
           {/* Description — minimal, bottom-left corner */}
