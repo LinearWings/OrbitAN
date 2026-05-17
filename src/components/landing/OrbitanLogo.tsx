@@ -16,28 +16,28 @@ export function OrbitanLogo({ variant = "hero" }: LogoProps) {
             <stop offset="50%" stopColor="#D97706"/><stop offset="100%" stopColor="#78350F"/>
           </radialGradient>
           <linearGradient id="lg-ring" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#3B82F6" stopOpacity="1"/>
-            <stop offset="30%" stopColor="#6366F1" stopOpacity="0.5"/>
-            <stop offset="70%" stopColor="#3B82F6" stopOpacity="0.15"/>
-            <stop offset="100%" stopColor="rgba(59,130,246,0.02)"/>
+            <stop offset="0%" stopColor="#60A5FA" stopOpacity="1"/>
+            <stop offset="30%" stopColor="#818CF8" stopOpacity="0.7"/>
+            <stop offset="70%" stopColor="#3B82F6" stopOpacity="0.25"/>
+            <stop offset="100%" stopColor="rgba(59,130,246,0.04)"/>
           </linearGradient>
         </defs>
 
         {/* ── THE "O" — orbital ring replacing the first letter ── */}
         {/* Primary ring: blue gradient, tilted */}
-        <ellipse cx="46" cy="60" rx="30" ry="35" fill="none" stroke="url(#lg-ring)" strokeWidth="2.4" transform="rotate(-15 46 60)"/>
+        <ellipse cx="46" cy="60" rx="30" ry="35" fill="none" stroke="url(#lg-ring)" strokeWidth="3.5" transform="rotate(-15 46 60)"/>
 
         {/* Secondary ring: violet dashed, counter-rotated */}
-        <ellipse cx="46" cy="60" rx="21" ry="26" fill="none" stroke="rgba(99,102,241,0.20)" strokeWidth="0.8" strokeDasharray="9 11" transform="rotate(38 46 60)"/>
+        <ellipse cx="46" cy="60" rx="21" ry="26" fill="none" stroke="rgba(129,140,248,0.40)" strokeWidth="1.2" strokeDasharray="9 11" transform="rotate(38 46 60)"/>
 
         {/* Amber arc fragment */}
-        <path d="M34 34 A32 37 0 0 1 56 27" fill="none" stroke="#F59E0B" strokeWidth="1.3" strokeLinecap="round" transform="rotate(-15 46 60)"/>
+        <path d="M34 34 A32 37 0 0 1 56 27" fill="none" stroke="#FBBF24" strokeWidth="2" strokeLinecap="round" transform="rotate(-15 46 60)"/>
 
         {/* Inner accent ring */}
         <ellipse cx="46" cy="60" rx="10" ry="13" fill="none" stroke="rgba(59,130,246,0.12)" strokeWidth="0.5" strokeDasharray="3 12" transform="rotate(-60 46 60)"/>
 
         {/* Ring hash marks */}
-        <g transform="rotate(-15 46 60)" opacity="0.28">
+        <g transform="rotate(-15 46 60)" opacity="0.45">
           <line x1="16" y1="60" x2="12" y2="60" stroke="#3B82F6" strokeWidth="1"/>
           <line x1="46" y1="25" x2="46" y2="21" stroke="#3B82F6" strokeWidth="1"/>
           <line x1="76" y1="60" x2="80" y2="60" stroke="#3B82F6" strokeWidth="1"/>
@@ -64,17 +64,17 @@ export function OrbitanLogo({ variant = "hero" }: LogoProps) {
 
         {/* ── WORDMARK — "rbitAN" flows directly from the ring-O ── */}
         {/* The ring IS the O, so the text starts with "rbit" */}
-        <text x="92" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="500" fontSize="42" fill="#fff" letterSpacing="-0.5">rbit</text>
-        <text x="198" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="42" fill="#F59E0B" letterSpacing="-0.5">A</text>
-        <text x="240" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="400" fontSize="42" fill="rgba(255,255,255,0.22)" letterSpacing="-0.5">N</text>
+        <text x="80" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="500" fontSize="42" fill="#fff" letterSpacing="-0.5">rbit</text>
+        <text x="186" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="700" fontSize="42" fill="#F59E0B" letterSpacing="-0.5">A</text>
+        <text x="228" y="72" fontFamily="'Clash Display', sans-serif" fontWeight="400" fontSize="42" fill="rgba(255,255,255,0.22)" letterSpacing="-0.5">N</text>
 
         {/* Subtle baseline under wordmark */}
-        <line x1="92" y1="78" x2="285" y2="78" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5"/>
+        <line x1="80" y1="78" x2="273" y2="78" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5"/>
 
         {/* ── TAGLINE ── */}
         {isHero && (<>
-          <text x="96" y="100" fontFamily="'JetBrains Mono', monospace" fontWeight="400" fontSize="7.8" fill="rgba(255,255,255,0.12)" letterSpacing="5.5">ORBITAL · SCHEDULE · SYSTEM</text>
-          <line x1="94" y1="106" x2="380" y2="106" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5"/>
+          <text x="84" y="100" fontFamily="'JetBrains Mono', monospace" fontWeight="400" fontSize="7.8" fill="rgba(255,255,255,0.12)" letterSpacing="5.5">ORBITAL · SCHEDULE · SYSTEM</text>
+          <line x1="82" y1="106" x2="380" y2="106" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5"/>
         </>)}
       </svg>
     </div>
