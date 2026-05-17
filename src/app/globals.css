@@ -596,39 +596,94 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   display:flex;flex-direction:column;align-items:center;
   pointer-events:none;
 }
-.l-hero-v2-content .l-hero-v2-btn,
+.l-hero-v2-content .l-hero-btn,
 .l-hero-v2-content a{pointer-events:auto}
-.l-hero-v2-h1{
+/* ── Hero Typography ── */
+
+/* OrbitAN Logo Wordmark */
+.l-hero-logo{
+  display:flex;align-items:center;gap:clamp(.15rem,.5vw,.35rem);
   font-family:"Clash Display",sans-serif;
-  font-size:clamp(2rem,5.5vw,4.5rem);font-weight:500;
-  line-height:1.05;letter-spacing:-.03em;
-  color:rgba(255,255,255,.7);
-  display:flex;flex-direction:column;
+  font-size:clamp(1.6rem,3.5vw,2.8rem);font-weight:600;
+  letter-spacing:-.02em;margin-bottom:clamp(1.5rem,3vh,2.5rem);
+  user-select:none;
+}
+.l-hero-logo-o{color:#3B82F6}
+.l-hero-logo-r{color:rgba(255,255,255,.85)}
+.l-hero-logo-b{color:rgba(255,255,255,.85)}
+.l-hero-logo-i{color:#F59E0B}
+.l-hero-logo-t{color:rgba(255,255,255,.85)}
+.l-hero-logo-a{color:rgba(255,255,255,.6)}
+.l-hero-logo-n{color:rgba(255,255,255,.45)}
+
+/* Headline — yin-yang character blocks */
+.l-hero-h1{
+  display:flex;flex-direction:column;align-items:center;gap:clamp(.5rem,1.2vh,1rem);
   margin-bottom:clamp(1rem,2.5vh,1.8rem);
 }
-.l-hero-v2-h1-line{display:block}
-.l-hero-v2-desc{
-  font-family:"Satoshi",sans-serif;
-  font-size:clamp(.875rem,1.1vw,1rem);line-height:1.7;
-  color:rgba(255,255,255,.28);max-width:480px;
-  margin-bottom:clamp(1.5rem,3vh,2.5rem);
+.l-hero-h1-row{display:flex;gap:clamp(.35rem,1vw,.7rem)}
+.l-hero-block{
+  font-family:"Clash Display",sans-serif;
+  font-size:clamp(2rem,5vw,4rem);font-weight:600;
+  line-height:1;letter-spacing:.02em;
+  padding:clamp(.15rem,.4vw,.3rem) clamp(.4rem,1vw,.7rem);
+  border-radius:4px;
+}
+/* Yang — light surface, dark text */
+.l-hero-block-yang{
+  background:rgba(255,255,255,.9);
+  color:#0A0A0F;
+}
+/* Yin — transparent, light text, hairline border */
+.l-hero-block-yin{
+  background:transparent;
+  color:rgba(255,255,255,.7);
+  border:1px solid rgba(255,255,255,.12);
 }
 
-.l-hero-v2-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
-.l-hero-v2-btn{
+/* English headline variant */
+.l-hero-h1-en{
+  font-family:"Clash Display",sans-serif;
+  font-size:clamp(1.5rem,3.5vw,3rem);font-weight:500;
+  letter-spacing:.12em;color:rgba(255,255,255,.65);
+}
+
+/* Subtitle — wide-spaced */
+.l-hero-sub{
+  font-family:"JetBrains Mono",monospace;
+  font-size:clamp(.45rem,.7vw,.55rem);
+  letter-spacing:.22em;color:rgba(255,255,255,.15);
+  text-transform:uppercase;
+  margin-bottom:clamp(.8rem,2vh,1.2rem);
+}
+
+/* Description */
+.l-hero-desc{
+  font-family:"Satoshi",sans-serif;
+  font-size:clamp(.8rem,1vw,.9rem);line-height:1.7;
+  color:rgba(255,255,255,.22);max-width:440px;
+  text-align:center;
+  margin-bottom:clamp(1.2rem,3vh,2rem);
+}
+
+/* CTA Actions */
+.l-hero-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.l-hero-btn{
   display:inline-flex;align-items:center;gap:8px;
-  border-radius:50px;padding:10px 20px;font-size:.6875rem;
+  border-radius:50px;padding:10px 22px;font-size:.6875rem;
   font-family:"Clash Display",sans-serif;font-weight:600;
   text-decoration:none;text-transform:uppercase;letter-spacing:.04em;
   transition:transform .15s ease,background .2s ease;
 }
-.l-hero-v2-btn:hover{transform:scale(1.03)}
-.l-hero-v2-btn:active{transform:scale(.97)}
-.l-hero-v2-btn-primary{background:#fff;color:#000}
-.l-hero-v2-btn-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
-.l-hero-v2-btn-dot{width:6px;height:6px;border-radius:50%;background:#F59E0B}
-.l-hero-v2-btn-dots{display:inline-flex;gap:2px;margin-left:2px}
-.l-hero-v2-btn-dots::before,.l-hero-v2-btn-dots::after{
+.l-hero-btn:hover{transform:scale(1.03)}
+.l-hero-btn:active{transform:scale(.97)}
+.l-hero-btn-primary{background:#fff;color:#000}
+.l-hero-btn-primary:hover{background:rgba(255,255,255,.9)}
+.l-hero-btn-secondary{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
+.l-hero-btn-secondary:hover{background:rgba(255,255,255,.15)}
+.l-hero-btn-dot{width:6px;height:6px;border-radius:50%;background:#F59E0B}
+.l-hero-btn-dots{display:inline-flex;gap:2px;margin-left:2px}
+.l-hero-btn-dots::before,.l-hero-btn-dots::after{
   content:"";width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.4;
 }
 
@@ -927,10 +982,10 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 /* ── Responsive ── */
 @media(max-width:767px){
-  .l-hero-v2-h1{font-size:clamp(1.75rem,8vw,3rem)}
-  .l-hero-v2-desc{font-size:.8125rem}
-  .l-hero-v2-actions{flex-direction:column;width:100%}
-  .l-hero-v2-btn{width:100%;justify-content:center}
+  .l-hero-block{font-size:clamp(1.5rem,7vw,3rem)}
+  .l-hero-desc{font-size:.75rem}
+  .l-hero-actions{flex-direction:column;width:100%}
+  .l-hero-btn{width:100%;justify-content:center}
   .l-methods-grid{grid-template-columns:1fr}
   .l-focus-inner{flex-direction:column}
   .l-focus-clock{width:100%;max-width:280px;margin:0 auto}
