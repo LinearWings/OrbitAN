@@ -10,6 +10,7 @@ import ParetoPanel from "./ParetoPanel";
 import MoffattPanel from "./MoffattPanel";
 import HowellMatrix from "./HowellMatrix";
 import SWOTPanel from "./SWOTPanel";
+import MethodGuide from "./MethodGuide";
 import type { FocusMethodId } from "@/types/focus";
 
 interface MethodologyDrawerProps {
@@ -133,7 +134,7 @@ export default function MethodologyDrawer({
           WebkitBackdropFilter: "blur(24px)",
           boxShadow: "0 -8px 32px rgba(0,0,0,0.4)",
         } : {
-          width: "min(480px, 85vw)",
+          width: "min(760px, 92vw)",
           transform: "translateX(0)",
           background: "rgba(10,10,15,0.96)",
           borderLeft: "1px solid rgba(255,255,255,0.08)",
@@ -172,9 +173,14 @@ export default function MethodologyDrawer({
                 >
                   <ArrowLeftIcon size={12} className="inline-block mr-0.5" /> 返回方法论列表
                 </button>
-                {methodId && (panels[methodId] ?? (
-                  <div className="text-white/40 text-sm">该方法论尚未实现</div>
-                ))}
+                {methodId && (
+                  <>
+                    <MethodGuide methodId={methodId} />
+                    {panels[methodId] ?? (
+                      <div className="text-white/40 text-sm">该方法论尚未实现</div>
+                    )}
+                  </>
+                )}
               </div>
             )}
           </div>

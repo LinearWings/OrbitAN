@@ -1,53 +1,74 @@
 # OrbitAN Methodologies
 
-This document describes all six time-management methodologies implemented in OrbitAN, including their theoretical principles, app translation, and technical architecture.
+This document records the six time-management methodologies implemented in OrbitAN. The current product copy is derived from the six DOCX research notes in `docs/` and is centralized in `src/data/methodology-content.ts`.
 
-| Method | Theory | App translation | Core components | Data structures |
-|---|---|---|---|---|
-| GTD (Getting Things Done) | Capture, Clarify, Organize, Reflect, Engage | The app presents a GTDPanel with inbox, next-actions, waiting, and someday/maybe lists | GTDPanel, InboxPanel, NextActionsPanel, WaitingPanel | TaskRow, TaskList, GTDContext | 
-| Pomodoro | Work cycles: 25/5 | Implemented via PomodoroPanel with timers and session tracking | PomodoroPanel, Timer hook, BreakManager | TimerState, SessionRecord | 
-| Pareto Principle (80/20) | Focus on vital few | ParetoPanel lists tasks and scores impact/effort | ParetoPanel, ParetoScoreCalculator | ParetoItem, ParetoScore | 
-| Moffatt Rest Method | Alternating activity types to sustain energy | MoffattPanel manages activity sessions with rotation | MoffattPanel, ActivityCard, RotationTimer | Activity, ScheduleSlot | 
-| Howell Matrix | 4-quadrant prioritization | HowellMatrix with drag-and-drop quadrants and color coding | HowellMatrix, DragDropGrid | Quadrant, PriorityColor | 
-| SWOT Analysis | Strengths, Weaknesses, Opportunities, Threats | SWOTPanel with 4-quadrant item management | SWOTPanel, SWOTCard, ToggleMatrix | SWOTItem, Quadrant | 
+## Source Documents
 
-## How to read this document
-- For each method, we cover theory, app implementation, and technical architecture (React components, TypeScript types, data structures).
-- This doc is designed to align with the project structure under src/ and the persistent localStorage model.
+| Method | Source document | Product surface |
+|---|---|---|
+| GTD | `GTD研究报告.docx` | GTD kanban, docs, methodology drawer |
+| Pomodoro | `番茄工作法.docx` | Timer panel, docs, methodology drawer |
+| Pareto | `帕累托法则：大学生时间管理的底层逻辑与理论重构(1).docx` | 80/20 scoring panel, docs, methodology drawer |
+| Moffatt | `莫法特休息法.docx` | Rotation timer, docs, methodology drawer |
+| Howell Matrix | `豪威尔矩阵.docx` | Urgent/important quadrant matrix, docs, methodology drawer |
+| SWOT | `SWOT.docx` | SWOT matrix, docs, methodology drawer |
 
-## The six methodologies in detail
+## Implementation Map
 
-### GTD (Getting Things Done)
-- Theory: Capture, Clarify, Organize, Reflect, Engage.
-- App implementation: GTDPanel provides inbox, next-actions, waiting, someday/maybes. Tasks flow from Inbox to Next Actions.
-- Architecture: React components for panels, TypeScript types for Task, and Reducer actions for state transitions.
+| Method | Core principle | App translation | Main files |
+|---|---|---|---|
+| GTD | Externalize open loops, clarify next actions, review regularly | Five-stage kanban: collect, clarify, organize, review, engage | `src/components/orbital/GTDPanel.tsx` |
+| Pomodoro | 25-minute focus, 5-minute break, tracked improvement loop | Phase timer with focus, short break, long break and persisted state | `src/components/orbital/PomodoroPanel.tsx` |
+| Pareto | Identify vital few tasks with multiplier effects | Impact/effort scoring and automatic Vital 20% highlighting | `src/components/orbital/ParetoPanel.tsx`, `src/utils/pareto.ts` |
+| Moffatt | Recover by switching cognitive modes instead of merely stopping | Eight-session rotation timer for different activity types | `src/components/orbital/MoffattPanel.tsx` |
+| Howell Matrix | Separate importance from urgency to reduce reactive firefighting | Drag-and-drop four-quadrant priority matrix | `src/components/orbital/HowellMatrix.tsx` |
+| SWOT | Use internal/external factors for strategic self-management | Strengths, weaknesses, opportunities, threats item grid | `src/components/orbital/SWOTPanel.tsx` |
+
+## Shared Content Model
+
+The structured method content lives in `src/data/methodology-content.ts`.
+
+Each `MethodologyGuide` contains:
+
+- `shortZh` / `shortEn`: compact descriptions for selectors and summaries
+- `originZh`: theory source and background
+- `principles`: core ideas extracted from the DOCX notes
+- `workflow`: ordered operational steps
+- `tactics`: practical use strategies
+- `bestFor`: recommended use cases
+- `cautions`: constraints and risks
+- `appModel`: how OrbitAN implements the method
+- `prompts`: pre-work reflection questions
+
+This single source feeds:
+
+- `src/data/defaults.ts` for selector descriptions
+- `src/components/orbital/MethodGuide.tsx` for in-app method guidance
+- `src/app/(landing)/docs/methodology/page.tsx` for the public methodology page
+- `src/data/docs-content.ts` for the Orbit Mode knowledge base
+
+## Method Notes
+
+### GTD
+
+GTD is used when the user has many open loops and needs a trusted external system. OrbitAN maps the method into a five-column board: collect, clarify, organize, review, and engage. The most important product behavior is helping the user convert vague commitments into concrete next actions.
 
 ### Pomodoro
-- Theory: 25-minute focus, 5-minute break cycles.
-- App implementation: PomodoroPanel with a configurable timer, breakdown of cycles, and break management.
-- Architecture: useReducer stores timer state; separate effects handle ticking via setInterval.
 
-### Pareto Principle (80/20)
-- Theory: Identify the 20% of tasks that yield 80% of results.
-- App implementation: ParetoPanel lists tasks, allows rating impact and effort, automatically computes a Pareto score and highlights vital tasks.
-- Architecture: ParetoScore calculation uses a simple algorithm on task properties, highlighting with visual cues in the UI.
+Pomodoro is not only a timer. The source note emphasizes planning, prediction, tracking, recording, processing, and improvement. OrbitAN keeps the timer simple, but the guide copy now prompts the user to predict cycles, record interruptions, and review the gap between expectation and reality.
 
-### Moffatt Rest Method
-- Theory: Alternate between mental, physical, creative, and social activities to manage energy cycles.
-- App implementation: MoffattPanel manages a queue of activity sessions with timer-based rotation.
-- Architecture: Activity types enumerated in TS, rotation logic in a panel hook.
+### Pareto
+
+The Pareto note frames 80/20 as a non-linear choice model, especially useful for students deciding between courses, research, internships, competitions, and long-term skill building. OrbitAN translates this into impact/effort scoring and marks the vital few tasks visually.
+
+### Moffatt
+
+Moffatt Rest focuses on active recovery through task switching: logical vs. creative, static vs. dynamic, hard vs. easy, and different interest areas. OrbitAN models this as an eight-part rotation, allowing a long work period to be divided into varied cognitive modes.
 
 ### Howell Matrix
-- Theory: 4-quadrant prioritization: Important+Urgent, Important+Not Urgent, Not Important+Urgent, Not Important+Not Urgent.
-- App implementation: HowellMatrix component with four draggable quadrants and color-coded priorities.
-- Architecture: Quadrant state modeled as a 4x4 grid; drag-and-drop implemented via a minimal internal pattern.
 
-### SWOT Analysis
-- Theory: Strengths, Weaknesses, Opportunities, Threats for strategic planning.
-- App implementation: SWOTPanel with 4 quadrants and item management per quadrant.
-- Architecture: SWOTItem types and quadrant mapping in TS types; persistence via the same global store.
+Howell Matrix follows the Eisenhower urgent/important framework. The source note stresses that time management is not filling time, but choosing accurately. OrbitAN's quadrant matrix is designed around the four actions: do now, schedule, delegate/simplify, and drop/control.
 
-## Architecture references
-- React components: GTDPanel, PomodoroPanel, ParetoPanel, MoffattPanel, HowellMatrix, SWOTPanel
-- TypeScript types: Task, PanelState, Quadrant, SWOTItem, etc.
-- Data structures: Tasks stored under a unified localStorage approach; panels read/write via a single context store.
+### SWOT
+
+SWOT is used as a time-management and self-understanding tool, not just a business analysis model. OrbitAN uses it for project planning, weekly review, and personal strategy: strengths/opportunities become leverage, weaknesses/threats become risk controls.
