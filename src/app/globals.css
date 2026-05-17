@@ -597,7 +597,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-hero-v2-content .l-hero-btn,
 .l-hero-v2-content a{pointer-events:auto}
 /* ── OrbitAN Logo ── */
-	.l-logo-hero{width:clamp(380px,55vw,600px)}
+	.l-logo-hero{width:clamp(520px,75vw,950px)}
 	.l-logo-nav{width:clamp(200px,30vw,340px);flex-shrink:0}
 	.l-logo-svg{display:block}
 
@@ -1024,7 +1024,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 /* ── Responsive ── */
 @media(max-width:767px){
-  .l-hero-glyph{font-size:70%} .l-hero-logo{left:50%;transform:translate(-50%,-50%)}
+  .l-hero-glyph{font-size:70%} .l-hero-logo{left:50%;transform:translate(-50%,-50%);width:clamp(280px,85vw,520px)}
   .l-hero-desc{font-size:.65rem;left:3%;bottom:16%}
   .l-hero-actions{top:75%}.l-hero-actions-row{gap:.6rem}
   .l-hero-btn-primary{padding:.5rem 1rem;font-size:.6rem}
