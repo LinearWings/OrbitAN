@@ -48,7 +48,10 @@ export function OrbitEngineDemo() {
                 opacity: visible ? 1 : 0,
                 transform: visible ? "translateY(0)" : "translateY(20px)",
                 transition: `opacity 0.5s ${0.1 + i * 0.15}s, transform 0.5s ${0.1 + i * 0.15}s cubic-bezier(0.16, 1, 0.3, 1)`,
-              }}
+                "--icon-r": parseInt(panel.iconColor.slice(1, 3), 16),
+                "--icon-g": parseInt(panel.iconColor.slice(3, 5), 16),
+                "--icon-b": parseInt(panel.iconColor.slice(5, 7), 16),
+              } as React.CSSProperties}
             >
               <div
                 className="l-engine-card-icon"

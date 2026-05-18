@@ -617,6 +617,14 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   color:#fff;line-height:1;
   user-select:none;
   filter:drop-shadow(0 0 30px rgba(59,130,246,.15));
+  animation:l-glyph-drift 8s ease-in-out infinite alternate;
+}
+.l-hero-glyph:nth-child(odd){animation-duration:10s;animation-delay:-2s}
+.l-hero-glyph:nth-child(3n){animation-duration:12s;animation-delay:-4s}
+@keyframes l-glyph-drift{
+  0%{filter:drop-shadow(0 0 30px rgba(59,130,246,.10))}
+  50%{filter:drop-shadow(0 0 40px rgba(59,130,246,.20))}
+  100%{filter:drop-shadow(0 0 25px rgba(245,158,11,.12))}
 }
 .l-hero-glyph-en{
   font-family:"JetBrains Mono",monospace;
@@ -1020,6 +1028,206 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	}
 	.l-fts-cell[data-anchor="true"]{
 	  font-weight:500;
+	}
+
+	/* ══════════════════════════════════════════
+	   LANDING ENHANCED — Light & Interactivity
+	   ══════════════════════════════════════════ */
+
+	/* ── Engine Cards — Glow Border + Light Sweep ── */
+	.l-engine-card{
+	  position:relative;overflow:hidden;
+	}
+	.l-engine-card::before{
+	  content:"";position:absolute;inset:-1px;z-index:0;
+	  border-radius:inherit;padding:1px;
+	  background:linear-gradient(135deg,transparent 40%,rgba(59,130,246,0) 50%,transparent 60%);
+	  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+	  -webkit-mask-composite:xor;mask-composite:exclude;
+	  opacity:0;transition:opacity .6s ease;
+	}
+	.l-engine-card:hover::before{
+	  opacity:1;
+	  background:linear-gradient(135deg,transparent 20%,rgba(59,130,246,.25) 50%,transparent 80%);
+	}
+	.l-engine-card::after{
+	  content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+	  background:linear-gradient(45deg,transparent 45%,rgba(255,255,255,.015) 50%,transparent 55%);
+	  transform:translateX(-100%);
+	  transition:none;pointer-events:none;z-index:0;
+	}
+	.l-engine-card:hover::after{
+	  animation:l-card-sweep 1.2s ease forwards;
+	}
+	@keyframes l-card-sweep{
+	  to{transform:translateX(100%)}
+	}
+	.l-engine-card-icon{
+	  position:relative;z-index:1;
+	  transition:box-shadow .4s ease,transform .3s ease;
+	}
+	.l-engine-card:hover .l-engine-card-icon{
+	  box-shadow:0 0 20px rgba(var(--icon-r,59),var(--icon-g,130),var(--icon-b,246),.3);
+	  transform:scale(1.08);
+	}
+	.l-engine-card-h,.l-engine-card-d{position:relative;z-index:1}
+
+	/* ── Methodology Cards — Shimmer + Glow ── */
+	.l-method-card{
+	  position:relative;overflow:hidden;
+	}
+	.l-method-card::before{
+	  content:"";position:absolute;inset:0;z-index:0;
+	  background:radial-gradient(ellipse at var(--mx,50%) var(--my,50%),rgba(255,255,255,.03) 0%,transparent 60%);
+	  opacity:0;transition:opacity .4s ease;pointer-events:none;
+	}
+	.l-method-card:hover::before{opacity:1}
+	.l-method-card::after{
+	  content:"";position:absolute;top:0;left:-100%;width:60%;height:100%;
+	  background:linear-gradient(90deg,transparent,rgba(255,255,255,.02),transparent);
+	  pointer-events:none;z-index:0;
+	}
+	.l-method-card:hover::after{
+	  animation:l-method-shimmer 1.5s ease forwards;
+	}
+	@keyframes l-method-shimmer{
+	  to{left:150%}
+	}
+	.l-method-tag,.l-method-name,.l-method-desc,.l-method-preview{position:relative;z-index:1}
+	.l-method-preview{
+	  transition:border-color .4s ease,box-shadow .4s ease;
+	}
+	.l-method-card:hover .l-method-preview{
+	  box-shadow:inset 0 0 30px rgba(255,255,255,.02),0 0 20px rgba(255,255,255,.01);
+	}
+
+	/* ── Focus Clock — Arc Rotation + Pulse ── */
+	.l-focus-clock-svg .l-focus-arc{
+	  transform-origin:110px 110px;
+	  animation:l-focus-arc-spin 20s linear infinite,l-focus-arc-pulse 4s ease-in-out infinite;
+	}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(1){animation-duration:20s,4s}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(2){animation-duration:26s,4.5s;animation-direction:reverse,normal}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(3){animation-duration:32s,5s}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(4){animation-duration:18s,3.5s;animation-direction:reverse,normal}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(5){animation-duration:36s,5.5s}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(6){animation-duration:22s,4s;animation-direction:reverse,normal}
+	@keyframes l-focus-arc-spin{
+	  to{transform:rotate(360deg)}
+	}
+	@keyframes l-focus-arc-pulse{
+	  0%,100%{opacity:.55}
+	  50%{opacity:.85}
+	}
+	.l-focus-hub{
+	  animation:l-focus-hub-glow 3s ease-in-out infinite;
+	}
+	@keyframes l-focus-hub-glow{
+	  0%,100%{r:3;opacity:1}
+	  50%{r:4.5;opacity:.7}
+	}
+	.l-focus-ring{
+	  animation:l-focus-ring-pulse 5s ease-in-out infinite;
+	}
+	@keyframes l-focus-ring-pulse{
+	  0%,100%{opacity:.04}
+	  50%{opacity:.08}
+	}
+
+	/* ── Keyboard Cards — Press + Ripple ── */
+	.l-keys-card{
+	  position:relative;overflow:hidden;
+	  cursor:default;
+	}
+	.l-keys-card::after{
+	  content:"";position:absolute;top:50%;left:50%;
+	  width:0;height:0;border-radius:50%;
+	  background:radial-gradient(circle,rgba(59,130,246,.15) 0%,transparent 70%);
+	  transform:translate(-50%,-50%);
+	  transition:width .5s ease,height .5s ease,opacity .5s ease;
+	  opacity:0;pointer-events:none;z-index:0;
+	}
+	.l-keys-card:hover::after{
+	  width:200%;height:200%;opacity:1;
+	}
+	.l-keys-keys,.l-keys-label{position:relative;z-index:1}
+	.l-keys-kbd{
+	  transition:all .15s cubic-bezier(.34,1.56,.64,1);
+	}
+	.l-keys-card:hover .l-keys-kbd{
+	  box-shadow:0 0 12px rgba(59,130,246,.15),inset 0 -2px 0 rgba(59,130,246,.2);
+	  border-color:rgba(59,130,246,.2);
+	  color:rgba(255,255,255,.45);
+	  transform:translateY(1px);
+	}
+	.l-keys-card:active .l-keys-kbd{
+	  transform:translateY(2px);
+	  box-shadow:0 0 6px rgba(59,130,246,.1),inset 0 1px 0 rgba(0,0,0,.3);
+	  transition-duration:.05s;
+	}
+
+	/* ── CTA — Rotating Crosses + Title Sweep ── */
+	.l-cta-x{
+	  display:inline-block;
+	  animation:l-cta-x-spin 12s linear infinite;
+	}
+	.l-cta-x:nth-child(2){animation-duration:16s;animation-direction:reverse}
+	.l-cta-x:nth-child(3){animation-duration:10s}
+	.l-cta-x:nth-child(4){animation-duration:14s;animation-direction:reverse}
+	.l-cta-x:nth-child(5){animation-duration:18s}
+	@keyframes l-cta-x-spin{
+	  to{transform:rotate(360deg)}
+	}
+	.l-cta-crosses{
+	  animation:l-cta-crosses-pulse 4s ease-in-out infinite;
+	}
+	@keyframes l-cta-crosses-pulse{
+	  0%,100%{color:rgba(255,255,255,.14)}
+	  50%{color:rgba(255,255,255,.22)}
+	}
+	.l-cta-title{
+	  position:relative;overflow:hidden;
+	}
+	.l-cta-title::after{
+	  content:"";position:absolute;top:0;left:-100%;width:50%;height:100%;
+	  background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);
+	  pointer-events:none;
+	}
+	.l-cta:hover .l-cta-title::after{
+	  animation:l-cta-sweep 2s ease forwards;
+	}
+	@keyframes l-cta-sweep{
+	  to{left:150%}
+	}
+
+	/* ── Scroll Indicator — Pulse ── */
+	.l-scroll-line{
+	  animation:l-scroll-pulse 2s ease-in-out infinite;
+	}
+	@keyframes l-scroll-pulse{
+	  0%,100%{opacity:.5;height:20px}
+	  50%{opacity:1;height:28px}
+	}
+	.l-scroll-mark{
+	  animation:l-scroll-mark-blink 3s ease-in-out infinite;
+	}
+	.l-scroll-mark:nth-child(2){animation-delay:.3s}
+	.l-scroll-mark:nth-child(4){animation-delay:.6s}
+	@keyframes l-scroll-mark-blink{
+	  0%,100%{opacity:.5}
+	  50%{opacity:1;color:rgba(255,255,255,.12)}
+	}
+
+	/* ── Evaporation Particles — Enhanced ── */
+	.l-evap-p{
+	  animation:l-evap-rise-enhanced linear infinite;
+	}
+	@keyframes l-evap-rise-enhanced{
+	  0%{transform:translateY(0) scale(1) translateX(0);opacity:0}
+	  10%{opacity:1}
+	  50%{transform:translateY(-18vh) scale(.7) translateX(var(--drift,3px))}
+	  90%{opacity:.4}
+	  100%{transform:translateY(-40vh) scale(.2) translateX(var(--drift-end,-2px));opacity:0}
 	}
 
 /* ── Responsive ── */

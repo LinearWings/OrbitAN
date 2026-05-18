@@ -147,12 +147,15 @@ export function HeroSection() {
 
         <ScrollIndicator />
         <div className="l-evap" aria-hidden="true">
-          {Array.from({ length: 12 }).map((_, i) => (
+          {Array.from({ length: 16 }).map((_, i) => (
             <div key={i} className="l-evap-p" style={{
-              left: `${15 + (i * 7) % 70}%`,
-              animationDelay: `${i * 0.7}s`,
-              animationDuration: `${6 + (i % 3) * 2}s`,
-            }} />
+              left: `${12 + (i * 6) % 76}%`,
+              animationDelay: `${i * 0.55}s`,
+              animationDuration: `${5 + (i % 4) * 2}s`,
+              "--drift": `${(i % 2 === 0 ? 1 : -1) * (3 + (i % 5) * 2)}px`,
+              "--drift-end": `${(i % 2 === 0 ? -1 : 1) * (2 + (i % 3) * 2)}px`,
+            } as React.CSSProperties}
+            />
           ))}
         </div>
       </div>

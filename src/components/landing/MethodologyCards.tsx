@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useReveal } from "@/hooks/useScrollProgress";
 
@@ -52,6 +53,14 @@ export function MethodologyCards() {
   const lang = useLanguage();
   const { ref, visible } = useReveal(0.05);
 
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    e.currentTarget.style.setProperty("--mx", `${x}%`);
+    e.currentTarget.style.setProperty("--my", `${y}%`);
+  }, []);
+
   return (
     <section className="l-methods" ref={ref}>
       <div className="l-methods-inner">
@@ -84,6 +93,7 @@ export function MethodologyCards() {
             <div
               key={m.id}
               className="l-method-card"
+              onMouseMove={handleMouseMove}
               style={{
                 opacity: visible ? 1 : 0,
                 transform: visible ? "translateY(0)" : "translateY(24px)",

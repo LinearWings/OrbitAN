@@ -27,9 +27,9 @@ export function FocusBlocksDemo() {
                 <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
               </filter>
             </defs>
-            <circle cx="110" cy="110" r="85" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
-            <circle cx="110" cy="110" r="65" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
-            <circle cx="110" cy="110" r="45" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="0.5" />
+            <circle className="l-focus-ring" cx="110" cy="110" r="85" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+            <circle className="l-focus-ring" cx="110" cy="110" r="65" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
+            <circle className="l-focus-ring" cx="110" cy="110" r="45" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="0.5" />
 
             {FOCUS_METHODS.map((m, i) => {
               const r = 90 + i * 3.5;
@@ -43,6 +43,7 @@ export function FocusBlocksDemo() {
               return (
                 <path
                   key={m.id}
+                  className="l-focus-arc"
                   d={`M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`}
                   fill="none"
                   stroke={m.color}
@@ -56,7 +57,7 @@ export function FocusBlocksDemo() {
 
             <line x1="110" y1="110" x2="110" y2="40" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" strokeLinecap="round" />
             <line x1="110" y1="110" x2="160" y2="110" stroke="rgba(255,255,255,0.18)" strokeWidth="1" strokeLinecap="round" />
-            <circle cx="110" cy="110" r="3" fill="#3B82F6" />
+            <circle className="l-focus-hub" cx="110" cy="110" r="3" fill="#3B82F6" />
           </svg>
         </div>
 
