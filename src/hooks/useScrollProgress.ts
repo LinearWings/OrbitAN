@@ -23,9 +23,11 @@ export function useScrollProgress(threshold = 0) {
     const sectionTop = rect.top;
     const sectionHeight = rect.height;
 
-    // 0 when section top is at viewport top (pristine)
-    // 1 when section has fully scrolled past
-    const p = Math.max(0, Math.min(1, -sectionTop / sectionHeight));
+    // Below viewport: progress=1 (fully visible, not yet animated)
+    // In viewport: 0 at top, 1 when fully scrolled past
+    const p = sectionTop > viewportHeight
+      ? 1
+      : Math.max(0, Math.min(1, -sectionTop / sectionHeight));
     setProgress(p);
     setIsVisible(sectionTop < viewportHeight && sectionTop + sectionHeight > 0);
   }, []);
