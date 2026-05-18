@@ -63,7 +63,7 @@ export function MethodologyCards() {
 
   const fanProgress = Math.min(1, progress / 0.5);
   const contentReveal = Math.max(0, Math.min(1, (progress - 0.5) / 0.3));
-  const rotations = [-5, -3, -1, 1, 3, 5];
+  const rotations = [-12, -7, -3, 3, 7, 12];
 
   return (
     <section className="l-methods" ref={ref}>
@@ -98,7 +98,7 @@ export function MethodologyCards() {
                 onMouseMove={handleMouseMove}
                 style={{
                   opacity: eased,
-                  transform: `rotate(${rot}deg) scale(${0.9 + eased * 0.1})`,
+                  transform: `rotate(${rot}deg) scale(${0.8 + eased * 0.2})`,
                 }}
               >
                 <span className="l-method-tag" style={{

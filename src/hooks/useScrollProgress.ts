@@ -23,12 +23,9 @@ export function useScrollProgress(threshold = 0) {
     const sectionTop = rect.top;
     const sectionHeight = rect.height;
 
-    // 0 when section top is at viewport bottom
-    // 1 when section bottom is at viewport top
-    const p = Math.max(
-      0,
-      Math.min(1, (viewportHeight - sectionTop) / (viewportHeight + sectionHeight))
-    );
+    // 0 when section top is at viewport top (pristine)
+    // 1 when section has fully scrolled past
+    const p = Math.max(0, Math.min(1, -sectionTop / sectionHeight));
     setProgress(p);
     setIsVisible(sectionTop < viewportHeight && sectionTop + sectionHeight > 0);
   }, []);
