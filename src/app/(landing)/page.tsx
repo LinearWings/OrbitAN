@@ -8,6 +8,7 @@ import { FocusBlocksDemo } from "@/components/landing/FocusBlocksDemo";
 import { KeyboardNav } from "@/components/landing/KeyboardNav";
 import { CTASection } from "@/components/landing/CTASection";
 import { LandingFooter } from "@/components/landing/LandingFooter";
+import { LandingLightEffects } from "@/components/landing/LandingLightEffects";
 import { DecorativeArrow } from "@/components/landing/DecorativeArrow";
 
 function SectionArrow({ color = "rgba(59,130,246,.08)" }: { color?: string }) {
@@ -22,6 +23,7 @@ function SectionArrow({ color = "rgba(59,130,246,.08)" }: { color?: string }) {
 export default function LandingPage() {
   return (
     <div className="landing">
+      <LandingLightEffects />
       <LandingNav />
       <HeroSection />
 

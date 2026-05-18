@@ -1255,3 +1255,43 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   .l-hero-v2-canvas-wrap{/* fullscreen */}
 }
 
+/* ══════════════════════════════════════════
+   LANDING — Light Effects
+   ══════════════════════════════════════════ */
+
+/* Star field */
+.l-stars{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.l-star{
+  position:absolute;border-radius:50%;
+  background:var(--star-color,rgba(255,255,255,.4));
+  animation:l-star-twinkle ease-in-out infinite alternate;
+}
+@keyframes l-star-twinkle{
+  0%{opacity:calc(var(--star-opacity,.3) * .3)}
+  100%{opacity:var(--star-opacity,.3)}
+}
+
+/* Mouse spotlight */
+.l-spotlight{
+  position:fixed;top:0;left:0;width:400px;height:400px;z-index:1;
+  pointer-events:none;border-radius:50%;
+  background:radial-gradient(circle,rgba(59,130,246,.06) 0%,rgba(99,102,241,.03) 30%,transparent 70%);
+  will-change:transform;
+  opacity:0;transition:opacity .6s ease;
+}
+.l-spotlight-visible{opacity:1}
+
+/* Dust particles */
+.l-dust{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.l-dust-p{
+  position:absolute;bottom:-10px;border-radius:50%;
+  background:rgba(255,255,255,.5);
+  animation:l-dust-float linear infinite;
+}
+@keyframes l-dust-float{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  10%{opacity:var(--dust-opacity,.12)}
+  90%{opacity:calc(var(--dust-opacity,.12) * .5)}
+  100%{transform:translateY(-100vh) translateX(var(--dust-drift,20px));opacity:0}
+}
+
