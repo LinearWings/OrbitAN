@@ -67,7 +67,7 @@ export function FloatingTimestamps({ logoRef }: Props) {
   const cellRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const rafRef = useRef<number>(0);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
-  const [ss, setSs] = useState(() => String(new Date().getSeconds()).padStart(2, "0"));
+  const [ss, setSs] = useState("00");
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const hoveredRef = useRef<number | null>(null);
   const glowCellsRef = useRef<Set<number>>(new Set());

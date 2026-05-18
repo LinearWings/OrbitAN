@@ -41,10 +41,11 @@ export function FocusBlocksDemo() {
               const sweep = (0.22 + (i / FOCUS_METHODS.length) * 0.22) * Math.PI * 2;
               const circumference = r * sweep;
               const drawn = arcProgress * circumference;
-              const x1 = 110 + r * Math.cos(startAngle);
-              const y1 = 110 + r * Math.sin(startAngle);
-              const x2 = 110 + r * Math.cos(startAngle + sweep);
-              const y2 = 110 + r * Math.sin(startAngle + sweep);
+              const rd = (v: number) => Math.round(v * 1e6) / 1e6;
+              const x1 = rd(110 + r * Math.cos(startAngle));
+              const y1 = rd(110 + r * Math.sin(startAngle));
+              const x2 = rd(110 + r * Math.cos(startAngle + sweep));
+              const y2 = rd(110 + r * Math.sin(startAngle + sweep));
               const largeArc = sweep > Math.PI ? 1 : 0;
               return (
                 <path
