@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
-import { useReveal } from "@/hooks/useScrollProgress";
+import { useReveal, useScrollProgress } from "@/hooks/useScrollProgress";
 import { FloatingTimestamps } from "./FloatingTimestamps";
 import { ScrollIndicator } from "./ScrollIndicator";
 import { OrbitanLogo } from "./OrbitanLogo";
@@ -47,17 +47,22 @@ export function HeroSection() {
   const lang = useLanguage();
   const t = getT(lang);
   const { ref, visible } = useReveal(0.05);
+  const { ref: scrollRef, progress } = useScrollProgress();
   const isZh = lang === "zh";
   const logoRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section className="l-hero-v2" ref={ref}>
-      <div className="l-hero-v2-canvas-wrap">
+    <section className="l-hero-v2">
+      <div className="l-hero-v2-canvas-wrap" ref={(el) => { (ref as React.MutableRefObject<HTMLDivElement | null>).current = el; (scrollRef as React.MutableRefObject<HTMLDivElement | null>).current = el; }}>
         <FloatingTimestamps logoRef={logoRef} />
 
         <div
           className="l-hero-stage"
-          style={{ opacity: visible ? 1 : 0, transition: "opacity 0.8s 0.1s" }}
+          style={{
+            opacity: visible ? 1 : 0,
+            transition: "opacity 0.8s 0.1s",
+            transform: `translateY(${progress * -40}px)`,
+          }}
         >
           {/* ── Left column — 轨划分秒 ── */}
           {isZh
@@ -112,7 +117,11 @@ export function HeroSection() {
           <div
             ref={logoRef}
             className="l-hero-logo"
-            style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s 0.35s" }}
+            style={{
+              opacity: visible ? 1 : 0,
+              transition: "opacity 0.5s 0.35s",
+              transform: `translate(-50%, -50%) translateY(${progress * -20}px) scale(${1 - progress * 0.05})`,
+            }}
           >
             <OrbitanLogo variant="hero" />
           </div>
@@ -120,7 +129,10 @@ export function HeroSection() {
           {/* Tagline */}
           <p
             className="l-hero-desc"
-            style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s 0.6s" }}
+            style={{
+              opacity: Math.max(0, (visible ? 1 : 0) - progress * 2),
+              transition: "opacity 0.5s 0.6s",
+            }}
           >
             {isZh ? "轨划分秒 · 注定乾坤" : "TIME ORBITED · FOCUS DETERMINED"}
           </p>
@@ -128,7 +140,10 @@ export function HeroSection() {
           {/* ── CTA Buttons — no arrows ── */}
           <div
             className="l-hero-actions"
-            style={{ opacity: visible ? 1 : 0, transition: "opacity 0.5s 0.75s" }}
+            style={{
+              opacity: Math.max(0, (visible ? 1 : 0) - progress * 1.5),
+              transition: "opacity 0.5s 0.75s",
+            }}
           >
             <div className="l-hero-actions-rule" />
             <div className="l-hero-actions-row">

@@ -32,30 +32,54 @@ const DUST = Array.from({ length: 25 }, (_, i) => ({
 
 export function LandingLightEffects() {
   const spotRef = useRef<HTMLDivElement>(null);
+  const starsRef = useRef<HTMLDivElement>(null);
+  const dustRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = spotRef.current;
-    if (!el) return;
+    const spot = spotRef.current;
+    const stars = starsRef.current;
+    const dust = dustRef.current;
+    if (!spot) return;
+
     let raf: number;
     let shown = false;
-    const onMove = (e: MouseEvent) => {
-      if (!shown) { el.classList.add("l-spotlight-visible"); shown = true; }
+
+    const onScroll = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        el.style.transform = `translate(${e.clientX - 200}px, ${e.clientY - 200}px)`;
+        const y = window.scrollY;
+        if (stars) stars.style.transform = `translateY(${y * 0.03}px)`;
+        if (dust) dust.style.transform = `translateY(${y * 0.08}px)`;
       });
     };
+
+    const onMove = (e: MouseEvent) => {
+      if (!shown) {
+        spot.classList.add("l-spotlight-visible");
+        shown = true;
+      }
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const y = window.scrollY;
+        spot.style.transform = `translate(${e.clientX - 200}px, ${e.clientY - 200 + y * 0.05}px)`;
+        if (stars) stars.style.transform = `translateY(${y * 0.03}px)`;
+        if (dust) dust.style.transform = `translateY(${y * 0.08}px)`;
+      });
+    };
+
     window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(raf);
     };
   }, []);
 
   return (
     <>
-      {/* Star field */}
-      <div className="l-stars" aria-hidden="true">
+      {/* Star field — deepest layer, slowest parallax */}
+      <div className="l-stars" ref={starsRef} aria-hidden="true">
         {STARS.map((s) => (
           <div
             key={s.id}
@@ -76,11 +100,11 @@ export function LandingLightEffects() {
         ))}
       </div>
 
-      {/* Mouse spotlight */}
+      {/* Mouse spotlight — mid layer */}
       <div className="l-spotlight" ref={spotRef} aria-hidden="true" />
 
-      {/* Dust particles */}
-      <div className="l-dust" aria-hidden="true">
+      {/* Dust particles — closest layer, fastest parallax */}
+      <div className="l-dust" ref={dustRef} aria-hidden="true">
         {DUST.map((d) => (
           <div
             key={d.id}

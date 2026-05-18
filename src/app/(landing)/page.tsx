@@ -9,11 +9,18 @@ import { KeyboardNav } from "@/components/landing/KeyboardNav";
 import { CTASection } from "@/components/landing/CTASection";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { LandingLightEffects } from "@/components/landing/LandingLightEffects";
+import { ScrollProgressBar } from "@/components/landing/ScrollProgressBar";
 import { DecorativeArrow } from "@/components/landing/DecorativeArrow";
+import { useReveal } from "@/hooks/useScrollProgress";
 
 function SectionArrow({ color = "rgba(59,130,246,.08)" }: { color?: string }) {
+  const { ref, visible } = useReveal(0.3);
   return (
-    <div className="l-section-arrow" aria-hidden="true">
+    <div
+      ref={ref}
+      className={`l-section-arrow${visible ? " l-section-arrow-active" : ""}`}
+      aria-hidden="true"
+    >
       <DecorativeArrow dir="right-down" color={color} scale={0.8} />
       <DecorativeArrow dir="right-up" color={color} scale={0.6} />
     </div>
@@ -23,6 +30,7 @@ function SectionArrow({ color = "rgba(59,130,246,.08)" }: { color?: string }) {
 export default function LandingPage() {
   return (
     <div className="landing">
+      <ScrollProgressBar />
       <LandingLightEffects />
       <LandingNav />
       <HeroSection />
