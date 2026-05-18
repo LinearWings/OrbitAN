@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/hooks/useLanguage";
-import { useReveal } from "@/hooks/useScrollProgress";
+import { useScrollProgress } from "@/hooks/useScrollProgress";
 
 const FOCUS_METHODS = [
   { id: "gtd", label: "GTD", color: "#22C55E" },
@@ -14,12 +14,16 @@ const FOCUS_METHODS = [
 
 export function FocusBlocksDemo() {
   const lang = useLanguage();
-  const { ref, visible } = useReveal(0.15);
+  const { ref, progress } = useScrollProgress();
+
+  const housingOpacity = Math.min(1, progress / 0.3);
+  const arcProgress = Math.max(0, Math.min(1, (progress - 0.3) / 0.5));
+  const legendProgress = Math.max(0, (progress - 0.8) / 0.2);
 
   return (
     <section className="l-focus" ref={ref}>
       <div className="l-focus-inner">
-        <div className="l-focus-clock">
+        <div className="l-focus-clock" style={{ opacity: housingOpacity }}>
           <svg viewBox="0 0 220 220" className="l-focus-clock-svg">
             <defs>
               <filter id="focusGlow">
@@ -35,6 +39,8 @@ export function FocusBlocksDemo() {
               const r = 90 + i * 3.5;
               const startAngle = (i / 6) * Math.PI * 2 - Math.PI / 2;
               const sweep = (0.22 + (i / FOCUS_METHODS.length) * 0.22) * Math.PI * 2;
+              const circumference = r * sweep;
+              const drawn = arcProgress * circumference;
               const x1 = 110 + r * Math.cos(startAngle);
               const y1 = 110 + r * Math.sin(startAngle);
               const x2 = 110 + r * Math.cos(startAngle + sweep);
@@ -51,6 +57,8 @@ export function FocusBlocksDemo() {
                   strokeLinecap="round"
                   filter="url(#focusGlow)"
                   opacity="0.7"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={circumference - drawn}
                 />
               );
             })}
@@ -62,37 +70,24 @@ export function FocusBlocksDemo() {
         </div>
 
         <div className="l-focus-content">
-          <h2
-            className="l-focus-h2"
-            style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? "translateY(0)" : "translateY(18px)",
-              transition: "opacity 0.6s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-            }}
-          >
+          <h2 className="l-focus-h2" style={{
+            opacity: housingOpacity,
+            transform: `translateY(${(1 - housingOpacity) * 18}px)`,
+          }}>
             {lang === "zh" ? "专注块系统" : "Focus Blocks"}
           </h2>
-          <p
-            className="l-focus-desc"
-            style={{
-              opacity: visible ? 1 : 0,
-              transition: "opacity 0.5s 0.15s",
-            }}
-          >
+          <p className="l-focus-desc" style={{ opacity: Math.min(1, housingOpacity + 0.2) }}>
             {lang === "zh"
               ? "将方法论会话时间盒化，显示在时钟外环。planned → active → paused → completed。"
               : "Time-box your methodology sessions. Visualized as colored arcs on the clock's outer rings."}
           </p>
 
-          <div
-            className="l-focus-legend"
-            style={{
-              opacity: visible ? 1 : 0,
-              transition: "opacity 0.5s 0.3s",
-            }}
-          >
-            {FOCUS_METHODS.map((m) => (
-              <span key={m.id} className="l-focus-legend-item">
+          <div className="l-focus-legend">
+            {FOCUS_METHODS.map((m, i) => (
+              <span key={m.id} className="l-focus-legend-item" style={{
+                opacity: Math.max(0, Math.min(1, (legendProgress - i * 0.1) / 0.5)),
+                transform: `translateY(${Math.max(0, (1 - Math.min(1, (legendProgress - i * 0.1) / 0.5))) * 10}px)`,
+              }}>
                 <span className="l-focus-legend-dot" style={{ background: m.color }} />
                 {m.label}
               </span>

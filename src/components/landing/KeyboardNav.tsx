@@ -1,7 +1,7 @@
 "use client";
 
 import { useLanguage } from "@/hooks/useLanguage";
-import { useReveal } from "@/hooks/useScrollProgress";
+import { useScrollProgress } from "@/hooks/useScrollProgress";
 
 const SHORTCUTS = [
   { keys: ["←", "→"], label: { zh: "前一天/后一天", en: "Prev/Next Day" } },
@@ -16,50 +16,49 @@ const SHORTCUTS = [
 
 export function KeyboardNav() {
   const lang = useLanguage();
-  const { ref, visible } = useReveal(0.1);
+  const { ref, progress } = useScrollProgress();
+
+  const headingProgress = Math.min(1, progress / 0.2);
 
   return (
     <section className="l-keys-section" ref={ref}>
       <div className="l-keys-inner">
-        <h2
-          className="l-keys-h2"
-          style={{
-            opacity: visible ? 1 : 0,
-            transform: visible ? "translateY(0)" : "translateY(18px)",
-            transition: "opacity 0.6s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-          }}
-        >
+        <h2 className="l-keys-h2" style={{
+          opacity: headingProgress,
+          transform: `translateY(${(1 - headingProgress) * 18}px)`,
+        }}>
           {lang === "zh" ? "全键盘操作" : "Full Keyboard Navigation"}
         </h2>
-        <p
-          className="l-keys-sub"
-          style={{
-            opacity: visible ? 1 : 0,
-            transition: "opacity 0.5s 0.15s",
-          }}
-        >
+        <p className="l-keys-sub" style={{
+          opacity: Math.min(1, headingProgress - 0.2),
+        }}>
           {lang === "zh" ? "每个操作，一次按键。" : "Every action, one keystroke away."}
         </p>
 
         <div className="l-keys-grid">
-          {SHORTCUTS.map((s, i) => (
-            <div
-              key={i}
-              className="l-keys-card"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? "translateY(0) scale(1)" : "translateY(16px) scale(0.97)",
-                transition: `opacity 0.4s ${0.05 + i * 0.06}s, transform 0.4s ${0.05 + i * 0.06}s cubic-bezier(0.16, 1, 0.3, 1)`,
-              }}
-            >
-              <div className="l-keys-keys">
-                {s.keys.map((k) => (
-                  <kbd key={k} className="l-keys-kbd">{k}</kbd>
-                ))}
+          {SHORTCUTS.map((s, i) => {
+            const stagger = Math.max(0, (progress - 0.15) / 0.35);
+            const cardProgress = Math.min(1, stagger - i * 0.04);
+            const spring = cardProgress < 0
+              ? 0
+              : cardProgress < 0.7
+                ? cardProgress / 0.7 * 1.08
+                : 1.08 - (cardProgress - 0.7) / 0.3 * 0.08;
+            const scale = Math.min(1.08, Math.max(0, spring));
+            return (
+              <div key={i} className="l-keys-card" style={{
+                opacity: Math.min(1, cardProgress * 2),
+                transform: `translateY(${(1 - scale) * 40}px) scale(${scale}) rotate(${-2 * (1 - Math.min(1, cardProgress))}deg)`,
+              }}>
+                <div className="l-keys-keys">
+                  {s.keys.map((k) => (
+                    <kbd key={k} className="l-keys-kbd">{k}</kbd>
+                  ))}
+                </div>
+                <span className="l-keys-label">{s.label[lang === "zh" ? "zh" : "en"]}</span>
               </div>
-              <span className="l-keys-label">{s.label[lang === "zh" ? "zh" : "en"]}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useReveal } from "@/hooks/useScrollProgress";
+import { useScrollProgress } from "@/hooks/useScrollProgress";
 
 const METHODS = [
   {
@@ -51,7 +51,7 @@ const METHODS = [
 
 export function MethodologyCards() {
   const lang = useLanguage();
-  const { ref, visible } = useReveal(0.05);
+  const { ref, progress } = useScrollProgress();
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -61,27 +61,23 @@ export function MethodologyCards() {
     e.currentTarget.style.setProperty("--my", `${y}%`);
   }, []);
 
+  const fanProgress = Math.min(1, progress / 0.5);
+  const contentReveal = Math.max(0, Math.min(1, (progress - 0.5) / 0.3));
+  const rotations = [-5, -3, -1, 1, 3, 5];
+
   return (
     <section className="l-methods" ref={ref}>
       <div className="l-methods-inner">
         <div className="l-methods-top">
-          <h2
-            className="l-methods-h2"
-            style={{
-              opacity: visible ? 1 : 0,
-              transform: visible ? "translateY(0)" : "translateY(18px)",
-              transition: "opacity 0.6s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-            }}
-          >
+          <h2 className="l-methods-h2" style={{
+            opacity: Math.min(1, fanProgress * 2),
+            transform: `translateY(${(1 - Math.min(1, fanProgress * 2)) * 18}px)`,
+          }}>
             {lang === "zh" ? "六维时间管理" : "Six Dimensions of Time Management"}
           </h2>
-          <p
-            className="l-methods-disc"
-            style={{
-              opacity: visible ? 1 : 0,
-              transition: "opacity 0.5s 0.15s",
-            }}
-          >
+          <p className="l-methods-disc" style={{
+            opacity: Math.min(1, fanProgress * 2 - 0.2),
+          }}>
             {lang === "zh"
               ? "六种经典方法论，各有专属面板。"
               : "Six proven methodologies, each with its own dedicated panel."}
@@ -89,42 +85,56 @@ export function MethodologyCards() {
         </div>
 
         <div className="l-methods-grid">
-          {METHODS.map((m, i) => (
-            <div
-              key={m.id}
-              className="l-method-card"
-              onMouseMove={handleMouseMove}
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? "translateY(0)" : "translateY(24px)",
-                transition: `opacity 0.5s ${0.1 + i * 0.08}s, transform 0.5s ${0.1 + i * 0.08}s cubic-bezier(0.16, 1, 0.3, 1)`,
-              }}
-            >
-              <span
-                className="l-method-tag"
+          {METHODS.map((m, i) => {
+            const stagger = Math.max(0, fanProgress - i * 0.05);
+            const cardProgress = Math.min(1, stagger / 0.7);
+            const eased = 1 - Math.pow(1 - cardProgress, 3);
+            const rot = rotations[i] * (1 - eased);
+            const contentVisible = contentReveal > i * 0.08;
+            return (
+              <div
+                key={m.id}
+                className="l-method-card"
+                onMouseMove={handleMouseMove}
                 style={{
-                  color: m.color,
-                  background: `${m.color}18`,
+                  opacity: eased,
+                  transform: `rotate(${rot}deg) scale(${0.9 + eased * 0.1})`,
                 }}
               >
-                {m.tag}
-              </span>
-              <h3 className="l-method-name" style={{ color: m.color }}>
-                {m.name[lang === "zh" ? "zh" : "en"]}
-              </h3>
-              <p className="l-method-desc">{m.desc[lang === "zh" ? "zh" : "en"]}</p>
-              <div className="l-method-preview" style={{ borderColor: `${m.color}20` }}>
-                <div className="l-method-preview-inner" style={{ background: `${m.color}08` }}>
-                  {m.id === "gtd" && <GTDPreview color={m.color} />}
-                  {m.id === "pomodoro" && <PomodoroPreview color={m.color} />}
-                  {m.id === "pareto" && <ParetoPreview color={m.color} />}
-                  {m.id === "moffatt" && <MoffattPreview color={m.color} />}
-                  {m.id === "howell" && <HowellPreview color={m.color} />}
-                  {m.id === "swot" && <SWOTPreview color={m.color} />}
+                <span className="l-method-tag" style={{
+                  color: m.color, background: `${m.color}18`,
+                  opacity: contentVisible ? 1 : 0,
+                  transition: "opacity 0.4s",
+                }}>
+                  {m.tag}
+                </span>
+                <h3 className="l-method-name" style={{
+                  color: m.color,
+                  opacity: contentVisible ? 1 : 0,
+                  transform: `translateY(${contentVisible ? 0 : 10}px)`,
+                  transition: "opacity 0.4s 0.05s, transform 0.4s 0.05s cubic-bezier(0.16,1,0.3,1)",
+                }}>
+                  {m.name[lang === "zh" ? "zh" : "en"]}
+                </h3>
+                <p className="l-method-desc" style={{
+                  opacity: contentVisible ? 1 : 0,
+                  transition: "opacity 0.4s 0.1s",
+                }}>
+                  {m.desc[lang === "zh" ? "zh" : "en"]}
+                </p>
+                <div className="l-method-preview" style={{ borderColor: `${m.color}20` }}>
+                  <div className="l-method-preview-inner" style={{ background: `${m.color}08` }}>
+                    {m.id === "gtd" && <GTDPreview color={m.color} />}
+                    {m.id === "pomodoro" && <PomodoroPreview color={m.color} />}
+                    {m.id === "pareto" && <ParetoPreview color={m.color} />}
+                    {m.id === "moffatt" && <MoffattPreview color={m.color} />}
+                    {m.id === "howell" && <HowellPreview color={m.color} />}
+                    {m.id === "swot" && <SWOTPreview color={m.color} />}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

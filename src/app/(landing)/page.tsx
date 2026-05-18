@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { OrbitEngineDemo } from "@/components/landing/OrbitEngineDemo";
@@ -10,47 +11,67 @@ import { CTASection } from "@/components/landing/CTASection";
 import { LandingFooter } from "@/components/landing/LandingFooter";
 import { LandingLightEffects } from "@/components/landing/LandingLightEffects";
 import { ScrollProgressBar } from "@/components/landing/ScrollProgressBar";
-import { DecorativeArrow } from "@/components/landing/DecorativeArrow";
-import { useReveal } from "@/hooks/useScrollProgress";
 
-function SectionArrow({ color = "rgba(59,130,246,.08)" }: { color?: string }) {
-  const { ref, visible } = useReveal(0.3);
+function LightBeamTrack({ color = "rgba(59,130,246,.12)" }: { color?: string }) {
   return (
-    <div
-      ref={ref}
-      className={`l-section-arrow${visible ? " l-section-arrow-active" : ""}`}
-      aria-hidden="true"
-    >
-      <DecorativeArrow dir="right-down" color={color} scale={0.8} />
-      <DecorativeArrow dir="right-up" color={color} scale={0.6} />
+    <div className="l-beam-track" aria-hidden="true">
+      <div className="l-beam-track-line" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
     </div>
   );
 }
 
+function useActiveSection(ids: string[]) {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const idx = ids.indexOf(entry.target.id);
+            if (idx >= 0) setIndex(idx);
+          }
+        }
+      },
+      { threshold: 0.3 }
+    );
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [ids]);
+  return index;
+}
+
+const SECTION_IDS = ["hero", "features", "methods", "focus", "keyboard", "cta"];
+
 export default function LandingPage() {
+  const sectionIndex = useActiveSection(SECTION_IDS);
+
   return (
     <div className="landing">
       <ScrollProgressBar />
-      <LandingLightEffects />
+      <LandingLightEffects sectionIndex={sectionIndex} />
       <LandingNav />
-      <HeroSection />
 
-      <SectionArrow />
-      <OrbitEngineDemo />
+      <div id="hero"><HeroSection /></div>
 
-      <SectionArrow color="rgba(99,102,241,.08)" />
-      <MethodologyCards />
+      <LightBeamTrack />
+      <div id="features"><OrbitEngineDemo /></div>
 
-      <SectionArrow color="rgba(245,158,11,.06)" />
-      <FocusBlocksDemo />
+      <LightBeamTrack color="rgba(99,102,241,.10)" />
+      <div id="methods"><MethodologyCards /></div>
 
-      <SectionArrow color="rgba(59,130,246,.08)" />
-      <KeyboardNav />
+      <LightBeamTrack color="rgba(245,158,11,.08)" />
+      <div id="focus"><FocusBlocksDemo /></div>
 
-      <SectionArrow color="rgba(99,102,241,.06)" />
-      <CTASection />
+      <LightBeamTrack color="rgba(59,130,246,.10)" />
+      <div id="keyboard"><KeyboardNav /></div>
 
-      <SectionArrow color="rgba(245,158,11,.05)" />
+      <LightBeamTrack color="rgba(99,102,241,.08)" />
+      <div id="cta"><CTASection /></div>
+
+      <LightBeamTrack color="rgba(245,158,11,.06)" />
       <LandingFooter />
     </div>
   );

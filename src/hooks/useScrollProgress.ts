@@ -70,3 +70,27 @@ export function useReveal(threshold = 0.1) {
 
   return { ref, visible };
 }
+
+/**
+ * Returns normalized mouse position relative to viewport center.
+ * x: -1 (left) to 1 (right), y: -1 (top) to 1 (bottom).
+ * Updated via rAF, stored in ref to avoid re-renders.
+ */
+export function useMousePosition() {
+  const pos = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    let raf: number;
+    const onMove = (e: MouseEvent) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        pos.current.x = (e.clientX / window.innerWidth - 0.5) * 2;
+        pos.current.y = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
+  }, []);
+
+  return pos;
+}
