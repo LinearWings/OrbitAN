@@ -17,6 +17,20 @@ function easeOut(t: number) { return 1 - Math.pow(1 - t, 3); }
 function easeIn(t: number) { return t * t * t; }
 function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
 
+/**
+ * Gets the bounding rect of the actual content area (first child → last child),
+ * excluding the section's padding. Falls back to the section rect if no children.
+ */
+function getContentRect(el: HTMLElement): DOMRect {
+  const first = el.firstElementChild as HTMLElement | null;
+  const last = el.lastElementChild as HTMLElement | null;
+  if (!first || !last) return el.getBoundingClientRect();
+  const top = first.getBoundingClientRect().top;
+  const bottom = last.getBoundingClientRect().bottom;
+  const rect = el.getBoundingClientRect();
+  return new DOMRect(rect.left, top, rect.width, bottom - top);
+}
+
 export function useCinematicScroll(config: CinematicConfig) {
   const ref = useRef<HTMLElement>(null);
   const configRef = useRef(config);
@@ -26,7 +40,8 @@ export function useCinematicScroll(config: CinematicConfig) {
   const setRef = useCallback((el: HTMLElement | null) => {
     ref.current = el;
     if (el && !heightRef.current) {
-      heightRef.current = el.getBoundingClientRect().height;
+      const contentRect = getContentRect(el);
+      heightRef.current = contentRect.height;
     }
   }, []);
 
@@ -43,7 +58,7 @@ export function useCinematicScroll(config: CinematicConfig) {
       const el = ref.current;
       if (!el) return;
 
-      const rect = el.getBoundingClientRect();
+      const rect = getContentRect(el);
       const vh = window.innerHeight;
 
       if (rect.bottom < -200 || rect.top > vh + 200) return;

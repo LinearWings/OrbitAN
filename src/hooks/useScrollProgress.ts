@@ -9,6 +9,16 @@ import { useEffect, useRef, useState, useCallback } from "react";
  * Caches the initial rect height to avoid feedback loops when CSS
  * transforms (from useCinematicScroll) change getBoundingClientRect().
  */
+function getContentRect(el: HTMLElement): DOMRect {
+  const first = el.firstElementChild as HTMLElement | null;
+  const last = el.lastElementChild as HTMLElement | null;
+  if (!first || !last) return el.getBoundingClientRect();
+  const top = first.getBoundingClientRect().top;
+  const bottom = last.getBoundingClientRect().bottom;
+  const rect = el.getBoundingClientRect();
+  return new DOMRect(rect.left, top, rect.width, bottom - top);
+}
+
 export function useScrollProgress(threshold = 0) {
   const ref = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
@@ -18,7 +28,7 @@ export function useScrollProgress(threshold = 0) {
   useEffect(() => {
     const el = ref.current;
     if (el && !baseHeight.current) {
-      baseHeight.current = el.getBoundingClientRect().height;
+      baseHeight.current = getContentRect(el).height;
     }
   }, []);
 
@@ -26,12 +36,12 @@ export function useScrollProgress(threshold = 0) {
     const el = ref.current;
     if (!el) return;
 
-    const rect = el.getBoundingClientRect();
+    const rect = getContentRect(el);
     const viewportHeight = window.innerHeight;
     const sectionTop = rect.top;
-    // Use cached height — rect.height changes when CSS transforms are applied
     const sectionHeight = baseHeight.current || rect.height;
 
+    // Section-relative progress (preserves existing content animation timing)
     const p = sectionTop > viewportHeight
       ? 1
       : Math.max(0, Math.min(1, -sectionTop / sectionHeight));
