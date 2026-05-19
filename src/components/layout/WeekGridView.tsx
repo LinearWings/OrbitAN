@@ -180,8 +180,8 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
         7-column timeline grid — on mobile, horizontally scrollable.
         On desktop, full width with time labels on the left.
       */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <div style={isMobile ? { minWidth: 700 } : undefined}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <div style={isMobile ? { minWidth: 700, display: "flex", flexDirection: "column", flex: 1, minHeight: 0 } : { display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
       {/* HEADER */}
       <div style={{
         display: "grid", gridTemplateColumns: "36px repeat(7, 1fr)",
