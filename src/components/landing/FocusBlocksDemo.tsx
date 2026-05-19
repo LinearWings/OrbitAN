@@ -17,8 +17,7 @@ export function FocusBlocksDemo() {
   const lang = useLanguage();
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    enter: { rotateX: 4, scale: 0.96, translateZ: -30, blur: 0.8, opacity: 0.5, mouseRotate: 1 },
-    origin: "30% center",
+    enter: { opacity: 0, translateY: 25 },
   });
 
   const housingOpacity = Math.min(1, progress / 0.3);
@@ -26,7 +25,7 @@ export function FocusBlocksDemo() {
   const legendProgress = Math.max(0, (progress - 0.8) / 0.2);
 
   return (
-    <section className="l-focus cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
+    <section className="l-focus cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
       <div className="l-focus-inner">
         <div className="l-focus-clock" style={{ opacity: housingOpacity }}>
           <svg viewBox="0 0 220 220" className="l-focus-clock-svg">

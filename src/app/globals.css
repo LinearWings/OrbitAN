@@ -994,18 +994,9 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   100%{opacity:.4;filter:blur(0px)}
 }
 
-/* ── Cinematic Scroll Camera ── */
-.cinematic-section{
-  perspective:1200px;
-  perspective-origin:center center;
-  transform-style:preserve-3d;
-  will-change:transform,filter,opacity;
-}
+/* ── Cinematic Fade ── */
 @media(prefers-reduced-motion:reduce){
-  .cinematic-section{
-    transform:none!important;filter:none!important;
-    perspective:none;will-change:auto;
-  }
+  .cinematic-fade{opacity:1!important}
 }
 
 /* ── System Components Deck ── */

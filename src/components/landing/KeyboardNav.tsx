@@ -19,14 +19,13 @@ export function KeyboardNav() {
   const lang = useLanguage();
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    enter: { rotateY: -5, translateX: 30, scale: 0.96, translateZ: -30, blur: 1, opacity: 0.4, mouseRotate: 1 },
-    origin: "right center",
+    enter: { opacity: 0, translateY: 30 },
   });
 
   const headingProgress = Math.min(1, progress / 0.2);
 
   return (
-    <section className="l-keys-section cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
+    <section className="l-keys-section cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
       <div className="l-keys-inner">
         <h2 className="l-keys-h2" style={{
           opacity: headingProgress,

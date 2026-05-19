@@ -62,8 +62,7 @@ export function HeroSection() {
   const t = getT(lang);
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    exit: { rotateX: -5, scale: 0.97, translateZ: -30, blur: 1, opacity: 0.3 },
-    origin: "center 40%",
+    exit: { opacity: 0 },
   });
   const isZh = lang === "zh";
   const logoRef = useRef<HTMLDivElement>(null);
@@ -72,7 +71,7 @@ export function HeroSection() {
   const fade = Math.max(0, 1 - (progress - 0.3) / 0.4);
 
   return (
-    <section className="l-hero-v2 cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
+    <section className="l-hero-v2 cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
       <div className="l-hero-v2-canvas-wrap">
         <FloatingTimestamps logoRef={logoRef} />
 

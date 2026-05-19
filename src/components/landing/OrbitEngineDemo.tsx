@@ -16,15 +16,14 @@ export function OrbitEngineDemo() {
   const t = getT(lang);
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    enter: { rotateX: 6, scale: 0.95, translateZ: -40, blur: 1, opacity: 0.4, mouseRotate: 1.5 },
-    origin: "center bottom",
+    enter: { opacity: 0, translateY: 30 },
   });
 
   const entrance = Math.min(1, progress / 0.5);
   const contentReveal = Math.max(0, Math.min(1, (progress - 0.5) / 0.3));
 
   return (
-    <section className="l-engine cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
+    <section className="l-engine cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
       <div className="l-engine-inner">
         <div className="l-engine-deck">
           {PANELS.map((panel, i) => {

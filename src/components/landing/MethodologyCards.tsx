@@ -54,8 +54,7 @@ export function MethodologyCards() {
   const lang = useLanguage();
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    enter: { rotateX: 5, scale: 0.93, translateZ: -50, blur: 1.5, opacity: 0.3, mouseRotate: 1 },
-    origin: "center center",
+    enter: { opacity: 0, translateY: 30 },
   });
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -82,7 +81,7 @@ export function MethodologyCards() {
   }, [fanProgress]);
 
   return (
-    <section className="l-methods cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; sectionRef.current = el; }}>
+    <section className="l-methods cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; sectionRef.current = el; }}>
       <div className="l-methods-inner">
         <div className="l-methods-top">
           <h2 className="l-methods-h2" style={{
