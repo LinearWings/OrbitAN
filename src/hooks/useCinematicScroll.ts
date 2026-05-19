@@ -73,12 +73,10 @@ export function useCinematicScroll(config: CinematicConfig) {
       const enter = cfg.enter;
       const exit = cfg.exit;
 
-      // Entering: starts when top peeks in, completes when bottom reaches viewport bottom
+      // Entering: starts when content first peeks in, gradual over content height
       let enterP = 0;
-      if (enter && rect.top < vh && rect.bottom > vh) {
-        enterP = Math.min(1, (vh - rect.top) / heightRef.current);
-      } else if (enter && rect.bottom <= vh) {
-        enterP = 1;
+      if (enter && rect.top < vh && rect.bottom > 0) {
+        enterP = Math.min(1, (vh - rect.top) / Math.min(vh, heightRef.current));
       }
 
       // Exiting: fade out as section scrolls away
