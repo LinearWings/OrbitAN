@@ -19,8 +19,8 @@ export function OrbitEngineDemo() {
     enter: { opacity: 0, translateY: 30 },
   });
 
-  const entrance = Math.min(1, progress / 0.5);
-  const contentReveal = Math.max(0, Math.min(1, (progress - 0.5) / 0.3));
+  const entrance = Math.min(1, progress / 0.35);
+  const contentReveal = Math.max(0, Math.min(1, (progress - 0.1) / 0.4));
 
   return (
     <section className="l-engine cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>

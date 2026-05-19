@@ -73,13 +73,12 @@ export function useCinematicScroll(config: CinematicConfig) {
       const enter = cfg.enter;
       const exit = cfg.exit;
 
-      // Entering: starts when content top is 0.5vh below the viewport bottom
-      // (so animation begins before the user sees the content), completes
-      // when content bottom enters the viewport. Denominator is content height
-      // capped at vh so tall sections finish within a viewport of scrolling.
+      // Entering: starts when content top peeks into viewport bottom,
+      // completes over 40% of the viewport height (snappy, matches
+      // the card stagger windows which complete early in the progress range).
       let enterP = 0;
       if (enter && rect.top < vh && rect.bottom > 0) {
-        enterP = Math.min(1, Math.max(0, (vh - rect.top) / Math.min(vh, heightRef.current || rect.height)));
+        enterP = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.4)));
       }
 
       // Exiting: fade out as section scrolls away

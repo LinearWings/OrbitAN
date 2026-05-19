@@ -16,9 +16,9 @@ export function CTASection() {
 
   const ctaText = lang === "zh" ? "准备 Enter Orbit" : "Ready to Enter Orbit";
 
-  const beamProgress = Math.min(1, progress / 0.5);
-  const titleProgress = Math.max(0, Math.min(1, (progress - 0.4) / 0.4));
-  const ctaProgress = Math.max(0, Math.min(1, (progress - 0.7) / 0.3));
+  const beamProgress = Math.min(1, progress / 0.35);
+  const titleProgress = Math.max(0, Math.min(1, (progress - 0.25) / 0.35));
+  const ctaProgress = Math.max(0, Math.min(1, (progress - 0.5) / 0.4));
 
   const chars = ctaText.split("");
 

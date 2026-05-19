@@ -20,9 +20,9 @@ export function FocusBlocksDemo() {
     enter: { opacity: 0, translateY: 25 },
   });
 
-  const housingOpacity = Math.min(1, progress / 0.3);
-  const arcProgress = Math.max(0, Math.min(1, (progress - 0.3) / 0.5));
-  const legendProgress = Math.max(0, (progress - 0.8) / 0.2);
+  const housingOpacity = Math.min(1, progress / 0.2);
+  const arcProgress = Math.max(0, Math.min(1, (progress - 0.15) / 0.45));
+  const legendProgress = Math.max(0, (progress - 0.55) / 0.45);
 
   return (
     <section className="l-focus cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>

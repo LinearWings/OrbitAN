@@ -65,8 +65,8 @@ export function MethodologyCards() {
     e.currentTarget.style.setProperty("--my", `${y}%`);
   }, []);
 
-  const fanProgress = Math.min(1, progress / 0.5);
-  const contentReveal = Math.max(0, Math.min(1, (progress - 0.5) / 0.3));
+  const fanProgress = Math.min(1, progress / 0.35);
+  const contentReveal = Math.max(0, Math.min(1, (progress - 0.25) / 0.35));
   const rotations = [-12, -7, -3, 3, 7, 12];
   const animTriggered = useRef(false);
 
