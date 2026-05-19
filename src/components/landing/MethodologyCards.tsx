@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useCinematicScroll } from "@/hooks/useCinematicScroll";
@@ -70,6 +70,15 @@ export function MethodologyCards() {
   const fanProgress = Math.min(1, progress / 0.5);
   const contentReveal = Math.max(0, Math.min(1, (progress - 0.5) / 0.3));
   const rotations = [-12, -7, -3, 3, 7, 12];
+  const animTriggered = useRef(false);
+
+  // Add scroll-trigger class once when section enters viewport
+  useEffect(() => {
+    if (fanProgress > 0.05 && !animTriggered.current) {
+      animTriggered.current = true;
+      cinematicRef.current?.classList.add("l-methods-animating");
+    }
+  }, [fanProgress, cinematicRef]);
 
   return (
     <section className="l-methods cinematic-section" ref={setRef}>
@@ -171,7 +180,7 @@ function PomodoroPreview({ color }: { color: string }) {
           <circle cx="20" cy="20" r="16" fill="none" stroke={`${color}20`} strokeWidth="2" />
           <circle cx="20" cy="20" r="16" fill="none" stroke={color} strokeWidth="2"
             strokeDasharray={`${2 * Math.PI * 16 * 0.65} ${2 * Math.PI * 16}`}
-            strokeDashoffset={0}
+            strokeDashoffset={100}
             transform="rotate(-90 20 20)"
           />
           <text x="20" y="22" textAnchor="middle" fill={color} fontSize="8" fontFamily="JetBrains Mono, monospace">25</text>

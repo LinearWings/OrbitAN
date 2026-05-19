@@ -13,6 +13,15 @@ export function useScrollProgress(threshold = 0) {
   const ref = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const baseHeight = useRef(0);
+
+  // Cache the untransformed height once on mount
+  useEffect(() => {
+    const el = ref.current;
+    if (el && !baseHeight.current) {
+      baseHeight.current = el.getBoundingClientRect().height;
+    }
+  }, []);
 
   const handleScroll = useCallback(() => {
     const el = ref.current;
@@ -21,7 +30,8 @@ export function useScrollProgress(threshold = 0) {
     const rect = el.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
     const sectionTop = rect.top;
-    const sectionHeight = rect.height;
+    // Use cached height to avoid feedback loop from CSS transforms
+    const sectionHeight = baseHeight.current || rect.height;
 
     // Below viewport: progress=1 (fully visible, not yet animated)
     // In viewport: 0 at top, 1 when fully scrolled past

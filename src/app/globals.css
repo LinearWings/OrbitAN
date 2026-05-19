@@ -1121,36 +1121,40 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	  transition:border-color .4s ease;
 	}
 
-	/* GTD: items cascade in from left */
-	.l-method-card[data-method="gtd"]:hover .l-method-gtd-item{
+	/* ── Scroll-triggered: all 6 previews play together when section enters view ── */
+	.l-method-card[data-method="gtd"] .l-method-gtd-item{
 	  animation:gtdSlideIn .5s ease-out both;
+	  animation-play-state:paused;
 	}
-	.l-method-card[data-method="gtd"]:hover .l-method-gtd-item:nth-child(1){animation-delay:0s}
-	.l-method-card[data-method="gtd"]:hover .l-method-gtd-item:nth-child(2){animation-delay:.08s}
-	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(2) .l-method-gtd-item{animation-delay:.1s}
-	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(2) .l-method-gtd-item:nth-child(2){animation-delay:.18s}
-	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(3) .l-method-gtd-item{animation-delay:.2s}
-	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(3) .l-method-gtd-item:nth-child(2){animation-delay:.28s}
-	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(4) .l-method-gtd-item{animation-delay:.3s}
-	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(4) .l-method-gtd-item:nth-child(2){animation-delay:.38s}
+	.l-method-card[data-method="gtd"] .l-method-gtd-item:nth-child(1){animation-delay:0s}
+	.l-method-card[data-method="gtd"] .l-method-gtd-item:nth-child(2){animation-delay:.08s}
+	.l-method-card[data-method="gtd"] .l-method-gtd-col:nth-child(2) .l-method-gtd-item{animation-delay:.1s}
+	.l-method-card[data-method="gtd"] .l-method-gtd-col:nth-child(2) .l-method-gtd-item:nth-child(2){animation-delay:.18s}
+	.l-method-card[data-method="gtd"] .l-method-gtd-col:nth-child(3) .l-method-gtd-item{animation-delay:.2s}
+	.l-method-card[data-method="gtd"] .l-method-gtd-col:nth-child(3) .l-method-gtd-item:nth-child(2){animation-delay:.28s}
+	.l-method-card[data-method="gtd"] .l-method-gtd-col:nth-child(4) .l-method-gtd-item{animation-delay:.3s}
+	.l-method-card[data-method="gtd"] .l-method-gtd-col:nth-child(4) .l-method-gtd-item:nth-child(2){animation-delay:.38s}
 	@keyframes gtdSlideIn{
 	  0%{transform:translateX(-6px);opacity:.2}
 	  100%{transform:translateX(0);opacity:1}
 	}
 
-	/* Pomodoro: ring rotates, dots pulse */
-	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-ring svg{
-	  animation:pomoSpin 3s linear infinite;
+	/* Pomodoro: progress bar fills, dots pulse */
+	.l-method-card[data-method="pomodoro"] .l-method-pomodoro-ring svg circle:nth-of-type(2){
+	  stroke-dashoffset:100;
+	  animation:pomoFill 1.2s ease-out both;
+	  animation-play-state:paused;
 	}
-	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-dot{
+	.l-method-card[data-method="pomodoro"] .l-method-pomodoro-dot{
 	  animation:pomoDotPulse 1s ease-in-out infinite;
+	  animation-play-state:paused;
 	}
-	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-dot:nth-child(2){animation-delay:.15s}
-	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-dot:nth-child(3){animation-delay:.3s}
-	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-dot:nth-child(4){animation-delay:.45s}
-	@keyframes pomoSpin{
-	  from{transform:rotate(0deg)}
-	  to{transform:rotate(360deg)}
+	.l-method-card[data-method="pomodoro"] .l-method-pomodoro-dot:nth-child(2){animation-delay:.15s}
+	.l-method-card[data-method="pomodoro"] .l-method-pomodoro-dot:nth-child(3){animation-delay:.3s}
+	.l-method-card[data-method="pomodoro"] .l-method-pomodoro-dot:nth-child(4){animation-delay:.45s}
+	@keyframes pomoFill{
+	  0%{stroke-dashoffset:100}
+	  100%{stroke-dashoffset:35}
 	}
 	@keyframes pomoDotPulse{
 	  0%,100%{transform:scale(1);opacity:.6}
@@ -1158,41 +1162,44 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	}
 
 	/* Pareto: bars grow upward */
-	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar{
+	.l-method-card[data-method="pareto"] .l-method-pareto-bar{
 	  animation:paretoGrow .6s ease-out both;
+	  animation-play-state:paused;
 	}
-	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar:nth-child(2){animation-delay:.08s}
-	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar:nth-child(3){animation-delay:.16s}
-	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar:nth-child(4){animation-delay:.24s}
-	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar:nth-child(5){animation-delay:.32s}
+	.l-method-card[data-method="pareto"] .l-method-pareto-bar:nth-child(2){animation-delay:.08s}
+	.l-method-card[data-method="pareto"] .l-method-pareto-bar:nth-child(3){animation-delay:.16s}
+	.l-method-card[data-method="pareto"] .l-method-pareto-bar:nth-child(4){animation-delay:.24s}
+	.l-method-card[data-method="pareto"] .l-method-pareto-bar:nth-child(5){animation-delay:.32s}
 	@keyframes paretoGrow{
 	  0%{transform:scaleY(0);transform-origin:bottom}
 	  100%{transform:scaleY(1);transform-origin:bottom}
 	}
 
 	/* Moffatt: blocks light up left→right */
-	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block{
+	.l-method-card[data-method="moffatt"] .l-method-moffatt-block{
 	  animation:moffattLight .4s ease-out both;
+	  animation-play-state:paused;
 	}
-	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(2){animation-delay:.06s}
-	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(3){animation-delay:.12s}
-	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(4){animation-delay:.18s}
-	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(5){animation-delay:.24s}
-	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(6){animation-delay:.30s}
-	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(7){animation-delay:.36s}
-	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(8){animation-delay:.42s}
+	.l-method-card[data-method="moffatt"] .l-method-moffatt-block:nth-child(2){animation-delay:.06s}
+	.l-method-card[data-method="moffatt"] .l-method-moffatt-block:nth-child(3){animation-delay:.12s}
+	.l-method-card[data-method="moffatt"] .l-method-moffatt-block:nth-child(4){animation-delay:.18s}
+	.l-method-card[data-method="moffatt"] .l-method-moffatt-block:nth-child(5){animation-delay:.24s}
+	.l-method-card[data-method="moffatt"] .l-method-moffatt-block:nth-child(6){animation-delay:.30s}
+	.l-method-card[data-method="moffatt"] .l-method-moffatt-block:nth-child(7){animation-delay:.36s}
+	.l-method-card[data-method="moffatt"] .l-method-moffatt-block:nth-child(8){animation-delay:.42s}
 	@keyframes moffattLight{
 	  0%{opacity:.15;transform:scaleY(.6)}
 	  100%{opacity:1;transform:scaleY(1)}
 	}
 
 	/* Howell: quadrants pulse in sequence */
-	.l-method-card[data-method="howell"]:hover .l-method-howell-quad{
+	.l-method-card[data-method="howell"] .l-method-howell-quad{
 	  animation:howellPulse .5s ease-out both;
+	  animation-play-state:paused;
 	}
-	.l-method-card[data-method="howell"]:hover .l-method-howell-quad:nth-child(2){animation-delay:.1s}
-	.l-method-card[data-method="howell"]:hover .l-method-howell-quad:nth-child(3){animation-delay:.2s}
-	.l-method-card[data-method="howell"]:hover .l-method-howell-quad:nth-child(4){animation-delay:.3s}
+	.l-method-card[data-method="howell"] .l-method-howell-quad:nth-child(2){animation-delay:.1s}
+	.l-method-card[data-method="howell"] .l-method-howell-quad:nth-child(3){animation-delay:.2s}
+	.l-method-card[data-method="howell"] .l-method-howell-quad:nth-child(4){animation-delay:.3s}
 	@keyframes howellPulse{
 	  0%{transform:scale(.92);opacity:.4}
 	  60%{transform:scale(1.03);opacity:1}
@@ -1200,16 +1207,37 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	}
 
 	/* SWOT: quadrants fade in with stagger */
-	.l-method-card[data-method="swot"]:hover .l-method-swot-quad{
+	.l-method-card[data-method="swot"] .l-method-swot-quad{
 	  animation:swotReveal .45s ease-out both;
+	  animation-play-state:paused;
 	}
-	.l-method-card[data-method="swot"]:hover .l-method-swot-quad:nth-child(2){animation-delay:.1s}
-	.l-method-card[data-method="swot"]:hover .l-method-swot-quad:nth-child(3){animation-delay:.2s}
-	.l-method-card[data-method="swot"]:hover .l-method-swot-quad:nth-child(4){animation-delay:.3s}
+	.l-method-card[data-method="swot"] .l-method-swot-quad:nth-child(2){animation-delay:.1s}
+	.l-method-card[data-method="swot"] .l-method-swot-quad:nth-child(3){animation-delay:.2s}
+	.l-method-card[data-method="swot"] .l-method-swot-quad:nth-child(4){animation-delay:.3s}
 	@keyframes swotReveal{
 	  0%{opacity:.2;transform:translateY(3px)}
 	  100%{opacity:1;transform:translateY(0)}
 	}
+
+	/* When .l-methods-animating is added (scroll-in), play ALL paused preview animations */
+	.l-methods-animating .l-method-card[data-method="gtd"] .l-method-gtd-item,
+	.l-methods-animating .l-method-card[data-method="pomodoro"] .l-method-pomodoro-ring svg circle:nth-of-type(2),
+	.l-methods-animating .l-method-card[data-method="pomodoro"] .l-method-pomodoro-dot,
+	.l-methods-animating .l-method-card[data-method="pareto"] .l-method-pareto-bar,
+	.l-methods-animating .l-method-card[data-method="moffatt"] .l-method-moffatt-block,
+	.l-methods-animating .l-method-card[data-method="howell"] .l-method-howell-quad,
+	.l-methods-animating .l-method-card[data-method="swot"] .l-method-swot-quad{
+	  animation-play-state:running;
+	}
+
+	/* Hover: replay individual card animation by restarting */
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-item{animation-play-state:running}
+	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-ring svg circle:nth-of-type(2){animation-play-state:running}
+	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-dot{animation-play-state:running}
+	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar{animation-play-state:running}
+	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block{animation-play-state:running}
+	.l-method-card[data-method="howell"]:hover .l-method-howell-quad{animation-play-state:running}
+	.l-method-card[data-method="swot"]:hover .l-method-swot-quad{animation-play-state:running}
 
 	/* ── Focus Clock — Arc Rotation + Pulse ── */
 	.l-focus-clock-svg .l-focus-arc{
