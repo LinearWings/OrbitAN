@@ -167,12 +167,21 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
   }, [week, state.focusBlocks, zoomPx, isOrbitMode]);
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#0A0A0D" }}>
+    <div style={{
+      height: "100%", display: "flex", flexDirection: "column",
+      background: "linear-gradient(175deg, rgba(14,14,22,0.84) 0%, rgba(8,8,14,0.92) 35%, rgba(11,11,19,0.88) 65%, rgba(6,6,12,0.94) 100%)",
+      backdropFilter: "blur(20px) saturate(1.15)",
+      WebkitBackdropFilter: "blur(20px) saturate(1.15)",
+      borderRadius: 16,
+      border: "1px solid rgba(255,255,255,0.05)",
+      boxShadow: "0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.015) inset, 0 1px 0 rgba(255,255,255,0.025) inset",
+      overflow: "hidden",
+    }}>
       {/*
         7-column timeline grid — on mobile, horizontally scrollable.
         On desktop, full width with time labels on the left.
       */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflowX: isMobile ? "auto" : "hidden" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflowX: isMobile ? "auto" : "hidden", overflowY: "hidden" }}>
         <div style={isMobile ? { minWidth: 700 } : undefined}>
       {/* HEADER */}
       <div style={{

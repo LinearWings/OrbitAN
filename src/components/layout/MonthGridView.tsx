@@ -64,7 +64,15 @@ export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
   }, [state.currentDate]);
 
   return (
-    <div className="h-full flex flex-col" style={{ background: "#0A0A0D" }}>
+    <div className="h-full flex flex-col" style={{
+      background: "linear-gradient(175deg, rgba(14,14,22,0.84) 0%, rgba(8,8,14,0.92) 35%, rgba(11,11,19,0.88) 65%, rgba(6,6,12,0.94) 100%)",
+      backdropFilter: "blur(20px) saturate(1.15)",
+      WebkitBackdropFilter: "blur(20px) saturate(1.15)",
+      borderRadius: 16,
+      border: "1px solid rgba(255,255,255,0.05)",
+      boxShadow: "0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.015) inset, 0 1px 0 rgba(255,255,255,0.025) inset",
+      overflow: "hidden",
+    }}>
       {/* Month/Year header */}
       <div style={{ textAlign: "center", padding: isMobile ? "8px 0" : "14px 0", borderBottom: `1px solid ${C.line}` }}>
         <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? 16 : 18, fontWeight: 600, color: "rgba(255,255,255,0.8)", letterSpacing: "0.03em" }}>{title}</span>
