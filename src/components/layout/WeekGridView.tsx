@@ -18,6 +18,7 @@ const DAY_LABELS_ZH = ["一", "二", "三", "四", "五", "六", "日"];
 
 interface WeekGridViewProps {
   onDayClick: (date: string) => void;
+  onCreateTask?: (date: string) => void;
   isOrbitMode?: boolean;
   selectedBlockId?: string | null;
   onSelectBlock?: (id: string | null) => void;
@@ -70,7 +71,7 @@ function assignConflictLanes<T extends TimedLayoutItem>(items: T[]): T[] {
   return sorted;
 }
 
-export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight }: WeekGridViewProps) {
+export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight }: WeekGridViewProps) {
   const { state } = useAppContext();
   const today = getToday();
   const [zoomPx, setZoomPx] = useState(DEFAULT_PX);
@@ -215,6 +216,32 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
               }}>
                 {dayNum}
               </span>
+              {onCreateTask && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onCreateTask(date); }}
+                  title="新建任务"
+                  style={{
+                    marginTop: 2, width: 18, height: 18, borderRadius: "50%",
+                    border: "1px solid rgba(255,255,255,0.08)", background: "transparent",
+                    color: "rgba(255,255,255,0.2)", cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 12, lineHeight: 1, padding: 0,
+                    transition: "color 0.15s, border-color 0.15s, background 0.15s",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.6)";
+                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)";
+                    (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.2)";
+                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
+                    (e.currentTarget as HTMLElement).style.background = "transparent";
+                  }}
+                >
+                  +
+                </button>
+              )}
               {count > 0 && (
                 <div style={{ marginTop: 3, display: "flex", gap: 2 }}>
                   {types.slice(0, 3).map(t => (

@@ -335,6 +335,14 @@ export default function Home() {
     setPendingEndTime(null);
   }, []);
 
+  const handleWeekCreate = useCallback((date: string) => {
+    navigateToDay(date);
+    setIsCreating(true);
+    setClickPhase("start");
+    setPendingStartTime(null);
+    setPendingEndTime(null);
+  }, [navigateToDay]);
+
   const handleCancelCreate = useCallback(() => {
     setIsCreating(false);
     setClickPhase("idle");
@@ -808,6 +816,7 @@ export default function Home() {
             <div className="relative w-full h-full">
               <WeekGridView
                 onDayClick={navigateToDay}
+                onCreateTask={handleWeekCreate}
                 isOrbitMode={isOrbitModeOpen}
                 selectedBlockId={selectedBlockId}
                 onSelectBlock={setSelectedBlockId}
