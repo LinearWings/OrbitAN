@@ -1,7 +1,9 @@
 "use client";
 
+import { useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
+import { useCinematicScroll } from "@/hooks/useCinematicScroll";
 import { getT } from "@/lib/i18n";
 
 const PANELS = [
@@ -13,13 +15,18 @@ const PANELS = [
 export function OrbitEngineDemo() {
   const lang = useLanguage();
   const t = getT(lang);
-  const { ref, progress } = useScrollProgress();
+  const { ref: scrollRef, progress } = useScrollProgress();
+  const { ref: cinematicRef } = useCinematicScroll({
+    enter: { rotateX: 25, rotateY: -5, scale: 0.85, translateZ: -200, blur: 3, opacity: 0, mouseRotate: 3, mouseTranslate: 8 },
+    origin: "center bottom",
+  });
+  const setRef = useCallback((el: HTMLDivElement | null) => { cinematicRef.current = el; scrollRef.current = el; }, [cinematicRef, scrollRef]);
 
   const entrance = Math.min(1, progress / 0.5);
   const contentReveal = Math.max(0, Math.min(1, (progress - 0.5) / 0.3));
 
   return (
-    <section className="l-engine" ref={ref}>
+    <section className="l-engine cinematic-section" ref={setRef}>
       <div className="l-engine-inner">
         <div className="l-engine-deck">
           {PANELS.map((panel, i) => {

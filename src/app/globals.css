@@ -541,7 +541,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
-  padding:12px clamp(1.25rem,3vw,2.5rem);
+  padding:7px clamp(1.25rem,3vw,2.5rem);
   background:rgba(6,8,13,.7);
   backdrop-filter:blur(12px);
   border-bottom:1px solid rgba(255,255,255,.04);
@@ -631,6 +631,18 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   letter-spacing:.15em;text-transform:uppercase;
   filter:none;color:rgba(255,255,255,.6);
 }
+.l-hero-glyph-outline{
+  position:absolute;
+  font-family:"Clash Display",sans-serif;
+  font-weight:900;line-height:1;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,.08);
+  text-transform:uppercase;letter-spacing:.04em;
+  pointer-events:none;user-select:none;
+  animation:l-glyph-drift 8s ease-in-out infinite alternate;
+}
+.l-hero-glyph-outline:nth-child(even){animation-duration:10s;animation-delay:-3s}
+.l-hero-glyph-outline:nth-child(3n){animation-duration:12s;animation-delay:-5s}
 
 /* OrbitAN Logo */
 .l-hero-logo{
@@ -728,6 +740,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
   background:#020408;
+  background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(59,130,246,.04),transparent),radial-gradient(ellipse 60% 40% at 20% 100%,rgba(99,102,241,.03),transparent);
 }
 .l-methods-inner{max-width:1300px;margin:0 auto}
 .l-methods-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:2rem;margin-bottom:clamp(4rem,10vh,8rem)}
@@ -751,8 +764,9 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   background:#020408;padding:clamp(1.5rem,3vw,2.5rem);
   display:flex;flex-direction:column;gap:1rem;
   transition:background .3s ease;
+  background-image:radial-gradient(ellipse 100% 80% at 50% 0%,rgba(59,130,246,.025),transparent);
 }
-.l-method-card:hover{background:rgba(10,10,18,1);border-color:rgba(255,255,255,.05)}.l-method-card:hover .l-method-preview{border-color:rgba(255,255,255,.06)}
+.l-method-card:hover{border-color:rgba(255,255,255,.05)}
 .l-method-tag{
   font-family:"JetBrains Mono",monospace;font-size:.45rem;
   letter-spacing:.14em;text-transform:uppercase;
@@ -813,6 +827,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-focus{
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
+  background-image:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(245,158,11,.025),transparent);
 }
 .l-focus-inner{
   max-width:1100px;margin:0 auto;
@@ -849,6 +864,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
   background:#020408;
+  background-image:radial-gradient(ellipse 70% 50% at 80% 20%,rgba(245,158,11,.03),transparent),radial-gradient(ellipse 50% 40% at 10% 80%,rgba(59,130,246,.025),transparent);
 }
 .l-keys-inner{max-width:900px;margin:0 auto;text-align:center}
 .l-keys-h2{
@@ -889,6 +905,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   position:relative;z-index:1;
   min-height:80vh;display:flex;align-items:center;justify-content:center;
   padding:clamp(4rem,12vh,8rem) clamp(1rem,3vw,2rem);
+  background-image:radial-gradient(ellipse 50% 60% at 50% 30%,rgba(59,130,246,.04),transparent);
 }
 .l-cta-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
 .l-cta-crosses{display:flex;gap:clamp(2.5rem,6vw,5rem);color:rgba(255,255,255,.14);transition:color .4s ease;margin-bottom:clamp(2rem,5vh,3.5rem)}
@@ -977,12 +994,26 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   100%{opacity:.4;filter:blur(0px)}
 }
 
+/* ── Cinematic Scroll Camera ── */
+.cinematic-section{
+  perspective:1200px;
+  perspective-origin:center center;
+  transform-style:preserve-3d;
+  will-change:transform,filter,opacity;
+}
+@media(prefers-reduced-motion:reduce){
+  .cinematic-section,.cinematic-section *{
+    transform:none!important;filter:none!important;
+    perspective:none;will-change:auto;
+  }
+}
+
 /* ── System Components Deck ── */
-	.l-engine{position:relative;z-index:1;padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem)}
+	.l-engine{position:relative;z-index:1;padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);background-image:radial-gradient(ellipse 70% 40% at 70% 20%,rgba(99,102,241,.03),transparent)}
 	.l-engine-inner{max-width:1100px;margin:0 auto}
 	.l-engine-deck{display:grid;grid-template-columns:1fr;gap:1px;background:rgba(255,255,255,.025);border-radius:16px;overflow:hidden}
 	@media(min-width:768px){.l-engine-deck{grid-template-columns:repeat(3,1fr)}}
-	.l-engine-card{background:#0A0A0F;padding:clamp(2rem,4vw,3.5rem);display:flex;flex-direction:column;gap:1.25rem;transition:background .7s ease,border-color .7s ease;border:1px solid transparent}
+	.l-engine-card{background:#0A0A0F;padding:clamp(2rem,4vw,3.5rem);display:flex;flex-direction:column;gap:1.25rem;transition:background .7s ease,border-color .7s ease;border:1px solid transparent;background-image:radial-gradient(ellipse 100% 60% at 30% 0%,rgba(59,130,246,.03),transparent)}
 	.l-engine-card:hover{background:rgba(12,12,20,1);border-color:rgba(255,255,255,.05)}.l-engine-card:hover .l-engine-card-h{color:rgba(255,255,255,.65)}
 	.l-engine-card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:"Clash Display",sans-serif;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 	.l-engine-card-h{font-family:"Clash Display",sans-serif;font-size:clamp(1.125rem,1.8vw,1.5rem);font-weight:600;line-height:1.1;color:rgba(255,255,255,.55);transition:color .4s ease}
@@ -1081,33 +1112,103 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	}
 	.l-engine-card-h,.l-engine-card-d{position:relative;z-index:1}
 
-	/* ── Methodology Cards — Shimmer + Glow ── */
+	/* ── Methodology Cards — Preview Animations ── */
 	.l-method-card{
 	  position:relative;overflow:hidden;
 	}
-	.l-method-card::before{
-	  content:"";position:absolute;inset:0;z-index:0;
-	  background:radial-gradient(ellipse at var(--mx,50%) var(--my,50%),rgba(255,255,255,.03) 0%,transparent 60%);
-	  opacity:0;transition:opacity .4s ease;pointer-events:none;
-	}
-	.l-method-card:hover::before{opacity:1}
-	.l-method-card::after{
-	  content:"";position:absolute;top:0;left:-100%;width:60%;height:100%;
-	  background:linear-gradient(90deg,transparent,rgba(255,255,255,.02),transparent);
-	  pointer-events:none;z-index:0;
-	}
-	.l-method-card:hover::after{
-	  animation:l-method-shimmer 1.5s ease forwards;
-	}
-	@keyframes l-method-shimmer{
-	  to{left:150%}
-	}
 	.l-method-tag,.l-method-name,.l-method-desc,.l-method-preview{position:relative;z-index:1}
 	.l-method-preview{
-	  transition:border-color .4s ease,box-shadow .4s ease;
+	  transition:border-color .4s ease;
 	}
-	.l-method-card:hover .l-method-preview{
-	  box-shadow:inset 0 0 30px rgba(255,255,255,.02),0 0 20px rgba(255,255,255,.01);
+
+	/* GTD: items cascade in from left */
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-item{
+	  animation:gtdSlideIn .5s ease-out both;
+	}
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-item:nth-child(1){animation-delay:0s}
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-item:nth-child(2){animation-delay:.08s}
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(2) .l-method-gtd-item{animation-delay:.1s}
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(2) .l-method-gtd-item:nth-child(2){animation-delay:.18s}
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(3) .l-method-gtd-item{animation-delay:.2s}
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(3) .l-method-gtd-item:nth-child(2){animation-delay:.28s}
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(4) .l-method-gtd-item{animation-delay:.3s}
+	.l-method-card[data-method="gtd"]:hover .l-method-gtd-col:nth-child(4) .l-method-gtd-item:nth-child(2){animation-delay:.38s}
+	@keyframes gtdSlideIn{
+	  0%{transform:translateX(-6px);opacity:.2}
+	  100%{transform:translateX(0);opacity:1}
+	}
+
+	/* Pomodoro: ring rotates, dots pulse */
+	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-ring svg{
+	  animation:pomoSpin 3s linear infinite;
+	}
+	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-dot{
+	  animation:pomoDotPulse 1s ease-in-out infinite;
+	}
+	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-dot:nth-child(2){animation-delay:.15s}
+	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-dot:nth-child(3){animation-delay:.3s}
+	.l-method-card[data-method="pomodoro"]:hover .l-method-pomodoro-dot:nth-child(4){animation-delay:.45s}
+	@keyframes pomoSpin{
+	  from{transform:rotate(0deg)}
+	  to{transform:rotate(360deg)}
+	}
+	@keyframes pomoDotPulse{
+	  0%,100%{transform:scale(1);opacity:.6}
+	  50%{transform:scale(1.5);opacity:1}
+	}
+
+	/* Pareto: bars grow upward */
+	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar{
+	  animation:paretoGrow .6s ease-out both;
+	}
+	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar:nth-child(2){animation-delay:.08s}
+	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar:nth-child(3){animation-delay:.16s}
+	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar:nth-child(4){animation-delay:.24s}
+	.l-method-card[data-method="pareto"]:hover .l-method-pareto-bar:nth-child(5){animation-delay:.32s}
+	@keyframes paretoGrow{
+	  0%{transform:scaleY(0);transform-origin:bottom}
+	  100%{transform:scaleY(1);transform-origin:bottom}
+	}
+
+	/* Moffatt: blocks light up left→right */
+	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block{
+	  animation:moffattLight .4s ease-out both;
+	}
+	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(2){animation-delay:.06s}
+	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(3){animation-delay:.12s}
+	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(4){animation-delay:.18s}
+	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(5){animation-delay:.24s}
+	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(6){animation-delay:.30s}
+	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(7){animation-delay:.36s}
+	.l-method-card[data-method="moffatt"]:hover .l-method-moffatt-block:nth-child(8){animation-delay:.42s}
+	@keyframes moffattLight{
+	  0%{opacity:.15;transform:scaleY(.6)}
+	  100%{opacity:1;transform:scaleY(1)}
+	}
+
+	/* Howell: quadrants pulse in sequence */
+	.l-method-card[data-method="howell"]:hover .l-method-howell-quad{
+	  animation:howellPulse .5s ease-out both;
+	}
+	.l-method-card[data-method="howell"]:hover .l-method-howell-quad:nth-child(2){animation-delay:.1s}
+	.l-method-card[data-method="howell"]:hover .l-method-howell-quad:nth-child(3){animation-delay:.2s}
+	.l-method-card[data-method="howell"]:hover .l-method-howell-quad:nth-child(4){animation-delay:.3s}
+	@keyframes howellPulse{
+	  0%{transform:scale(.92);opacity:.4}
+	  60%{transform:scale(1.03);opacity:1}
+	  100%{transform:scale(1);opacity:1}
+	}
+
+	/* SWOT: quadrants fade in with stagger */
+	.l-method-card[data-method="swot"]:hover .l-method-swot-quad{
+	  animation:swotReveal .45s ease-out both;
+	}
+	.l-method-card[data-method="swot"]:hover .l-method-swot-quad:nth-child(2){animation-delay:.1s}
+	.l-method-card[data-method="swot"]:hover .l-method-swot-quad:nth-child(3){animation-delay:.2s}
+	.l-method-card[data-method="swot"]:hover .l-method-swot-quad:nth-child(4){animation-delay:.3s}
+	@keyframes swotReveal{
+	  0%{opacity:.2;transform:translateY(3px)}
+	  100%{opacity:1;transform:translateY(0)}
 	}
 
 	/* ── Focus Clock — Arc Rotation + Pulse ── */

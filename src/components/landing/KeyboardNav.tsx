@@ -1,7 +1,9 @@
 "use client";
 
+import { useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
+import { useCinematicScroll } from "@/hooks/useCinematicScroll";
 
 const SHORTCUTS = [
   { keys: ["←", "→"], label: { zh: "前一天/后一天", en: "Prev/Next Day" } },
@@ -16,12 +18,17 @@ const SHORTCUTS = [
 
 export function KeyboardNav() {
   const lang = useLanguage();
-  const { ref, progress } = useScrollProgress();
+  const { ref: scrollRef, progress } = useScrollProgress();
+  const { ref: cinematicRef } = useCinematicScroll({
+    enter: { rotateY: -30, translateX: 100, scale: 0.9, translateZ: -120, blur: 3, opacity: 0, mouseRotate: 2 },
+    origin: "right center",
+  });
+  const setRef = useCallback((el: HTMLElement | null) => { cinematicRef.current = el as HTMLDivElement; scrollRef.current = el as HTMLDivElement; }, [cinematicRef, scrollRef]);
 
   const headingProgress = Math.min(1, progress / 0.2);
 
   return (
-    <section className="l-keys-section" ref={ref}>
+    <section className="l-keys-section cinematic-section" ref={setRef}>
       <div className="l-keys-inner">
         <h2 className="l-keys-h2" style={{
           opacity: headingProgress,

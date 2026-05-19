@@ -17,7 +17,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
   return (
     <div className="h-screen bg-[#050505] text-white/80 overflow-y-auto" data-scroll-container style={{ fontFamily: "'Satoshi', sans-serif" }}>
       <header
-        className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-8 py-4"
+        className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-8 py-2"
         style={{
           background: "rgba(5,5,5,0.95)",
           borderBottom: "2px solid rgba(255,255,255,0.05)",
@@ -46,10 +46,10 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
                 }}
               >
                 <Link href="/docs" onClick={() => setMenuOpen(false)} className="text-sm text-white/60 hover:text-white/90">
-                  {t.nav_docs}
+                  Docs
                 </Link>
                 <Link href="/orbit" onClick={() => setMenuOpen(false)} className="text-sm text-white/60 hover:text-white/90">
-                  {t.orbit_now}
+                  Enter Orbit
                 </Link>
               </div>
             )}
@@ -57,7 +57,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
         ) : (
           <nav className="flex items-center gap-6 text-sm" style={{ fontFamily: "'JetBrains Mono', monospace", color: "rgba(255,255,255,0.3)" }}>
             <Link href="/docs" className="hover:text-white/60" style={{ fontSize: "0.6875rem", letterSpacing: "0.06em" }}>
-              {t.nav_docs}
+              Docs
             </Link>
             <Link
               href="/orbit"
@@ -70,7 +70,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
                 color: "rgba(37,99,235,0.7)",
               }}
             >
-              {t.orbit_now}
+              Enter Orbit
             </Link>
             <LangSwitch currentLang={lang} />
           </nav>

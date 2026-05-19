@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
+import { useCinematicScroll } from "@/hooks/useCinematicScroll";
 
 const METHODS = [
   {
@@ -51,7 +52,12 @@ const METHODS = [
 
 export function MethodologyCards() {
   const lang = useLanguage();
-  const { ref, progress } = useScrollProgress();
+  const { ref: scrollRef, progress } = useScrollProgress();
+  const { ref: cinematicRef } = useCinematicScroll({
+    enter: { rotateX: 35, rotateY: 8, scale: 0.7, translateZ: -300, blur: 4, opacity: 0, mouseRotate: 2 },
+    origin: "center center",
+  });
+  const setRef = useCallback((el: HTMLElement | null) => { cinematicRef.current = el as HTMLDivElement; scrollRef.current = el as HTMLDivElement; }, [cinematicRef, scrollRef]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -66,7 +72,7 @@ export function MethodologyCards() {
   const rotations = [-12, -7, -3, 3, 7, 12];
 
   return (
-    <section className="l-methods" ref={ref}>
+    <section className="l-methods cinematic-section" ref={setRef}>
       <div className="l-methods-inner">
         <div className="l-methods-top">
           <h2 className="l-methods-h2" style={{
@@ -95,6 +101,7 @@ export function MethodologyCards() {
               <div
                 key={m.id}
                 className="l-method-card"
+                data-method={m.id}
                 onMouseMove={handleMouseMove}
                 style={{
                   opacity: eased,

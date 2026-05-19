@@ -117,12 +117,13 @@ export function FloatingTimestamps({ logoRef }: Props) {
     mouseRef.current = { x: (e.clientX - rect.left) / rect.width, y: (e.clientY - rect.top) / rect.height };
 
     // Detect which cell is under cursor
+    // Grid is 106% with -3% margin, so map mouse into grid-local coords
     const g = gridRef.current;
     if (!g) return;
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    const col = Math.floor(x * COLS);
-    const row = Math.floor(y * ROWS);
+    const gx = ((e.clientX - rect.left) / rect.width + 0.03) / 1.06;
+    const gy = ((e.clientY - rect.top) / rect.height + 0.03) / 1.06;
+    const col = Math.floor(gx * COLS);
+    const row = Math.floor(gy * ROWS);
     if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
       const idx = row * COLS + col;
       if (hoveredRef.current !== idx) {
@@ -142,7 +143,7 @@ export function FloatingTimestamps({ logoRef }: Props) {
       const el = cellRefs.current[ci];
       if (el) {
         el.style.removeProperty('--glow');
-        el.classList.remove('l-fts-near', 'l-fts-far');
+        el.classList.remove('l-fts-hover', 'l-fts-near', 'l-fts-far');
       }
     }
     glowCellsRef.current.clear();

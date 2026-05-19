@@ -28,6 +28,7 @@ export default function MethodSelector({ onSelect }: Props) {
           onClick={() => onSelect(m.id)}
           className={`${styles.card} group relative`}
           style={{ "--i": i } as React.CSSProperties}
+          data-method={m.id}
           aria-label={`Select ${m.name}`}
         >
           <div className="mb-2 text-white/80 group-hover:translate-y-[-1px] transition-transform">

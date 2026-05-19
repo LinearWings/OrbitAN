@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
+import { useCinematicScroll } from "@/hooks/useCinematicScroll";
 import { FloatingTimestamps } from "./FloatingTimestamps";
 import { ScrollIndicator } from "./ScrollIndicator";
 import { OrbitanLogo } from "./OrbitanLogo";
@@ -42,10 +43,29 @@ const EN_GLYPHS = [
   { text: "MINED",   x: "87%", y: "64%", size: "clamp(.5rem,1vw,.8rem)", opacity: 0.15, dx: 0.8, dy: 0.5 },
 ];
 
+const OUTLINE_WORDS_LEFT = [
+  { text: "ORBIT",   x: "2%",  y: "14%", size: "clamp(3rem,6.5vw,6rem)",   dx: -1, dy: -0.5 },
+  { text: "CHART",   x: "5%",  y: "30%", size: "clamp(2.2rem,4.5vw,4rem)", dx: -0.8, dy: 0 },
+  { text: "PART",    x: "1%",  y: "48%", size: "clamp(3.2rem,7vw,6.5rem)", dx: -1, dy: 0.3 },
+  { text: "SECOND",  x: "4%",  y: "66%", size: "clamp(1.8rem,3.8vw,3.4rem)", dx: -0.7, dy: 0.6 },
+];
+
+const OUTLINE_WORDS_RIGHT = [
+  { text: "FOCUS",   x: "86%", y: "16%", size: "clamp(3.4rem,7vw,6.8rem)", dx: 1, dy: -0.5 },
+  { text: "FIXED",   x: "89%", y: "34%", size: "clamp(2rem,4vw,3.5rem)",   dx: 0.9, dy: 0 },
+  { text: "COSMOS",  x: "84%", y: "52%", size: "clamp(2.6rem,5.2vw,4.5rem)", dx: 1, dy: 0.3 },
+  { text: "TERRA",   x: "88%", y: "68%", size: "clamp(2.8rem,5.6vw,5rem)",  dx: 0.8, dy: 0.6 },
+];
+
 export function HeroSection() {
   const lang = useLanguage();
   const t = getT(lang);
-  const { ref, progress } = useScrollProgress();
+  const { ref: scrollRef, progress } = useScrollProgress();
+  const { ref: cinematicRef } = useCinematicScroll({
+    exit: { rotateX: -15, scale: 0.92, translateZ: -100, blur: 2, opacity: 0 },
+    origin: "center 40%",
+  });
+  const setRef = useCallback((el: HTMLDivElement | null) => { cinematicRef.current = el; scrollRef.current = el; }, [cinematicRef, scrollRef]);
   const isZh = lang === "zh";
   const logoRef = useRef<HTMLDivElement>(null);
 
@@ -53,8 +73,8 @@ export function HeroSection() {
   const fade = Math.max(0, 1 - (progress - 0.3) / 0.4);
 
   return (
-    <section className="l-hero-v2">
-      <div className="l-hero-v2-canvas-wrap" ref={ref}>
+    <section className="l-hero-v2 cinematic-section" ref={setRef}>
+      <div className="l-hero-v2-canvas-wrap">
         <FloatingTimestamps logoRef={logoRef} />
 
         <div className="l-hero-stage" style={{ opacity: fade }}>
@@ -77,6 +97,28 @@ export function HeroSection() {
               transition: "none",
             }}>
               {g.char}
+            </span>
+          ))}
+
+          {isZh && OUTLINE_WORDS_LEFT.map((g, i) => (
+            <span key={`ol${i}`} className="l-hero-glyph-outline" style={{
+              left: g.x, top: g.y, fontSize: g.size,
+              opacity: fade,
+              transform: `translate(${g.dx * scatter * 80}px, ${g.dy * scatter * 80}px) scale(${1 - scatter * 0.15})`,
+              transition: "none",
+            }}>
+              {g.text}
+            </span>
+          ))}
+
+          {isZh && OUTLINE_WORDS_RIGHT.map((g, i) => (
+            <span key={`or${i}`} className="l-hero-glyph-outline" style={{
+              left: g.x, top: g.y, fontSize: g.size,
+              opacity: fade,
+              transform: `translate(${g.dx * scatter * 80}px, ${g.dy * scatter * 80}px) scale(${1 - scatter * 0.15})`,
+              transition: "none",
+            }}>
+              {g.text}
             </span>
           ))}
 

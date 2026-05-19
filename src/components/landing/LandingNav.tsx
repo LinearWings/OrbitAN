@@ -16,7 +16,7 @@ export function LandingNav() {
       </Link>
 
       <span className="l-nav-tagline">
-        {lang === "zh" ? "一日一轨道，专注即引力" : "A Day Is An Orbit, Focus Is Your Gravity"}
+        {lang === "zh" ? "轨道日程 · 专注系统" : "Orbital Schedule · Focus System"}
       </span>
 
       <div className="l-nav-actions">
@@ -25,7 +25,7 @@ export function LandingNav() {
           {t.hero_cta}
         </Link>
         <Link href="/docs" className="l-nav-btn l-nav-btn-secondary">
-          {lang === "zh" ? "文档" : "Docs"}
+          Docs
           <span className="l-nav-btn-dots" />
         </Link>
       </div>

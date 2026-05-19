@@ -1,16 +1,23 @@
 "use client";
 
+import { useCallback } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
+import { useCinematicScroll } from "@/hooks/useCinematicScroll";
 
 export function CTASection() {
   const lang = useLanguage();
   const t = getT(lang);
-  const { ref, progress } = useScrollProgress();
+  const { ref: scrollRef, progress } = useScrollProgress();
+  const { ref: cinematicRef } = useCinematicScroll({
+    enter: { rotateX: 20, rotateY: -10, scale: 0.6, translateZ: -400, blur: 5, opacity: 0, mouseRotate: 4, mouseTranslate: 12 },
+    origin: "center center",
+  });
+  const setRef = useCallback((el: HTMLElement | null) => { cinematicRef.current = el as HTMLDivElement; scrollRef.current = el as HTMLDivElement; }, [cinematicRef, scrollRef]);
 
-  const ctaText = lang === "zh" ? "准备进入轨道" : "Ready to Enter Orbit";
+  const ctaText = lang === "zh" ? "准备 Enter Orbit" : "Ready to Enter Orbit";
 
   const beamProgress = Math.min(1, progress / 0.5);
   const titleProgress = Math.max(0, Math.min(1, (progress - 0.4) / 0.4));
@@ -19,7 +26,7 @@ export function CTASection() {
   const chars = ctaText.split("");
 
   return (
-    <section className="l-cta" ref={ref}>
+    <section className="l-cta cinematic-section" ref={setRef}>
       <div className="l-cta-beams" aria-hidden="true">
         {["top-left", "top-right", "bottom-left", "bottom-right"].map((corner, i) => {
           const angle = [225, 315, 135, 45][i];
