@@ -58,10 +58,12 @@ export function useCinematicScroll(config: CinematicConfig) {
       const enter = cfg.enter;
       const exit = cfg.exit;
 
-      // Entering: fade+slide in quickly (35% of viewport)
+      // Entering: starts when section TOP peeks into viewport, completes at viewport center
       let enterP = 0;
-      if (enter && rect.top < vh) {
-        enterP = Math.min(1, (vh - rect.top) / (vh * 0.35));
+      if (enter && rect.top < vh && rect.top > 0) {
+        enterP = Math.min(1, (vh - rect.top) / vh);
+      } else if (enter && rect.top <= 0) {
+        enterP = 1;
       }
 
       // Exiting: fade out as section scrolls away
