@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useCinematicScroll } from "@/hooks/useCinematicScroll";
@@ -21,14 +20,13 @@ export function FocusBlocksDemo() {
     enter: { rotateX: 12, scale: 0.88, translateZ: -150, blur: 2, opacity: 0, mouseRotate: 2, mouseTranslate: 6 },
     origin: "30% center",
   });
-  const setRef = useCallback((el: HTMLElement | null) => { cinematicRef.current = el as HTMLDivElement; scrollRef.current = el as HTMLDivElement; }, [cinematicRef, scrollRef]);
 
   const housingOpacity = Math.min(1, progress / 0.3);
   const arcProgress = Math.max(0, Math.min(1, (progress - 0.3) / 0.5));
   const legendProgress = Math.max(0, (progress - 0.8) / 0.2);
 
   return (
-    <section className="l-focus cinematic-section" ref={setRef}>
+    <section className="l-focus cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
       <div className="l-focus-inner">
         <div className="l-focus-clock" style={{ opacity: housingOpacity }}>
           <svg viewBox="0 0 220 220" className="l-focus-clock-svg">

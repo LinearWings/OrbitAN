@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
@@ -15,7 +14,6 @@ export function CTASection() {
     enter: { rotateX: 20, rotateY: -10, scale: 0.6, translateZ: -400, blur: 5, opacity: 0, mouseRotate: 4, mouseTranslate: 12 },
     origin: "center center",
   });
-  const setRef = useCallback((el: HTMLElement | null) => { cinematicRef.current = el as HTMLDivElement; scrollRef.current = el as HTMLDivElement; }, [cinematicRef, scrollRef]);
 
   const ctaText = lang === "zh" ? "准备 Enter Orbit" : "Ready to Enter Orbit";
 
@@ -26,7 +24,7 @@ export function CTASection() {
   const chars = ctaText.split("");
 
   return (
-    <section className="l-cta cinematic-section" ref={setRef}>
+    <section className="l-cta cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
       <div className="l-cta-beams" aria-hidden="true">
         {["top-left", "top-right", "bottom-left", "bottom-right"].map((corner, i) => {
           const angle = [225, 315, 135, 45][i];

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
@@ -65,7 +65,6 @@ export function HeroSection() {
     exit: { rotateX: -15, scale: 0.92, translateZ: -100, blur: 2, opacity: 0 },
     origin: "center 40%",
   });
-  const setRef = useCallback((el: HTMLDivElement | null) => { cinematicRef.current = el; scrollRef.current = el; }, [cinematicRef, scrollRef]);
   const isZh = lang === "zh";
   const logoRef = useRef<HTMLDivElement>(null);
 
@@ -73,7 +72,7 @@ export function HeroSection() {
   const fade = Math.max(0, 1 - (progress - 0.3) / 0.4);
 
   return (
-    <section className="l-hero-v2 cinematic-section" ref={setRef}>
+    <section className="l-hero-v2 cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
       <div className="l-hero-v2-canvas-wrap">
         <FloatingTimestamps logoRef={logoRef} />
 

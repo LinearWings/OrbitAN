@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useCinematicScroll } from "@/hooks/useCinematicScroll";
@@ -57,7 +57,6 @@ export function MethodologyCards() {
     enter: { rotateX: 35, rotateY: 8, scale: 0.7, translateZ: -300, blur: 4, opacity: 0, mouseRotate: 2 },
     origin: "center center",
   });
-  const setRef = useCallback((el: HTMLElement | null) => { cinematicRef.current = el as HTMLDivElement; scrollRef.current = el as HTMLDivElement; }, [cinematicRef, scrollRef]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -72,16 +71,18 @@ export function MethodologyCards() {
   const rotations = [-12, -7, -3, 3, 7, 12];
   const animTriggered = useRef(false);
 
+  const sectionRef = useRef<HTMLElement | null>(null);
+
   // Add scroll-trigger class once when section enters viewport
   useEffect(() => {
     if (fanProgress > 0.05 && !animTriggered.current) {
       animTriggered.current = true;
-      cinematicRef.current?.classList.add("l-methods-animating");
+      sectionRef.current?.classList.add("l-methods-animating");
     }
-  }, [fanProgress, cinematicRef]);
+  }, [fanProgress]);
 
   return (
-    <section className="l-methods cinematic-section" ref={setRef}>
+    <section className="l-methods cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; sectionRef.current = el; }}>
       <div className="l-methods-inner">
         <div className="l-methods-top">
           <h2 className="l-methods-h2" style={{

@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useCinematicScroll } from "@/hooks/useCinematicScroll";
@@ -20,13 +19,12 @@ export function OrbitEngineDemo() {
     enter: { rotateX: 25, rotateY: -5, scale: 0.85, translateZ: -200, blur: 3, opacity: 0, mouseRotate: 3, mouseTranslate: 8 },
     origin: "center bottom",
   });
-  const setRef = useCallback((el: HTMLDivElement | null) => { cinematicRef.current = el; scrollRef.current = el; }, [cinematicRef, scrollRef]);
 
   const entrance = Math.min(1, progress / 0.5);
   const contentReveal = Math.max(0, Math.min(1, (progress - 0.5) / 0.3));
 
   return (
-    <section className="l-engine cinematic-section" ref={setRef}>
+    <section className="l-engine cinematic-section" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
       <div className="l-engine-inner">
         <div className="l-engine-deck">
           {PANELS.map((panel, i) => {

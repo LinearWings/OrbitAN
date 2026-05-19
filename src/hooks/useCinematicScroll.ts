@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useMousePosition } from "./useScrollProgress";
 
 interface CinematicKeyframe {
@@ -23,20 +23,11 @@ export interface CinematicConfig {
   origin?: string;
 }
 
-function lerp(a: number, b: number, t: number): number {
-  return a + (b - a) * t;
-}
-
-function easeOut(t: number): number {
-  return 1 - Math.pow(1 - t, 3);
-}
-
-function easeIn(t: number): number {
-  return t * t * t;
-}
+function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
+function easeOut(t: number) { return 1 - Math.pow(1 - t, 3); }
+function easeIn(t: number) { return t * t * t; }
 
 const IDENT = { rx: 0, ry: 0, rz: 0, s: 1, tx: 0, ty: 0, tz: 0, blur: 0, op: 1 };
-
 function applyKF(kf: CinematicKeyframe) {
   return {
     rx: kf.rotateX ?? 0, ry: kf.rotateY ?? 0, rz: kf.rotateZ ?? 0,
@@ -46,51 +37,74 @@ function applyKF(kf: CinematicKeyframe) {
   };
 }
 
+/**
+ * Computes a section's scroll progress WITHOUT reading getBoundingClientRect(),
+ * which returns transformed dimensions and creates a feedback loop.
+ * Uses offsetTop (untransformed) + scroll container offset.
+ */
+function getProgress(el: HTMLElement, cachedHeight: number): number {
+  // Walk up to find the scroll container or fall back to document
+  let scrollEl: HTMLElement | null = el;
+  let offsetTop = 0;
+  while (scrollEl) {
+    offsetTop += scrollEl.offsetTop;
+    scrollEl = scrollEl.offsetParent as HTMLElement | null;
+  }
+
+  // Find the actual scroll ancestor
+  let container: HTMLElement | null = el.parentElement;
+  while (container) {
+    const style = getComputedStyle(container);
+    if (/(auto|scroll)/.test(style.overflowY)) break;
+    container = container.parentElement;
+  }
+
+  const scrollTop = container ? container.scrollTop : window.scrollY;
+  const vh = window.innerHeight;
+  const top = offsetTop - scrollTop;
+
+  if (top > vh) return 1; // below viewport
+  return Math.max(0, Math.min(1, -top / cachedHeight));
+}
+
 export function useCinematicScroll(config: CinematicConfig) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
   const mouse = useMousePosition();
-  const reducedMotion = useRef(false);
   const configRef = useRef(config);
   configRef.current = config;
+  const heightRef = useRef(0);
+
+  // Stable callback ref — never changes across renders
+  const setRef = useCallback((el: HTMLElement | null) => {
+    ref.current = el;
+    if (el) {
+      // Cache untransformed height once
+      heightRef.current = el.getBoundingClientRect().height;
+    }
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    reducedMotion.current = mq.matches;
-    const onChange = () => { reducedMotion.current = mq.matches; };
+    let reducedMotion = mq.matches;
+    const onChange = () => { reducedMotion = mq.matches; };
     mq.addEventListener("change", onChange);
 
-    const el = ref.current;
-    if (!el) return;
-
-    // Cache the untransformed layout position ONCE before any transforms.
-    // After transforms are applied, getBoundingClientRect() returns transformed
-    // dimensions which would create a feedback loop with the progress calculation.
-    const initRect = el.getBoundingClientRect();
-    const initTop = initRect.top + window.scrollY;
-    const baseHeight = initRect.height;
-
     let raf = 0;
-
     const tick = () => {
       raf = requestAnimationFrame(tick);
+      const el = ref.current;
+      if (!el || !heightRef.current) return;
+
+      const progress = getProgress(el, heightRef.current);
       const cfg = configRef.current;
       const enter = cfg.enter;
       const exit = cfg.exit;
       const origin = cfg.origin ?? "center center";
 
-      // Compute viewport-relative top from cached document position.
-      // This is immune to transforms since we never re-read the rect.
-      const top = initTop - window.scrollY;
-      const vh = window.innerHeight;
-
       // Off-screen early exit
-      if (top > vh + 300 || top + baseHeight < -300) return;
+      if (progress === 1 && !enter && !exit) return;
 
-      const progress = top > vh
-        ? 1
-        : Math.max(0, Math.min(1, -top / baseHeight));
-
-      if (reducedMotion.current) {
+      if (reducedMotion) {
         el.style.transform = "";
         el.style.filter = "";
         el.style.opacity = "";
@@ -123,18 +137,11 @@ export function useCinematicScroll(config: CinematicConfig) {
 
       let { rx, ry, rz, s, tx, ty, tz, blur, op } = v;
 
-      // Active zone: mouse-driven tilt
       if (progress >= 0.35 && progress <= 0.65) {
         const mr = enter?.mouseRotate ?? exit?.mouseRotate ?? 0;
         const mt = enter?.mouseTranslate ?? exit?.mouseTranslate ?? 0;
-        if (mr) {
-          ry += mouse.current.x * mr;
-          rx += mouse.current.y * -mr;
-        }
-        if (mt) {
-          tx += mouse.current.x * mt;
-          ty += mouse.current.y * mt;
-        }
+        if (mr) { ry += mouse.current.x * mr; rx += mouse.current.y * -mr; }
+        if (mt) { tx += mouse.current.x * mt; ty += mouse.current.y * mt; }
       }
 
       const parts: string[] = [];
@@ -151,11 +158,8 @@ export function useCinematicScroll(config: CinematicConfig) {
     };
 
     raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      mq.removeEventListener("change", onChange);
-    };
+    return () => { cancelAnimationFrame(raf); mq.removeEventListener("change", onChange); };
   }, [mouse]);
 
-  return { ref };
+  return { ref: setRef };
 }

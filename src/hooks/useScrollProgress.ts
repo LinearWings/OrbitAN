@@ -3,49 +3,81 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
 /**
+ * Computes offsetTop relative to the document (unaffected by CSS transforms).
+ */
+function getDocumentOffsetTop(el: HTMLElement): number {
+  let top = 0;
+  let node: HTMLElement | null = el;
+  while (node) {
+    top += node.offsetTop;
+    node = node.offsetParent as HTMLElement | null;
+  }
+  return top;
+}
+
+/**
+ * Finds the nearest scrollable ancestor (overflow: auto|scroll).
+ */
+function getScrollParent(el: HTMLElement): HTMLElement | null {
+  let parent = el.parentElement;
+  while (parent) {
+    const style = getComputedStyle(parent);
+    if (/(auto|scroll)/.test(style.overflowY)) return parent;
+    parent = parent.parentElement;
+  }
+  return null;
+}
+
+/**
  * Tracks scroll progress of a section relative to the viewport.
  * Returns 0→1 as the section enters and passes through the viewport.
  *
- * @param threshold - Optional threshold to trigger at (default: 0)
- * @returns { ref, progress, isVisible }
+ * Uses offsetTop (untransformed) to avoid feedback loops when
+ * CSS transforms are applied to the section element.
  */
 export function useScrollProgress(threshold = 0) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const baseHeight = useRef(0);
+  const cachedHeight = useRef(0);
+  const scrollParent = useRef<HTMLElement | null>(null);
+  const docTop = useRef(0);
 
-  // Cache the untransformed height once on mount
+  // Cache untransformed layout info once on mount
   useEffect(() => {
     const el = ref.current;
-    if (el && !baseHeight.current) {
-      baseHeight.current = el.getBoundingClientRect().height;
-    }
+    if (!el) return;
+    cachedHeight.current = el.getBoundingClientRect().height;
+    docTop.current = getDocumentOffsetTop(el);
+    scrollParent.current = getScrollParent(el);
   }, []);
 
   const handleScroll = useCallback(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !cachedHeight.current) return;
 
-    const rect = el.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const sectionTop = rect.top;
-    // Use cached height to avoid feedback loop from CSS transforms
-    const sectionHeight = baseHeight.current || rect.height;
+    const scrollTop = scrollParent.current
+      ? scrollParent.current.scrollTop
+      : window.scrollY;
+    const top = docTop.current - scrollTop;
+    const vh = window.innerHeight;
+    const h = cachedHeight.current;
 
-    // Below viewport: progress=1 (fully visible, not yet animated)
-    // In viewport: 0 at top, 1 when fully scrolled past
-    const p = sectionTop > viewportHeight
-      ? 1
-      : Math.max(0, Math.min(1, -sectionTop / sectionHeight));
+    const p = top > vh ? 1 : Math.max(0, Math.min(1, -top / h));
     setProgress(p);
-    setIsVisible(sectionTop < viewportHeight && sectionTop + sectionHeight > 0);
+    setIsVisible(top < vh && top + h > 0);
   }, []);
 
   useEffect(() => {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Also listen on the scroll parent if it's not window
+    const sp = scrollParent.current;
+    if (sp) sp.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (sp) sp.removeEventListener("scroll", handleScroll);
+    };
   }, [handleScroll]);
 
   return { ref, progress, isVisible };
@@ -53,7 +85,6 @@ export function useScrollProgress(threshold = 0) {
 
 /**
  * Simple IntersectionObserver-based reveal hook.
- * Element becomes visible once it enters the viewport.
  */
 export function useReveal(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
@@ -62,17 +93,10 @@ export function useReveal(threshold = 0.1) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
       { threshold, rootMargin: "0px 0px -40px 0px" }
     );
-
     observer.observe(el);
     return () => observer.disconnect();
   }, [threshold]);
@@ -82,12 +106,9 @@ export function useReveal(threshold = 0.1) {
 
 /**
  * Returns normalized mouse position relative to viewport center.
- * x: -1 (left) to 1 (right), y: -1 (top) to 1 (bottom).
- * Updated via rAF, stored in ref to avoid re-renders.
  */
 export function useMousePosition() {
   const pos = useRef({ x: 0, y: 0 });
-
   useEffect(() => {
     let raf: number;
     const onMove = (e: MouseEvent) => {
@@ -100,6 +121,5 @@ export function useMousePosition() {
     window.addEventListener("mousemove", onMove, { passive: true });
     return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
   }, []);
-
   return pos;
 }
