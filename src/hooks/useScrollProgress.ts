@@ -3,89 +3,57 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
 /**
- * Computes offsetTop relative to the document (unaffected by CSS transforms).
- */
-function getDocumentOffsetTop(el: HTMLElement): number {
-  let top = 0;
-  let node: HTMLElement | null = el;
-  while (node) {
-    top += node.offsetTop;
-    node = node.offsetParent as HTMLElement | null;
-  }
-  return top;
-}
-
-/**
- * Finds the nearest scrollable ancestor (overflow: auto|scroll).
- */
-function getScrollParent(el: HTMLElement): HTMLElement | null {
-  let parent = el.parentElement;
-  while (parent) {
-    const style = getComputedStyle(parent);
-    if (/(auto|scroll)/.test(style.overflowY)) return parent;
-    parent = parent.parentElement;
-  }
-  return null;
-}
-
-/**
  * Tracks scroll progress of a section relative to the viewport.
  * Returns 0→1 as the section enters and passes through the viewport.
  *
- * Uses offsetTop (untransformed) to avoid feedback loops when
- * CSS transforms are applied to the section element.
+ * Caches the initial rect height to avoid feedback loops when CSS
+ * transforms (from useCinematicScroll) change getBoundingClientRect().
  */
 export function useScrollProgress(threshold = 0) {
   const ref = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const cachedHeight = useRef(0);
-  const scrollParent = useRef<HTMLElement | null>(null);
-  const docTop = useRef(0);
+  const baseHeight = useRef(0);
 
-  // Cache untransformed layout info once on mount
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
-    cachedHeight.current = el.getBoundingClientRect().height;
-    docTop.current = getDocumentOffsetTop(el);
-    scrollParent.current = getScrollParent(el);
+    if (el && !baseHeight.current) {
+      baseHeight.current = el.getBoundingClientRect().height;
+    }
   }, []);
 
   const handleScroll = useCallback(() => {
     const el = ref.current;
-    if (!el || !cachedHeight.current) return;
+    if (!el) return;
 
-    const scrollTop = scrollParent.current
-      ? scrollParent.current.scrollTop
-      : window.scrollY;
-    const top = docTop.current - scrollTop;
-    const vh = window.innerHeight;
-    const h = cachedHeight.current;
+    const rect = el.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const sectionTop = rect.top;
+    // Use cached height — rect.height changes when CSS transforms are applied
+    const sectionHeight = baseHeight.current || rect.height;
 
-    const p = top > vh ? 1 : Math.max(0, Math.min(1, -top / h));
+    const p = sectionTop > viewportHeight
+      ? 1
+      : Math.max(0, Math.min(1, -sectionTop / sectionHeight));
     setProgress(p);
-    setIsVisible(top < vh && top + h > 0);
+    setIsVisible(sectionTop < viewportHeight && sectionTop + sectionHeight > 0);
   }, []);
 
   useEffect(() => {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    // Also listen on the scroll parent if it's not window
-    const sp = scrollParent.current;
-    if (sp) sp.addEventListener("scroll", handleScroll, { passive: true });
+    // Also listen on the actual scroll container (div[data-scroll-container])
+    const scrollEl = document.querySelector("[data-scroll-container]");
+    if (scrollEl) scrollEl.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (sp) sp.removeEventListener("scroll", handleScroll);
+      if (scrollEl) scrollEl.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll]);
 
   return { ref, progress, isVisible };
 }
 
-/**
- * Simple IntersectionObserver-based reveal hook.
- */
 export function useReveal(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -104,9 +72,6 @@ export function useReveal(threshold = 0.1) {
   return { ref, visible };
 }
 
-/**
- * Returns normalized mouse position relative to viewport center.
- */
 export function useMousePosition() {
   const pos = useRef({ x: 0, y: 0 });
   useEffect(() => {

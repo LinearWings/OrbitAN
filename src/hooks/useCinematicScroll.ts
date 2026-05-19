@@ -37,36 +37,6 @@ function applyKF(kf: CinematicKeyframe) {
   };
 }
 
-/**
- * Computes a section's scroll progress WITHOUT reading getBoundingClientRect(),
- * which returns transformed dimensions and creates a feedback loop.
- * Uses offsetTop (untransformed) + scroll container offset.
- */
-function getProgress(el: HTMLElement, cachedHeight: number): number {
-  // Walk up to find the scroll container or fall back to document
-  let scrollEl: HTMLElement | null = el;
-  let offsetTop = 0;
-  while (scrollEl) {
-    offsetTop += scrollEl.offsetTop;
-    scrollEl = scrollEl.offsetParent as HTMLElement | null;
-  }
-
-  // Find the actual scroll ancestor
-  let container: HTMLElement | null = el.parentElement;
-  while (container) {
-    const style = getComputedStyle(container);
-    if (/(auto|scroll)/.test(style.overflowY)) break;
-    container = container.parentElement;
-  }
-
-  const scrollTop = container ? container.scrollTop : window.scrollY;
-  const vh = window.innerHeight;
-  const top = offsetTop - scrollTop;
-
-  if (top > vh) return 1; // below viewport
-  return Math.max(0, Math.min(1, -top / cachedHeight));
-}
-
 export function useCinematicScroll(config: CinematicConfig) {
   const ref = useRef<HTMLElement>(null);
   const mouse = useMousePosition();
@@ -74,11 +44,9 @@ export function useCinematicScroll(config: CinematicConfig) {
   configRef.current = config;
   const heightRef = useRef(0);
 
-  // Stable callback ref — never changes across renders
   const setRef = useCallback((el: HTMLElement | null) => {
     ref.current = el;
-    if (el) {
-      // Cache untransformed height once
+    if (el && !heightRef.current) {
       heightRef.current = el.getBoundingClientRect().height;
     }
   }, []);
@@ -89,20 +57,30 @@ export function useCinematicScroll(config: CinematicConfig) {
     const onChange = () => { reducedMotion = mq.matches; };
     mq.addEventListener("change", onChange);
 
+    // Listen on the actual scroll container
+    const scrollEl = document.querySelector("[data-scroll-container]");
     let raf = 0;
+
     const tick = () => {
       raf = requestAnimationFrame(tick);
       const el = ref.current;
       if (!el || !heightRef.current) return;
 
-      const progress = getProgress(el, heightRef.current);
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+
+      // Off-screen early exit
+      if (rect.bottom < -300 || rect.top > vh + 300) return;
+
+      // Use rect.top (viewport-relative) with cached height
+      const progress = rect.top > vh
+        ? 1
+        : Math.max(0, Math.min(1, -rect.top / heightRef.current));
+
       const cfg = configRef.current;
       const enter = cfg.enter;
       const exit = cfg.exit;
       const origin = cfg.origin ?? "center center";
-
-      // Off-screen early exit
-      if (progress === 1 && !enter && !exit) return;
 
       if (reducedMotion) {
         el.style.transform = "";
@@ -158,7 +136,10 @@ export function useCinematicScroll(config: CinematicConfig) {
     };
 
     raf = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(raf); mq.removeEventListener("change", onChange); };
+    return () => {
+      cancelAnimationFrame(raf);
+      mq.removeEventListener("change", onChange);
+    };
   }, [mouse]);
 
   return { ref: setRef };
