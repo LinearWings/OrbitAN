@@ -177,7 +177,8 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
       {/* HEADER */}
       <div style={{
         display: "grid", gridTemplateColumns: "36px repeat(7, 1fr)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)", flexShrink: 0,
+        borderBottom: "1px solid rgba(255,255,255,0.05)", flexShrink: 0,
+        background: "rgba(255,255,255,0.01)",
       }}>
         <div />
         {week.map((date, di) => {
@@ -188,26 +189,32 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
           return (
             <button key={date} onClick={() => onDayClick(date)} style={{
               display: "flex", flexDirection: "column", alignItems: "center",
-              padding: "10px 4px 8px", border: "none", background: "transparent", cursor: "pointer",
-              borderRight: di < 6 ? "1px solid rgba(255,255,255,0.035)" : "none",
+              padding: "10px 4px 8px", border: "none", background: isToday ? "rgba(37,99,235,0.04)" : "transparent", cursor: "pointer",
+              borderRight: di < 6 ? "1px solid rgba(255,255,255,0.03)" : "none",
+              transition: "background 0.2s",
             }}>
-              <span style={{ fontSize: 12, fontFamily: "'Inter','Microsoft YaHei',sans-serif", color: "rgba(255,255,255,0.35)", lineHeight: 1 }}>
+              <span style={{ fontSize: 11, fontFamily: "'Inter','Microsoft YaHei',sans-serif", color: "rgba(255,255,255,0.28)", lineHeight: 1, letterSpacing: "0.04em" }}>
                 周{DAY_LABELS_ZH[di]}
               </span>
               <span style={{
-                marginTop: 4, width: 34, height: 34, borderRadius: "50%",
+                marginTop: 5, width: 32, height: 32, borderRadius: "50%",
                 display: "inline-flex", alignItems: "center", justifyContent: "center",
-                background: isToday ? "#2563EB" : "transparent",
-                color: isToday ? "#fff" : "rgba(255,255,255,0.65)",
-                fontSize: 18, fontFamily: "'Clash Display',sans-serif", fontWeight: 600,
+                background: isToday ? "rgba(37,99,235,0.25)" : "transparent",
+                color: isToday ? "#93C5FD" : "rgba(255,255,255,0.55)",
+                fontSize: 16, fontFamily: "'Clash Display',sans-serif", fontWeight: isToday ? 600 : 500,
+                boxShadow: isToday ? "0 0 12px rgba(37,99,235,0.15)" : "none",
+                transition: "background 0.2s, box-shadow 0.2s",
               }}>
                 {dayNum}
               </span>
               {count > 0 && (
                 <div style={{ marginTop: 3, display: "flex", gap: 2 }}>
-                  {types.slice(0, 4).map(t => (
-                    <div key={t} style={{ width: 5, height: 5, borderRadius: "50%", background: getTaskColor(t) }} />
+                  {types.slice(0, 3).map(t => (
+                    <div key={t} style={{ width: 4, height: 4, borderRadius: "50%", background: getTaskColor(t), opacity: 0.6 }} />
                   ))}
+                  {types.length > 3 && (
+                    <span style={{ fontSize: 8, color: "rgba(255,255,255,0.2)", fontFamily: "'JetBrains Mono',monospace", lineHeight: 1 }}>+{types.length - 3}</span>
+                  )}
                 </div>
               )}
             </button>
@@ -221,15 +228,15 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
         <div style={{ position: "relative", height: `${TOTAL_HOURS * zoomPx}px` }}>
           {/* Grid background — absolute fills the inner container */}
           <div style={{ position: "absolute", inset: 0, display: "grid", gridTemplateColumns: "36px repeat(7, 1fr)", gridTemplateRows: "1fr" }}>
-            <div style={{ position: "relative", borderRight: "1px solid rgba(255,255,255,0.04)" }}>
-              {/* Labels every 3 hours to avoid crowding */}
+            <div style={{ position: "relative", borderRight: "1px solid rgba(255,255,255,0.03)" }}>
+              {/* Labels every 3 hours */}
               {Array.from({ length: TOTAL_HOURS + 1 }, (_, h) => {
                 const hour = HOUR_START + h;
                 const showLabel = h % 3 === 0;
                 return (
                   <div key={h} style={{ position: "absolute", left: 0, right: 0, top: `${(h / TOTAL_HOURS) * 100}%`, textAlign: "right", paddingRight: 8, transform: "translateY(-100%)" }}>
                     {showLabel && (
-                      <span style={{ fontSize: 12, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: "rgba(255,255,255,0.2)", lineHeight: 1 }}>
+                      <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: "rgba(255,255,255,0.15)", lineHeight: 1, letterSpacing: "-0.02em" }}>
                         {String(hour).padStart(2, "0")}
                       </span>
                     )}
@@ -240,15 +247,17 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
             {week.map((date, di) => {
               const isToday = date === today;
               return (
-                <div key={date} style={{ position: "relative", background: isToday ? "rgba(37,99,235,0.02)" : "transparent", borderRight: di < 6 ? "1px solid rgba(255,255,255,0.035)" : "none" }}>
-                  {Array.from({ length: TOTAL_HOURS + 1 }, (_, h) => (
-                    <div key={h} style={{ position: "absolute", left: 0, right: 0, top: `${(h / TOTAL_HOURS) * 100}%`, borderTop: "1px solid rgba(255,255,255,0.025)" }} />
-                  ))}
+                <div key={date} style={{ position: "relative", background: isToday ? "rgba(37,99,235,0.015)" : "transparent", borderRight: di < 6 ? "1px solid rgba(255,255,255,0.02)" : "none" }}>
+                  {Array.from({ length: TOTAL_HOURS + 1 }, (_, h) => {
+                    const isHour = h % 3 === 0;
+                    return (
+                    <div key={h} style={{ position: "absolute", left: 0, right: 0, top: `${(h / TOTAL_HOURS) * 100}%`, borderTop: `1px solid rgba(255,255,255,${isHour ? "0.025" : "0.012"})` }} />
+                  )})}
                   {isToday && nowPct >= 0 && nowPct <= 100 && (
                     <div style={{ position: "absolute", left: 0, right: 0, top: `${nowPct}%`, zIndex: 20, pointerEvents: "none" }}>
                       <div style={{ display: "flex", alignItems: "center" }}>
-                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444", marginLeft: -4 }} />
-                        <div style={{ flex: 1, height: 1.5, background: "rgba(239,68,68,0.7)" }} />
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#EF4444", marginLeft: -3, boxShadow: "0 0 6px rgba(239,68,68,0.4)" }} />
+                        <div style={{ flex: 1, height: 1, background: "rgba(239,68,68,0.4)" }} />
                       </div>
                     </div>
                   )}
@@ -273,7 +282,7 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
               } : undefined}
               onClick={() => {
                 if (isOrbitMode) return;
-                if (deleteHighlight) return; // Suppress click while delete mode active
+                if (deleteHighlight) return;
                 onDayClick(t.date);
               }}
               style={{
@@ -283,30 +292,31 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
                 width: `calc((100% - 36px) / 7 / ${t.span} - 3px)`,
                 height: `${t.heightPx}px`,
                 minHeight: 18,
-                background: `${t.color}18`,
-                borderLeft: `3px solid ${t.color}`,
-                borderRadius: 3,
+                background: `${t.color}10`,
+                borderLeft: `2px solid ${t.color}80`,
+                borderRadius: 4,
                 overflow: "hidden",
                 cursor: "pointer",
+                backdropFilter: "blur(4px)",
                 boxShadow: (deleteHighlight?.type === "task" && deleteHighlight.id === t.taskId)
-                  ? `0 0 20px ${t.color}60, 0 0 8px ${t.color}40`
-                  : "0 1px 2px rgba(0,0,0,0.15)",
+                  ? `0 0 24px ${t.color}40, 0 0 8px ${t.color}30`
+                  : `0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.02)`,
                 zIndex: (deleteHighlight?.type === "task" && deleteHighlight.id === t.taskId) ? 96 : 5,
-                transform: (deleteHighlight?.type === "task" && deleteHighlight.id === t.taskId) ? "scale(1.05)" : undefined,
-                transition: "transform 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease, filter 0.4s ease",
-                opacity: deleteHighlight && !(deleteHighlight.type === "task" && deleteHighlight.id === t.taskId) ? 0.25 : undefined,
-                filter: deleteHighlight && !(deleteHighlight.type === "task" && deleteHighlight.id === t.taskId) ? "blur(3px)" : undefined,
+                transform: (deleteHighlight?.type === "task" && deleteHighlight.id === t.taskId) ? "scale(1.04)" : undefined,
+                transition: "transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, filter 0.3s ease",
+                opacity: deleteHighlight && !(deleteHighlight.type === "task" && deleteHighlight.id === t.taskId) ? 0.2 : undefined,
+                filter: deleteHighlight && !(deleteHighlight.type === "task" && deleteHighlight.id === t.taskId) ? "blur(2px)" : undefined,
               }}
-              onMouseEnter={(e) => { if (!deleteHighlight) { (e.currentTarget as HTMLElement).style.transform = "scale(1.02)"; (e.currentTarget as HTMLElement).style.zIndex = "15"; } }}
-              onMouseLeave={(e) => { if (!deleteHighlight) { (e.currentTarget as HTMLElement).style.transform = ""; (e.currentTarget as HTMLElement).style.zIndex = "5"; } }}
+              onMouseEnter={(e) => { if (!deleteHighlight) { (e.currentTarget as HTMLElement).style.transform = "scale(1.01)"; (e.currentTarget as HTMLElement).style.zIndex = "15"; (e.currentTarget as HTMLElement).style.boxShadow = `0 2px 8px rgba(0,0,0,0.3), 0 0 12px ${t.color}20`; } }}
+              onMouseLeave={(e) => { if (!deleteHighlight) { (e.currentTarget as HTMLElement).style.transform = ""; (e.currentTarget as HTMLElement).style.zIndex = "5"; (e.currentTarget as HTMLElement).style.boxShadow = ""; } }}
             >
-              {t.heightPx > 20 ? (
-                <div style={{ padding: "3px 5px" }}>
-                  <div style={{ fontSize: 12, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 500, color: `${t.color}e0`, lineHeight: 1.3 }}>{t.startTime}</div>
-                  <div style={{ fontSize: 12, lineHeight: 1.3, color: "rgba(255,255,255,0.85)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 1 }}>{t.name}</div>
+              {t.heightPx > 22 ? (
+                <div style={{ padding: "3px 6px" }}>
+                  <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 500, color: `${t.color}c0`, lineHeight: 1.3, letterSpacing: "-0.02em" }}>{t.startTime}</div>
+                  <div style={{ fontSize: 11, lineHeight: 1.3, color: "rgba(255,255,255,0.8)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 1, fontWeight: 500 }}>{t.name}</div>
                 </div>
               ) : (
-                <div style={{ padding: "1px 4px", fontSize: 12, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: `${t.color}e0`, lineHeight: 1.2 }}>{t.startTime}</div>
+                <div style={{ padding: "1px 5px", fontSize: 11, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: `${t.color}c0`, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{t.startTime}</div>
               )}
             </div>
           ))
@@ -358,11 +368,11 @@ export default function WeekGridView({ onDayClick, isOrbitMode, selectedBlockId,
 
       {/* LEGEND */}
       {allTypes.length > 0 && (
-        <div style={{ display: "flex", gap: 14, padding: "8px 10px", borderTop: "1px solid rgba(255,255,255,0.04)", flexShrink: 0, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 16, padding: "7px 12px", borderTop: "1px solid rgba(255,255,255,0.035)", flexShrink: 0, flexWrap: "wrap", background: "rgba(255,255,255,0.005)" }}>
           {allTypes.map((type) => (
-            <div key={type} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: getTaskColor(type), flexShrink: 0 }} />
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontFamily: "'Inter','Microsoft YaHei',sans-serif" }}>{getTaskLabel(type).zh}</span>
+            <div key={type} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: getTaskColor(type), flexShrink: 0, opacity: 0.7 }} />
+              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontFamily: "'Inter','Microsoft YaHei',sans-serif" }}>{getTaskLabel(type).zh}</span>
             </div>
           ))}
         </div>

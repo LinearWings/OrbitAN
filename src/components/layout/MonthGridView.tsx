@@ -12,11 +12,10 @@ interface MonthGridViewProps {
 
 const DAY_LABELS = ["日", "一", "二", "三", "四", "五", "六"];
 const C = {
-  dim: "rgba(255,255,255,0.04)",
-  line: "rgba(255,255,255,0.06)",
-  todayBg: "rgba(37,99,235,0.12)",
-  todayRing: "rgba(37,99,235,0.4)",
-  weekend: "rgba(255,255,255,0.1)",
+  dim: "rgba(255,255,255,0.03)",
+  line: "rgba(255,255,255,0.05)",
+  todayBg: "rgba(37,99,235,0.08)",
+  todayRing: "rgba(37,99,235,0.3)",
 };
 
 function getMonthGrid(currentDate: string) {
@@ -65,16 +64,16 @@ export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
   }, [state.currentDate]);
 
   return (
-    <div className="h-full flex flex-col" style={{ background: "#08090C" }}>
+    <div className="h-full flex flex-col" style={{ background: "#0A0A0D" }}>
       {/* Month/Year header */}
-      <div style={{ textAlign: "center", padding: isMobile ? "8px 0" : "12px 0", borderBottom: `1px solid ${C.line}` }}>
-        <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? 16 : 20, fontWeight: 600, color: "rgba(255,255,255,0.85)", letterSpacing: "0.02em" }}>{title}</span>
+      <div style={{ textAlign: "center", padding: isMobile ? "8px 0" : "14px 0", borderBottom: `1px solid ${C.line}` }}>
+        <span style={{ fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? 16 : 18, fontWeight: 600, color: "rgba(255,255,255,0.8)", letterSpacing: "0.03em" }}>{title}</span>
       </div>
 
       {/* Day-of-week labels */}
-      <div className="grid grid-cols-7" style={{ borderBottom: `1px solid ${C.line}` }}>
+      <div className="grid grid-cols-7" style={{ borderBottom: `1px solid ${C.line}`, background: "rgba(255,255,255,0.005)" }}>
         {DAY_LABELS.map((label, i) => (
-          <div key={label} style={{ textAlign: "center", padding: isMobile ? "4px 0" : "8px 0", fontSize: isMobile ? 11 : 13, fontFamily: "'Inter','Microsoft YaHei',sans-serif", fontWeight: 500, color: i === 0 || i === 6 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.35)" }}>
+          <div key={label} style={{ textAlign: "center", padding: isMobile ? "4px 0" : "7px 0", fontSize: isMobile ? 10 : 12, fontFamily: "'Inter','Microsoft YaHei',sans-serif", fontWeight: 500, color: i === 0 || i === 6 ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.3)", letterSpacing: "0.04em" }}>
             {label}
           </div>
         ))}
@@ -89,7 +88,7 @@ export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
                 const tasks = state.tasks[date] ?? [];
                 const isToday = date === today;
                 const isWeekend = di === 0 || di === 6;
-                const typeColors = [...new Set(tasks.map(t => t.type))].slice(0, 5);
+                const typeColors = [...new Set(tasks.map(t => t.type))].slice(0, isMobile ? 3 : 5);
                 const count = tasks.length;
 
                 return (
@@ -97,20 +96,20 @@ export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
                     style={{
                       display: "flex", flexDirection: "column", alignItems: "center",
                       justifyContent: "flex-start", cursor: "pointer", border: "none",
-                      background: isToday ? C.todayBg : isWeekend ? "rgba(255,255,255,0.015)" : "transparent",
-                      paddingTop: isMobile ? 4 : 8, opacity: isCurrentMonth ? 1 : 0.3,
+                      background: isToday ? C.todayBg : isWeekend ? "rgba(255,255,255,0.01)" : "transparent",
+                      paddingTop: isMobile ? 4 : 7, opacity: isCurrentMonth ? 1 : 0.25,
                       position: "relative",
+                      transition: "background 0.15s",
                     }}
                   >
                     {/* Day number */}
                     <span style={{
                       display: "inline-flex", alignItems: "center", justifyContent: "center",
-                      width: isMobile ? 26 : 32, height: isMobile ? 26 : 32, borderRadius: "50%",
-                      fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? 13 : 16, fontWeight: isToday ? 600 : 400,
-                      background: isToday ? "rgba(37,99,235,0.25)" : "transparent",
-                      color: isToday ? "#FFFFFF" : isCurrentMonth ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.2)",
-                      outline: isToday ? `1px solid ${C.todayRing}` : "none",
-                      outlineOffset: 2,
+                      width: isMobile ? 24 : 30, height: isMobile ? 24 : 30, borderRadius: "50%",
+                      fontFamily: "'Clash Display', sans-serif", fontSize: isMobile ? 12 : 15, fontWeight: isToday ? 600 : 400,
+                      background: isToday ? "rgba(37,99,235,0.2)" : "transparent",
+                      color: isToday ? "#93C5FD" : isCurrentMonth ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.15)",
+                      boxShadow: isToday ? "0 0 10px rgba(37,99,235,0.12)" : "none",
                       lineHeight: 1,
                     }}>
                       {dayNum}
@@ -118,23 +117,27 @@ export default function MonthGridView({ onDayClick }: MonthGridViewProps) {
 
                     {/* Task indicators */}
                     {count > 0 && (
-                      <div style={{ marginTop: isMobile ? 3 : 6, display: "flex", flexDirection: "column", alignItems: "center", gap: isMobile ? 2 : 3 }}>
-                        {/* Color dots — max 2 on mobile */}
+                      <div style={{ marginTop: isMobile ? 3 : 5, display: "flex", flexDirection: "column", alignItems: "center", gap: isMobile ? 2 : 3 }}>
                         <div style={{ display: "flex", gap: isMobile ? 2 : 3 }}>
-                          {typeColors.slice(0, isMobile ? 2 : 5).map(type => (
-                            <div key={type} style={{ width: isMobile ? 5 : 6, height: isMobile ? 5 : 6, borderRadius: "50%", background: getTaskColor(type), boxShadow: `0 0 4px ${getTaskColor(type)}40` }} />
+                          {typeColors.map(type => (
+                            <div key={type} style={{ width: isMobile ? 4 : 5, height: isMobile ? 4 : 5, borderRadius: "50%", background: getTaskColor(type), opacity: 0.65, boxShadow: `0 0 3px ${getTaskColor(type)}30` }} />
                           ))}
+                          {(() => {
+                            const allTypes = [...new Set(tasks.map(t => t.type))];
+                            return allTypes.length > typeColors.length ? (
+                              <span style={{ fontSize: 8, color: "rgba(255,255,255,0.15)", fontFamily: "'JetBrains Mono',monospace", lineHeight: 1, display: "inline-flex", alignItems: "center" }}>+</span>
+                            ) : null;
+                          })()}
                         </div>
-                        {/* Count badge */}
-                        <span style={{ fontSize: isMobile ? 11 : 13, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 600, color: "rgba(255,255,255,0.4)", lineHeight: 1 }}>
+                        <span style={{ fontSize: isMobile ? 10 : 12, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 600, color: "rgba(255,255,255,0.35)", lineHeight: 1 }}>
                           {count}
                         </span>
                       </div>
                     )}
 
-                    {/* Empty cell hover indicator */}
-                    {count === 0 && isCurrentMonth && (
-                      <div style={{ marginTop: isMobile ? 3 : 6, fontSize: isMobile ? 11 : 13, color: "rgba(255,255,255,0.06)", fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", lineHeight: 1 }}>·</div>
+                    {/* Empty cell */}
+                    {count === 0 && isCurrentMonth && !isToday && (
+                      <div style={{ marginTop: isMobile ? 3 : 5, fontSize: isMobile ? 10 : 12, color: "rgba(255,255,255,0.04)", fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", lineHeight: 1 }}>·</div>
                     )}
                   </button>
                 );
