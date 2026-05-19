@@ -83,25 +83,18 @@ export function useCinematicScroll(config: CinematicConfig) {
         return;
       }
 
-      // Viewport-relative progress:
-      // Entering: 0 when bottom just entered viewport → 1 when top reaches viewport center
-      // Exiting:  0 when bottom starts leaving viewport top → 1 when bottom reaches viewport top
+      // Entering: 0 when section first peeks in → 1 when top reaches viewport center
+      // Capped at 1.0 so it finishes before exit begins
       let enterP = 0;
-      if (enter) {
-        if (rect.bottom < vh) {
-          // Section partially visible, bottom hasn't reached viewport top
-          enterP = Math.max(0, (vh - rect.bottom) / Math.min(vh, heightRef.current));
-        } else if (rect.top < vh / 2) {
-          // Section extends below viewport, scrolling toward center
-          enterP = Math.max(0, Math.min(1, (vh - rect.top) / (vh + heightRef.current)));
-        } else {
-          enterP = 0;
-        }
+      if (enter && rect.top < vh) {
+        enterP = Math.min(1, (vh - rect.top) / vh);
       }
 
+      // Exiting: 0 when top crosses viewport top → 1 when bottom reaches viewport top
+      // Only starts AFTER entering is done (rect.top < 0 means top is above viewport)
       let exitP = 0;
       if (exit && rect.top < 0) {
-        exitP = Math.min(1, -rect.top / Math.min(vh, heightRef.current));
+        exitP = Math.min(1, -rect.top / heightRef.current);
       }
 
       let v = IDENT;
