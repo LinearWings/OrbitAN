@@ -6,40 +6,44 @@ import { useEffect, useRef, useState, useCallback } from "react";
  * Tracks scroll progress of a section relative to the viewport.
  * Returns 0→1 as the section enters and passes through the viewport.
  *
- * Caches the initial rect to avoid feedback loops when CSS transforms
- * change getBoundingClientRect() dimensions.
+ * Caches the initial rect height to avoid feedback loops when CSS
+ * transforms (from useCinematicScroll) change getBoundingClientRect().
  */
+function getContentRect(el: HTMLElement): DOMRect {
+  const first = el.firstElementChild as HTMLElement | null;
+  const last = el.lastElementChild as HTMLElement | null;
+  if (!first || !last) return el.getBoundingClientRect();
+  const top = first.getBoundingClientRect().top;
+  const bottom = last.getBoundingClientRect().bottom;
+  const rect = el.getBoundingClientRect();
+  return new DOMRect(rect.left, top, rect.width, bottom - top);
+}
+
 export function useScrollProgress(threshold = 0) {
   const ref = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const cachedTop = useRef(0);
-  const cachedHeight = useRef(0);
+  const baseHeight = useRef(0);
 
   useEffect(() => {
     const el = ref.current;
-    if (el && !cachedHeight.current) {
-      const rect = el.getBoundingClientRect();
-      cachedTop.current = rect.top + window.scrollY;
-      cachedHeight.current = rect.height;
+    if (el && !baseHeight.current) {
+      baseHeight.current = getContentRect(el).height;
     }
   }, []);
 
   const handleScroll = useCallback(() => {
     const el = ref.current;
-    if (!el || !cachedHeight.current) return;
+    if (!el) return;
 
-    // Use cached position to avoid transform feedback loop
-    const sectionTop = cachedTop.current - window.scrollY;
-    const sectionHeight = cachedHeight.current;
+    const rect = getContentRect(el);
     const viewportHeight = window.innerHeight;
+    const sectionTop = rect.top;
+    const sectionHeight = baseHeight.current || rect.height;
 
-    // Progress: 0 when section first enters viewport from bottom,
-    // 1 when section fills the viewport. Stays at 1 once section
-    // passes the viewport top (exit tracking is handled by useCinematicScroll).
-    const p = sectionTop <= 0
-      ? 1
-      : Math.max(0, Math.min(1, (viewportHeight - sectionTop) / Math.min(viewportHeight, sectionHeight)));
+    // Progress: 0 when content first enters viewport bottom,
+    // 1 when content fills the viewport. Clamped to 1 after.
+    const p = Math.max(0, Math.min(1, (viewportHeight - sectionTop) / Math.min(viewportHeight, sectionHeight)));
     setProgress(p);
     setIsVisible(sectionTop < viewportHeight && sectionTop + sectionHeight > 0);
   }, []);
@@ -47,6 +51,7 @@ export function useScrollProgress(threshold = 0) {
   useEffect(() => {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
+    // Also listen on the actual scroll container (div[data-scroll-container])
     const scrollEl = document.querySelector("[data-scroll-container]");
     if (scrollEl) scrollEl.addEventListener("scroll", handleScroll, { passive: true });
     return () => {

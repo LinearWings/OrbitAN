@@ -5,6 +5,7 @@ import { useEffect, useRef, useCallback } from "react";
 interface CinematicKeyframe {
   opacity?: number;
   translateY?: number;
+  scale?: number;
 }
 
 export interface CinematicConfig {
@@ -13,75 +14,106 @@ export interface CinematicConfig {
 }
 
 function easeOut(t: number) { return 1 - Math.pow(1 - t, 3); }
+function easeIn(t: number) { return t * t * t; }
 function lerp(a: number, b: number, t: number) { return a + (b - a) * t; }
+
+/**
+ * Gets the bounding rect of the actual content area (first child → last child),
+ * excluding the section's padding. Falls back to the section rect if no children.
+ */
+function getContentRect(el: HTMLElement): DOMRect {
+  const first = el.firstElementChild as HTMLElement | null;
+  const last = el.lastElementChild as HTMLElement | null;
+  if (!first || !last) return el.getBoundingClientRect();
+  const top = first.getBoundingClientRect().top;
+  const bottom = last.getBoundingClientRect().bottom;
+  const rect = el.getBoundingClientRect();
+  return new DOMRect(rect.left, top, rect.width, bottom - top);
+}
 
 export function useCinematicScroll(config: CinematicConfig) {
   const ref = useRef<HTMLElement>(null);
   const configRef = useRef(config);
   configRef.current = config;
-  const cachedTop = useRef(0);
-  const cachedHeight = useRef(0);
+  const heightRef = useRef(0);
 
   const setRef = useCallback((el: HTMLElement | null) => {
     ref.current = el;
-    if (el && !cachedHeight.current) {
-      const rect = el.getBoundingClientRect();
-      cachedTop.current = rect.top + window.scrollY;
-      cachedHeight.current = rect.height;
+    if (el && !heightRef.current) {
+      const contentRect = getContentRect(el);
+      heightRef.current = contentRect.height;
     }
   }, []);
 
   useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reducedMotion = mq.matches;
+    const onChange = () => { reducedMotion = mq.matches; };
+    mq.addEventListener("change", onChange);
+
     let raf = 0;
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
       const el = ref.current;
-      if (!el || !cachedHeight.current) return;
+      if (!el) return;
 
-      // Use cached position to avoid feedback loop from transforms
-      const top = cachedTop.current - window.scrollY;
-      const h = cachedHeight.current;
+      const rect = getContentRect(el);
       const vh = window.innerHeight;
-      const bottom = top + h;
 
-      if (bottom < -200 || top > vh + 200) return;
+      if (rect.bottom < -200 || rect.top > vh + 200) return;
+
+      if (reducedMotion) {
+        el.style.opacity = "";
+        el.style.transform = "";
+        return;
+      }
 
       const cfg = configRef.current;
       const enter = cfg.enter;
       const exit = cfg.exit;
 
-      // Entering: starts when section peeks in, completes when section fills viewport.
-      // Use min(vh, h) so tall sections finish within one viewport-height of scroll.
+      // Entering: starts when content top is 0.5vh below the viewport bottom
+      // (so animation begins before the user sees the content), completes
+      // when content bottom enters the viewport. Denominator is content height
+      // capped at vh so tall sections finish within a viewport of scrolling.
       let enterP = 0;
-      if (enter && top < vh && bottom > 0) {
-        enterP = Math.min(1, Math.max(0, (vh - top) / Math.min(vh, h)));
+      if (enter && rect.top < vh && rect.bottom > 0) {
+        enterP = Math.min(1, Math.max(0, (vh - rect.top) / Math.min(vh, heightRef.current || rect.height)));
       }
 
-      // Exiting
+      // Exiting: fade out as section scrolls away
       let exitP = 0;
-      if (exit && top < 0) {
-        exitP = Math.min(1, -top / h);
+      if (exit && rect.top < 0) {
+        exitP = Math.min(1, -rect.top / (heightRef.current || rect.height));
       }
 
       let op = 1;
       let ty = 0;
+      let s = 1;
 
       if (exitP > 0.01 && exit) {
-        op = lerp(1, exit.opacity ?? 1, exitP);
-        ty = lerp(0, exit.translateY ?? 0, exitP);
+        const t = easeIn(exitP);
+        op = lerp(1, exit.opacity ?? 1, t);
+        ty = lerp(0, exit.translateY ?? 0, t);
+        s = lerp(1, exit.scale ?? 1, t);
       } else if (enterP < 0.99 && enter) {
         const t = easeOut(enterP);
         op = lerp(enter.opacity ?? 0, 1, t);
         ty = lerp(enter.translateY ?? 0, 0, t);
+        s = lerp(enter.scale ?? 1, 1, t);
       }
 
+      const parts: string[] = [];
+      if (ty) parts.push(`translateY(${ty.toFixed(1)}px)`);
+      if (s !== 1) parts.push(`scale(${s.toFixed(4)})`);
+
       el.style.opacity = op < 0.99 ? op.toFixed(3) : "";
-      el.style.transform = ty ? `translateY(${ty.toFixed(1)}px)` : "";
+      el.style.transform = parts.length ? parts.join(" ") : "";
     };
 
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    return () => { cancelAnimationFrame(raf); mq.removeEventListener("change", onChange); };
   }, []);
 
   return { ref: setRef };
