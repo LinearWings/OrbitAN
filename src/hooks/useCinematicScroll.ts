@@ -57,7 +57,6 @@ export function useCinematicScroll(config: CinematicConfig) {
     const onChange = () => { reducedMotion = mq.matches; };
     mq.addEventListener("change", onChange);
 
-    // Listen on the actual scroll container
     const scrollEl = document.querySelector("[data-scroll-container]");
     let raf = 0;
 
@@ -69,13 +68,8 @@ export function useCinematicScroll(config: CinematicConfig) {
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight;
 
-      // Off-screen early exit
-      if (rect.bottom < -300 || rect.top > vh + 300) return;
-
-      // Use rect.top (viewport-relative) with cached height
-      const progress = rect.top > vh
-        ? 1
-        : Math.max(0, Math.min(1, -rect.top / heightRef.current));
+      // Off-screen: no transforms needed
+      if (rect.bottom < -200 || rect.top > vh + 200) return;
 
       const cfg = configRef.current;
       const enter = cfg.enter;
@@ -89,21 +83,32 @@ export function useCinematicScroll(config: CinematicConfig) {
         return;
       }
 
+      // Viewport-relative progress:
+      // Entering: 0 when bottom just entered viewport → 1 when top reaches viewport center
+      // Exiting:  0 when bottom starts leaving viewport top → 1 when bottom reaches viewport top
+      let enterP = 0;
+      if (enter) {
+        if (rect.bottom < vh) {
+          // Section partially visible, bottom hasn't reached viewport top
+          enterP = Math.max(0, (vh - rect.bottom) / Math.min(vh, heightRef.current));
+        } else if (rect.top < vh / 2) {
+          // Section extends below viewport, scrolling toward center
+          enterP = Math.max(0, Math.min(1, (vh - rect.top) / (vh + heightRef.current)));
+        } else {
+          enterP = 0;
+        }
+      }
+
+      let exitP = 0;
+      if (exit && rect.top < 0) {
+        exitP = Math.min(1, -rect.top / Math.min(vh, heightRef.current));
+      }
+
       let v = IDENT;
 
-      if (progress < 0.01) {
-        v = enter ? applyKF(enter) : IDENT;
-      } else if (progress < 0.35 && enter) {
-        const t = easeOut(Math.min(1, progress / 0.35));
-        const e = applyKF(enter);
-        v = {
-          rx: lerp(e.rx, 0, t), ry: lerp(e.ry, 0, t), rz: lerp(e.rz, 0, t),
-          s: lerp(e.s, 1, t),
-          tx: lerp(e.tx, 0, t), ty: lerp(e.ty, 0, t), tz: lerp(e.tz, 0, t),
-          blur: lerp(e.blur, 0, t), op: lerp(e.op, 1, t),
-        };
-      } else if (progress > 0.65 && exit) {
-        const t = easeIn(Math.min(1, (progress - 0.65) / 0.35));
+      if (exitP > 0.01 && exit) {
+        // Exiting phase
+        const t = easeIn(exitP);
         const x = applyKF(exit);
         v = {
           rx: lerp(0, x.rx, t), ry: lerp(0, x.ry, t), rz: lerp(0, x.rz, t),
@@ -111,17 +116,27 @@ export function useCinematicScroll(config: CinematicConfig) {
           tx: lerp(0, x.tx, t), ty: lerp(0, x.ty, t), tz: lerp(0, x.tz, t),
           blur: lerp(0, x.blur, t), op: lerp(1, x.op, t),
         };
+      } else if (enterP < 0.99 && enter) {
+        // Entering phase
+        const t = easeOut(enterP);
+        const e = applyKF(enter);
+        v = {
+          rx: lerp(e.rx, 0, t), ry: lerp(e.ry, 0, t), rz: lerp(e.rz, 0, t),
+          s: lerp(e.s, 1, t),
+          tx: lerp(e.tx, 0, t), ty: lerp(e.ty, 0, t), tz: lerp(e.tz, 0, t),
+          blur: lerp(e.blur, 0, t), op: lerp(e.op, 1, t),
+        };
       }
 
-      let { rx, ry, rz, s, tx, ty, tz, blur, op } = v;
-
-      if (progress >= 0.35 && progress <= 0.65) {
+      // Active zone: mouse-driven tilt
+      if (enterP > 0.99 && exitP < 0.01) {
         const mr = enter?.mouseRotate ?? exit?.mouseRotate ?? 0;
         const mt = enter?.mouseTranslate ?? exit?.mouseTranslate ?? 0;
-        if (mr) { ry += mouse.current.x * mr; rx += mouse.current.y * -mr; }
-        if (mt) { tx += mouse.current.x * mt; ty += mouse.current.y * mt; }
+        if (mr) { v.ry += mouse.current.x * mr; v.rx += mouse.current.y * -mr; }
+        if (mt) { v.tx += mouse.current.x * mt; v.ty += mouse.current.y * mt; }
       }
 
+      const { rx, ry, rz, s, tx, ty, tz, blur, op } = v;
       const parts: string[] = [];
       if (tx || ty || tz) parts.push(`translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, ${tz.toFixed(2)}px)`);
       if (rx) parts.push(`rotateX(${rx.toFixed(3)}deg)`);
@@ -136,10 +151,7 @@ export function useCinematicScroll(config: CinematicConfig) {
     };
 
     raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      mq.removeEventListener("change", onChange);
-    };
+    return () => { cancelAnimationFrame(raf); mq.removeEventListener("change", onChange); };
   }, [mouse]);
 
   return { ref: setRef };
