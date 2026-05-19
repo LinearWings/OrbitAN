@@ -1002,7 +1002,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   will-change:transform,filter,opacity;
 }
 @media(prefers-reduced-motion:reduce){
-  .cinematic-section,.cinematic-section *{
+  .cinematic-section{
     transform:none!important;filter:none!important;
     perspective:none;will-change:auto;
   }

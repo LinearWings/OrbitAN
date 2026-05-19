@@ -35,6 +35,17 @@ function easeIn(t: number): number {
   return t * t * t;
 }
 
+const IDENT = { rx: 0, ry: 0, rz: 0, s: 1, tx: 0, ty: 0, tz: 0, blur: 0, op: 1 };
+
+function applyKF(kf: CinematicKeyframe) {
+  return {
+    rx: kf.rotateX ?? 0, ry: kf.rotateY ?? 0, rz: kf.rotateZ ?? 0,
+    s: kf.scale ?? 1,
+    tx: kf.translateX ?? 0, ty: kf.translateY ?? 0, tz: kf.translateZ ?? 0,
+    blur: kf.blur ?? 0, op: kf.opacity ?? 1,
+  };
+}
+
 export function useCinematicScroll(config: CinematicConfig) {
   const ref = useRef<HTMLDivElement>(null);
   const mouse = useMousePosition();
@@ -51,6 +62,13 @@ export function useCinematicScroll(config: CinematicConfig) {
     const el = ref.current;
     if (!el) return;
 
+    // Cache the untransformed layout position ONCE before any transforms.
+    // After transforms are applied, getBoundingClientRect() returns transformed
+    // dimensions which would create a feedback loop with the progress calculation.
+    const initRect = el.getBoundingClientRect();
+    const initTop = initRect.top + window.scrollY;
+    const baseHeight = initRect.height;
+
     let raf = 0;
 
     const tick = () => {
@@ -60,19 +78,17 @@ export function useCinematicScroll(config: CinematicConfig) {
       const exit = cfg.exit;
       const origin = cfg.origin ?? "center center";
 
-      const rect = el.getBoundingClientRect();
+      // Compute viewport-relative top from cached document position.
+      // This is immune to transforms since we never re-read the rect.
+      const top = initTop - window.scrollY;
       const vh = window.innerHeight;
 
       // Off-screen early exit
-      if (rect.bottom < -200 || rect.top > vh + 200) return;
+      if (top > vh + 300 || top + baseHeight < -300) return;
 
-      const sectionTop = rect.top;
-      const sectionHeight = rect.height;
-
-      // Same formula as useScrollProgress
-      const progress = sectionTop > vh
+      const progress = top > vh
         ? 1
-        : Math.max(0, Math.min(1, -sectionTop / sectionHeight));
+        : Math.max(0, Math.min(1, -top / baseHeight));
 
       if (reducedMotion.current) {
         el.style.transform = "";
@@ -81,47 +97,33 @@ export function useCinematicScroll(config: CinematicConfig) {
         return;
       }
 
-      // Determine phase and interpolation
-      let rx = 0, ry = 0, rz = 0, s = 1, tx = 0, ty = 0, tz = 0, blur = 0, op = 1;
+      let v = IDENT;
 
-      if (progress < 0.01 && enter) {
-        // Below viewport — fully at enter keyframe
-        rx = enter.rotateX ?? 0;
-        ry = enter.rotateY ?? 0;
-        rz = enter.rotateZ ?? 0;
-        s = enter.scale ?? 1;
-        tx = enter.translateX ?? 0;
-        ty = enter.translateY ?? 0;
-        tz = enter.translateZ ?? 0;
-        blur = enter.blur ?? 0;
-        op = enter.opacity ?? 1;
+      if (progress < 0.01) {
+        v = enter ? applyKF(enter) : IDENT;
       } else if (progress < 0.35 && enter) {
-        // Entering phase — ease-out from enter keyframe to identity
         const t = easeOut(Math.min(1, progress / 0.35));
-        rx = lerp(enter.rotateX ?? 0, 0, t);
-        ry = lerp(enter.rotateY ?? 0, 0, t);
-        rz = lerp(enter.rotateZ ?? 0, 0, t);
-        s = lerp(enter.scale ?? 1, 1, t);
-        tx = lerp(enter.translateX ?? 0, 0, t);
-        ty = lerp(enter.translateY ?? 0, 0, t);
-        tz = lerp(enter.translateZ ?? 0, 0, t);
-        blur = lerp(enter.blur ?? 0, 0, t);
-        op = lerp(enter.opacity ?? 1, 1, t);
+        const e = applyKF(enter);
+        v = {
+          rx: lerp(e.rx, 0, t), ry: lerp(e.ry, 0, t), rz: lerp(e.rz, 0, t),
+          s: lerp(e.s, 1, t),
+          tx: lerp(e.tx, 0, t), ty: lerp(e.ty, 0, t), tz: lerp(e.tz, 0, t),
+          blur: lerp(e.blur, 0, t), op: lerp(e.op, 1, t),
+        };
       } else if (progress > 0.65 && exit) {
-        // Exiting phase — ease-in from identity to exit keyframe
         const t = easeIn(Math.min(1, (progress - 0.65) / 0.35));
-        rx = lerp(0, exit.rotateX ?? 0, t);
-        ry = lerp(0, exit.rotateY ?? 0, t);
-        rz = lerp(0, exit.rotateZ ?? 0, t);
-        s = lerp(1, exit.scale ?? 1, t);
-        tx = lerp(0, exit.translateX ?? 0, t);
-        ty = lerp(0, exit.translateY ?? 0, t);
-        tz = lerp(0, exit.translateZ ?? 0, t);
-        blur = lerp(0, exit.blur ?? 0, t);
-        op = lerp(1, exit.opacity ?? 1, t);
+        const x = applyKF(exit);
+        v = {
+          rx: lerp(0, x.rx, t), ry: lerp(0, x.ry, t), rz: lerp(0, x.rz, t),
+          s: lerp(1, x.s, t),
+          tx: lerp(0, x.tx, t), ty: lerp(0, x.ty, t), tz: lerp(0, x.tz, t),
+          blur: lerp(0, x.blur, t), op: lerp(1, x.op, t),
+        };
       }
 
-      // Active zone (0.35–0.65): apply mouse-driven tilt
+      let { rx, ry, rz, s, tx, ty, tz, blur, op } = v;
+
+      // Active zone: mouse-driven tilt
       if (progress >= 0.35 && progress <= 0.65) {
         const mr = enter?.mouseRotate ?? exit?.mouseRotate ?? 0;
         const mt = enter?.mouseTranslate ?? exit?.mouseTranslate ?? 0;
@@ -135,7 +137,6 @@ export function useCinematicScroll(config: CinematicConfig) {
         }
       }
 
-      // Build transform
       const parts: string[] = [];
       if (tx || ty || tz) parts.push(`translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, ${tz.toFixed(2)}px)`);
       if (rx) parts.push(`rotateX(${rx.toFixed(3)}deg)`);
