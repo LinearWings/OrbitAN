@@ -142,7 +142,7 @@ export function HeroSection() {
 
           <div ref={logoRef} className="l-hero-logo" style={{
             opacity: fade,
-            transform: `translate(-50%, -50%) translateY(${progress * -60}px) scale(${1 - progress * 0.1})`,
+            transform: `translate(-50%, -50%) translateY(${exitP * -60}px) scale(${1 - exitP * 0.1})`,
             transition: "none",
           }}>
             <OrbitanLogo variant="hero" />
