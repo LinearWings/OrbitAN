@@ -34,10 +34,12 @@ export function useScrollProgress(threshold = 0) {
     const sectionHeight = cachedHeight.current;
     const viewportHeight = window.innerHeight;
 
-    // Progress: 0 when section top first enters viewport bottom,
-    // 1 when section fills the viewport. Use min(vh, h) so tall sections
-    // complete within one viewport-height of scroll.
-    const p = Math.max(0, Math.min(1, (viewportHeight - sectionTop) / Math.min(viewportHeight, sectionHeight)));
+    // Progress: 0 when section first enters viewport from bottom,
+    // 1 when section fills the viewport. Stays at 1 once section
+    // passes the viewport top (exit tracking is handled by useCinematicScroll).
+    const p = sectionTop <= 0
+      ? 1
+      : Math.max(0, Math.min(1, (viewportHeight - sectionTop) / Math.min(viewportHeight, sectionHeight)));
     setProgress(p);
     setIsVisible(sectionTop < viewportHeight && sectionTop + sectionHeight > 0);
   }, []);

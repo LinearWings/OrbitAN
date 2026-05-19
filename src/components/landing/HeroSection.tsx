@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
@@ -60,15 +60,24 @@ const OUTLINE_WORDS_RIGHT = [
 export function HeroSection() {
   const lang = useLanguage();
   const t = getT(lang);
-  const { ref: scrollRef, progress } = useScrollProgress();
+  const { ref: scrollRef } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
     exit: { opacity: 0 },
   });
   const isZh = lang === "zh";
   const logoRef = useRef<HTMLDivElement>(null);
 
-  const scatter = Math.min(1, progress * 2);
-  const fade = Math.max(0, 1 - (progress - 0.3) / 0.4);
+  // Hero exit progress — tracks how far the hero has scrolled past the viewport
+  const [exitP, setExitP] = useState(0);
+  useEffect(() => {
+    const onScroll = () => setExitP(Math.min(1, window.scrollY / window.innerHeight));
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scatter = Math.min(1, exitP * 2);
+  const fade = Math.max(0, 1 - (exitP - 0.3) / 0.4);
 
   return (
     <section className="l-hero-v2 cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
