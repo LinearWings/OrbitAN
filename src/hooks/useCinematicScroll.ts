@@ -73,12 +73,13 @@ export function useCinematicScroll(config: CinematicConfig) {
       const enter = cfg.enter;
       const exit = cfg.exit;
 
-      // Entering: starts when content top peeks into viewport bottom,
-      // completes over 40% of the viewport height (snappy, matches
-      // the card stagger windows which complete early in the progress range).
+      // Entering: starts when content top peeks into viewport bottom.
+      // Completes over min(vh*0.7, contentHeight) so the section-level
+      // fade-in is slow enough to let card stagger/animation shine through.
       let enterP = 0;
       if (enter && rect.top < vh && rect.bottom > 0) {
-        enterP = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.4)));
+        const denom = Math.min(vh * 0.7, heightRef.current || rect.height);
+        enterP = Math.min(1, Math.max(0, (vh - rect.top) / Math.max(vh * 0.15, denom)));
       }
 
       // Exiting: fade out as section scrolls away

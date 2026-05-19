@@ -16,9 +16,12 @@ export function CTASection() {
 
   const ctaText = lang === "zh" ? "准备 Enter Orbit" : "Ready to Enter Orbit";
 
-  const beamProgress = Math.min(1, progress / 0.35);
-  const titleProgress = Math.max(0, Math.min(1, (progress - 0.25) / 0.35));
-  const ctaProgress = Math.max(0, Math.min(1, (progress - 0.5) / 0.4));
+  // Phase 1: corner beams intensify (0→45%)
+  // Phase 2: title characters cascade (30%→75%)
+  // Phase 3: CTA button + keyboard hints (55%→100%)
+  const beamProgress = Math.min(1, progress / 0.45);
+  const titleProgress = Math.max(0, Math.min(1, (progress - 0.3) / 0.45));
+  const ctaProgress = Math.max(0, Math.min(1, (progress - 0.55) / 0.45));
 
   const chars = ctaText.split("");
 

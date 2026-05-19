@@ -65,8 +65,8 @@ export function MethodologyCards() {
     e.currentTarget.style.setProperty("--my", `${y}%`);
   }, []);
 
-  const fanProgress = Math.min(1, progress / 0.35);
-  const contentReveal = Math.max(0, Math.min(1, (progress - 0.25) / 0.35));
+  const fanProgress = Math.min(1, progress / 0.6);
+  const contentReveal = Math.max(0, Math.min(1, (progress - 0.3) / 0.5));
   const rotations = [-12, -7, -3, 3, 7, 12];
   const animTriggered = useRef(false);
 
@@ -101,11 +101,11 @@ export function MethodologyCards() {
 
         <div className="l-methods-grid">
           {METHODS.map((m, i) => {
-            const stagger = Math.max(0, fanProgress - i * 0.05);
-            const cardProgress = Math.min(1, stagger / 0.7);
+            const stagger = Math.max(0, fanProgress - i * 0.08);
+            const cardProgress = Math.min(1, stagger / 0.6);
             const eased = 1 - Math.pow(1 - cardProgress, 3);
             const rot = rotations[i] * (1 - eased);
-            const contentVisible = contentReveal > i * 0.08;
+            const contentVisible = contentReveal > i * 0.1;
             return (
               <div
                 key={m.id}
@@ -120,21 +120,21 @@ export function MethodologyCards() {
                 <span className="l-method-tag" style={{
                   color: m.color, background: `${m.color}18`,
                   opacity: contentVisible ? 1 : 0,
-                  transition: "opacity 0.4s",
+                  transition: "opacity 0.5s",
                 }}>
                   {m.tag}
                 </span>
                 <h3 className="l-method-name" style={{
                   color: m.color,
                   opacity: contentVisible ? 1 : 0,
-                  transform: `translateY(${contentVisible ? 0 : 10}px)`,
-                  transition: "opacity 0.4s 0.05s, transform 0.4s 0.05s cubic-bezier(0.16,1,0.3,1)",
+                  transform: `translateY(${contentVisible ? 0 : 12}px)`,
+                  transition: "opacity 0.5s 0.08s, transform 0.5s 0.08s cubic-bezier(0.16,1,0.3,1)",
                 }}>
                   {m.name[lang === "zh" ? "zh" : "en"]}
                 </h3>
                 <p className="l-method-desc" style={{
                   opacity: contentVisible ? 1 : 0,
-                  transition: "opacity 0.4s 0.1s",
+                  transition: "opacity 0.5s 0.15s",
                 }}>
                   {m.desc[lang === "zh" ? "zh" : "en"]}
                 </p>

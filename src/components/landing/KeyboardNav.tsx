@@ -22,7 +22,8 @@ export function KeyboardNav() {
     enter: { opacity: 0, translateY: 30 },
   });
 
-  const headingProgress = Math.min(1, progress / 0.15);
+  // Heading appears quickly, then cards spring in as a wave
+  const headingProgress = Math.min(1, progress / 0.25);
 
   return (
     <section className="l-keys-section cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
@@ -41,7 +42,7 @@ export function KeyboardNav() {
 
         <div className="l-keys-grid">
           {SHORTCUTS.map((s, i) => {
-            const stagger = Math.max(0, (progress - 0.1) / 0.3);
+            const stagger = Math.max(0, (progress - 0.1) / 0.5);
             const cardProgress = Math.min(1, stagger - i * 0.04);
             const spring = cardProgress < 0
               ? 0

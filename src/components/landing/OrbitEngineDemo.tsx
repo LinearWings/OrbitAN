@@ -19,16 +19,17 @@ export function OrbitEngineDemo() {
     enter: { opacity: 0, translateY: 30 },
   });
 
-  const entrance = Math.min(1, progress / 0.35);
-  const contentReveal = Math.max(0, Math.min(1, (progress - 0.1) / 0.4));
+  // Cards slide in over first 55% of scroll, content reveals from 20%→70%
+  const entrance = Math.min(1, progress / 0.55);
+  const contentReveal = Math.max(0, Math.min(1, (progress - 0.2) / 0.5));
 
   return (
     <section className="l-engine cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
       <div className="l-engine-inner">
         <div className="l-engine-deck">
           {PANELS.map((panel, i) => {
-            const stagger = Math.max(0, entrance - i * 0.1);
-            const cardProgress = Math.min(1, stagger / 0.8);
+            const stagger = Math.max(0, entrance - i * 0.16);
+            const cardProgress = Math.min(1, stagger / 0.65);
             const eased = 1 - Math.pow(1 - cardProgress, 3);
             return (
               <div
@@ -44,22 +45,22 @@ export function OrbitEngineDemo() {
               >
                 <div className="l-engine-card-icon" style={{
                   background: panel.iconBg, color: panel.iconColor,
-                  opacity: contentReveal > i * 0.15 ? 1 : 0,
-                  transform: `scale(${contentReveal > i * 0.15 ? 1 : 0.5})`,
-                  transition: "opacity 0.4s, transform 0.4s cubic-bezier(0.34,1.56,0.64,1)",
+                  opacity: contentReveal > i * 0.2 ? 1 : 0,
+                  transform: `scale(${contentReveal > i * 0.2 ? 1 : 0.5})`,
+                  transition: "opacity 0.5s, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)",
                 }}>
                   {panel.icon}
                 </div>
                 <h3 className="l-engine-card-h" style={{
-                  opacity: contentReveal > i * 0.15 + 0.1 ? 1 : 0,
-                  transform: `translateY(${contentReveal > i * 0.15 + 0.1 ? 0 : 12}px)`,
-                  transition: "opacity 0.4s 0.1s, transform 0.4s 0.1s cubic-bezier(0.16,1,0.3,1)",
+                  opacity: contentReveal > i * 0.2 + 0.12 ? 1 : 0,
+                  transform: `translateY(${contentReveal > i * 0.2 + 0.12 ? 0 : 16}px)`,
+                  transition: "opacity 0.5s 0.1s, transform 0.5s 0.1s cubic-bezier(0.16,1,0.3,1)",
                 }}>
                   {t[panel.titleKey as keyof typeof t]}
                 </h3>
                 <p className="l-engine-card-d" style={{
-                  opacity: contentReveal > i * 0.15 + 0.2 ? 1 : 0,
-                  transition: "opacity 0.4s 0.2s",
+                  opacity: contentReveal > i * 0.2 + 0.24 ? 1 : 0,
+                  transition: "opacity 0.5s 0.2s",
                 }}>
                   {t[panel.descKey as keyof typeof t]}
                 </p>

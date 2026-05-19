@@ -20,9 +20,12 @@ export function FocusBlocksDemo() {
     enter: { opacity: 0, translateY: 25 },
   });
 
-  const housingOpacity = Math.min(1, progress / 0.2);
-  const arcProgress = Math.max(0, Math.min(1, (progress - 0.15) / 0.45));
-  const legendProgress = Math.max(0, (progress - 0.55) / 0.45);
+  // Phase 1: housing fades in (0→30%)
+  // Phase 2: arcs draw around clock (20%→75%)
+  // Phase 3: legend items cascade in (50%→100%)
+  const housingOpacity = Math.min(1, progress / 0.3);
+  const arcProgress = Math.max(0, Math.min(1, (progress - 0.2) / 0.55));
+  const legendProgress = Math.max(0, (progress - 0.5) / 0.5);
 
   return (
     <section className="l-focus cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
@@ -90,8 +93,8 @@ export function FocusBlocksDemo() {
           <div className="l-focus-legend">
             {FOCUS_METHODS.map((m, i) => (
               <span key={m.id} className="l-focus-legend-item" style={{
-                opacity: Math.max(0, Math.min(1, (legendProgress - i * 0.1) / 0.5)),
-                transform: `translateY(${Math.max(0, (1 - Math.min(1, (legendProgress - i * 0.1) / 0.5))) * 10}px)`,
+                opacity: Math.max(0, Math.min(1, (legendProgress - i * 0.08) / 0.4)),
+                transform: `translateY(${Math.max(0, (1 - Math.min(1, (legendProgress - i * 0.08) / 0.4))) * 12}px)`,
               }}>
                 <span className="l-focus-legend-dot" style={{ background: m.color }} />
                 {m.label}
