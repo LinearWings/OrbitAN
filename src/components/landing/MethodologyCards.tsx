@@ -54,7 +54,7 @@ export function MethodologyCards() {
   const lang = useLanguage();
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    enter: { rotateX: 35, rotateY: 8, scale: 0.7, translateZ: -300, blur: 4, opacity: 0, mouseRotate: 2 },
+    enter: { rotateX: 5, scale: 0.93, translateZ: -50, blur: 1.5, opacity: 0.3, mouseRotate: 1 },
     origin: "center center",
   });
 

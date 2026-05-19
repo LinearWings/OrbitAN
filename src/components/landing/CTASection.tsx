@@ -11,7 +11,7 @@ export function CTASection() {
   const t = getT(lang);
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    enter: { rotateX: 20, rotateY: -10, scale: 0.6, translateZ: -400, blur: 5, opacity: 0, mouseRotate: 4, mouseTranslate: 12 },
+    enter: { rotateX: 5, scale: 0.94, translateZ: -40, blur: 1.2, opacity: 0.3, mouseRotate: 1.5 },
     origin: "center center",
   });
 

@@ -62,7 +62,7 @@ export function HeroSection() {
   const t = getT(lang);
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    exit: { rotateX: -15, scale: 0.92, translateZ: -100, blur: 2, opacity: 0 },
+    exit: { rotateX: -5, scale: 0.97, translateZ: -30, blur: 1, opacity: 0.3 },
     origin: "center 40%",
   });
   const isZh = lang === "zh";

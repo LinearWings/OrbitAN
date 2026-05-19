@@ -16,7 +16,7 @@ export function OrbitEngineDemo() {
   const t = getT(lang);
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    enter: { rotateX: 25, rotateY: -5, scale: 0.85, translateZ: -200, blur: 3, opacity: 0, mouseRotate: 3, mouseTranslate: 8 },
+    enter: { rotateX: 6, scale: 0.95, translateZ: -40, blur: 1, opacity: 0.4, mouseRotate: 1.5 },
     origin: "center bottom",
   });
 

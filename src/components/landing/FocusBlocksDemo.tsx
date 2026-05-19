@@ -17,7 +17,7 @@ export function FocusBlocksDemo() {
   const lang = useLanguage();
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    enter: { rotateX: 12, scale: 0.88, translateZ: -150, blur: 2, opacity: 0, mouseRotate: 2, mouseTranslate: 6 },
+    enter: { rotateX: 4, scale: 0.96, translateZ: -30, blur: 0.8, opacity: 0.5, mouseRotate: 1 },
     origin: "30% center",
   });
 

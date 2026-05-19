@@ -19,7 +19,7 @@ export function KeyboardNav() {
   const lang = useLanguage();
   const { ref: scrollRef, progress } = useScrollProgress();
   const { ref: cinematicRef } = useCinematicScroll({
-    enter: { rotateY: -30, translateX: 100, scale: 0.9, translateZ: -120, blur: 3, opacity: 0, mouseRotate: 2 },
+    enter: { rotateY: -5, translateX: 30, scale: 0.96, translateZ: -30, blur: 1, opacity: 0.4, mouseRotate: 1 },
     origin: "right center",
   });
 
