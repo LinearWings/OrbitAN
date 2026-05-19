@@ -58,11 +58,11 @@ export function useCinematicScroll(config: CinematicConfig) {
       const enter = cfg.enter;
       const exit = cfg.exit;
 
-      // Entering: starts when section TOP peeks into viewport, completes at viewport center
+      // Entering: starts when top peeks in, completes when bottom reaches viewport bottom
       let enterP = 0;
-      if (enter && rect.top < vh && rect.top > 0) {
-        enterP = Math.min(1, (vh - rect.top) / vh);
-      } else if (enter && rect.top <= 0) {
+      if (enter && rect.top < vh && rect.bottom > vh) {
+        enterP = Math.min(1, (vh - rect.top) / heightRef.current);
+      } else if (enter && rect.bottom <= vh) {
         enterP = 1;
       }
 
