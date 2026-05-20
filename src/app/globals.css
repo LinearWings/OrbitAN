@@ -739,7 +739,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-methods{
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
-  background:#020408;
+  background:#06080F;
   background-image:
     radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,.07),transparent),
     radial-gradient(ellipse 60% 50% at 20% 100%,rgba(99,102,241,.05),transparent),
@@ -750,13 +750,16 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-methods::before{
   content:"";position:absolute;inset:0;
   background:
+    linear-gradient(180deg,rgba(6,8,12,.5) 0%,transparent 18%,transparent 82%,rgba(6,8,12,.5) 100%),
     linear-gradient(135deg,rgba(59,130,246,.03) 0%,transparent 40%),
     linear-gradient(315deg,rgba(99,102,241,.03) 0%,transparent 40%);
   pointer-events:none;z-index:0;
 }
 .l-methods::after{
-  content:"";position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(59,130,246,.12),rgba(99,102,241,.08),transparent);
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,transparent,rgba(59,130,246,.12),rgba(99,102,241,.08),transparent) no-repeat top/100% 1px,
+    linear-gradient(90deg,transparent,rgba(59,130,246,.1),rgba(99,102,241,.06),transparent) no-repeat bottom/100% 1px;
   pointer-events:none;
 }
 .l-methods-inner{max-width:1300px;margin:0 auto;position:relative;z-index:1}
@@ -845,7 +848,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-focus{
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
-  background-color:#060810;
+  background-color:#06080F;
   background-image:
     radial-gradient(ellipse 70% 60% at 50% 50%,rgba(245,158,11,.06),transparent),
     radial-gradient(ellipse 50% 40% at 30% 20%,rgba(239,68,68,.03),transparent),
@@ -857,12 +860,14 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   content:"";position:absolute;inset:0;
   background:
     radial-gradient(circle at 50% 50%,rgba(245,158,11,.04) 0%,transparent 50%),
-    linear-gradient(180deg,rgba(6,8,16,0) 0%,rgba(6,8,16,.5) 100%);
+    linear-gradient(180deg,rgba(6,8,12,.5) 0%,transparent 18%,transparent 82%,rgba(6,8,12,.5) 100%);
   pointer-events:none;z-index:0;
 }
 .l-focus::after{
-  content:"";position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(245,158,11,.12),rgba(239,68,68,.06),transparent);
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,transparent,rgba(245,158,11,.12),rgba(239,68,68,.06),transparent) no-repeat top/100% 1px,
+    linear-gradient(90deg,transparent,rgba(245,158,11,.1),rgba(239,68,68,.05),transparent) no-repeat bottom/100% 1px;
   pointer-events:none;
 }
 .l-focus-inner{
@@ -901,7 +906,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-keys-section{
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
-  background:#020408;
+  background:#06080F;
   background-image:
     radial-gradient(ellipse 70% 60% at 80% 20%,rgba(245,158,11,.06),transparent),
     radial-gradient(ellipse 60% 50% at 10% 80%,rgba(59,130,246,.05),transparent),
@@ -913,12 +918,14 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-keys-section::before{
   content:"";position:absolute;inset:0;
   background:
-    linear-gradient(180deg,rgba(6,8,16,.3) 0%,transparent 30%,transparent 70%,rgba(6,8,16,.3) 100%);
+    linear-gradient(180deg,rgba(6,8,12,.5) 0%,transparent 18%,transparent 82%,rgba(6,8,12,.5) 100%);
   pointer-events:none;z-index:0;
 }
 .l-keys-section::after{
-  content:"";position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(59,130,246,.1),rgba(245,158,11,.08),transparent);
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,transparent,rgba(59,130,246,.1),rgba(245,158,11,.08),transparent) no-repeat top/100% 1px,
+    linear-gradient(90deg,transparent,rgba(59,130,246,.08),rgba(245,158,11,.06),transparent) no-repeat bottom/100% 1px;
   pointer-events:none;
 }
 .l-keys-inner{max-width:900px;margin:0 auto;text-align:center;position:relative;z-index:1}
@@ -961,7 +968,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   position:relative;z-index:1;
   min-height:80vh;display:flex;align-items:center;justify-content:center;
   padding:clamp(4rem,12vh,8rem) clamp(1rem,3vw,2rem);
-  background-color:#060810;
+  background-color:#06080F;
   background-image:
     radial-gradient(ellipse 60% 70% at 50% 30%,rgba(59,130,246,.08),transparent),
     radial-gradient(ellipse 50% 50% at 30% 70%,rgba(245,158,11,.05),transparent),
@@ -973,12 +980,14 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   content:"";position:absolute;inset:0;
   background:
     radial-gradient(circle at 50% 40%,rgba(59,130,246,.06) 0%,transparent 60%),
-    linear-gradient(180deg,rgba(6,8,16,.4) 0%,transparent 30%,transparent 70%,rgba(6,8,16,.5) 100%);
+    linear-gradient(180deg,rgba(6,8,12,.5) 0%,transparent 18%,transparent 82%,rgba(6,8,12,.5) 100%);
   pointer-events:none;z-index:0;
 }
 .l-cta::after{
-  content:"";position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(59,130,246,.15),rgba(245,158,11,.1),rgba(99,102,241,.08),transparent);
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,transparent,rgba(59,130,246,.15),rgba(245,158,11,.1),rgba(99,102,241,.08),transparent) no-repeat top/100% 1px,
+    linear-gradient(90deg,transparent,rgba(59,130,246,.12),rgba(245,158,11,.08),rgba(99,102,241,.06),transparent) no-repeat bottom/100% 1px;
   pointer-events:none;
 }
 .l-cta-inner{display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1}
@@ -1055,8 +1064,13 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 /* ── Light Beam Track (replaces SectionArrow) ── */
 .l-beam-track{
   display:flex;align-items:center;justify-content:center;
-  padding:clamp(1.5rem,4vh,3rem) 0;overflow:hidden;
+  padding:clamp(2.5rem,6vh,5rem) 0;overflow:hidden;
   position:relative;
+}
+.l-beam-track::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(6,8,12,.9) 0%,transparent 35%,transparent 65%,rgba(6,8,12,.9) 100%);
+  pointer-events:none;
 }
 .l-beam-track-line{
   width:clamp(200px,60vw,800px);height:1px;
@@ -1183,7 +1197,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	.l-engine{
 	  position:relative;z-index:1;
 	  padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
-	  background-color:#060810;
+	  background-color:#06080F;
 	  background-image:
 	    radial-gradient(ellipse 80% 60% at 70% 20%,rgba(99,102,241,.06),transparent),
 	    radial-gradient(ellipse 50% 50% at 20% 80%,rgba(59,130,246,.04),transparent),
@@ -1193,13 +1207,14 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	.l-engine::before{
 	  content:"";position:absolute;inset:0;
 	  background:
-	    linear-gradient(180deg,rgba(6,8,16,0) 0%,rgba(6,8,16,.6) 100%),
-	    linear-gradient(0deg,rgba(6,8,16,0) 0%,rgba(6,8,16,.4) 100%);
+	    linear-gradient(180deg,rgba(6,8,12,.5) 0%,transparent 18%,transparent 82%,rgba(6,8,12,.5) 100%);
 	  pointer-events:none;z-index:0;
 	}
 	.l-engine::after{
-	  content:"";position:absolute;top:0;left:0;right:0;height:1px;
-	  background:linear-gradient(90deg,transparent,rgba(99,102,241,.15),rgba(59,130,246,.1),transparent);
+	  content:"";position:absolute;inset:0;
+	  background:
+	    linear-gradient(90deg,transparent,rgba(99,102,241,.15),rgba(59,130,246,.1),transparent) no-repeat top/100% 1px,
+	    linear-gradient(90deg,transparent,rgba(99,102,241,.12),rgba(59,130,246,.08),transparent) no-repeat bottom/100% 1px;
 	  pointer-events:none;
 	}
 	.l-engine-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
