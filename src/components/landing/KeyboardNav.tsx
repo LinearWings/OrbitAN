@@ -22,7 +22,7 @@ export function KeyboardNav() {
   return (
     <section className="l-keys-section cinematic-fade" ref={cinematicRef}>
       <SectionParticles count={10} color="rgba(59,130,246,.6)" />
-      <div className="l-grid-overlay" style={{ backgroundImage: "linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(0deg,rgba(255,255,255,.05) 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
+      <div className="l-grid-overlay" style={{ backgroundImage: "linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(0deg,rgba(255,255,255,.015) 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
       <div className="l-section-border-animated" style={{ "--border-color": "rgba(59,130,246,.3)" } as React.CSSProperties} />
       <div className="l-section-glow" style={{ top: "15%", right: "10%", width: 300, height: 300, background: "rgba(245,158,11,.15)" }} />
       <div className="l-section-glow" style={{ bottom: "20%", left: "10%", width: 250, height: 250, background: "rgba(59,130,246,.15)", animationDelay: "3s" }} />

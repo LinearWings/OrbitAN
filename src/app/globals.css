@@ -957,10 +957,10 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-keys-card{
   display:flex;flex-direction:column;align-items:center;gap:10px;
   padding:clamp(1rem,2vw,1.5rem);
-  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.03);
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
   border-radius:12px;transition:background .2s ease,border-color .2s ease;
 }
-.l-keys-card:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}.l-keys-card:hover .l-keys-kbd{color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.15)}
+.l-keys-card:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12)}.l-keys-card:hover .l-keys-kbd{color:rgba(255,255,255,.45);border-color:rgba(255,255,255,.2)}
 .l-keys-keys{display:flex;gap:4px;align-items:center}
 .l-keys-kbd{
   font-family:"JetBrains Mono",monospace;font-size:.625rem;
