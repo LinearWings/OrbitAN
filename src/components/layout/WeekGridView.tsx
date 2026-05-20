@@ -81,6 +81,11 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
   const { state } = useAppContext();
   const today = getToday();
   const [zoomPx, setZoomPx] = useState(DEFAULT_PX);
+  // Hover indicator during creation mode
+  const [hoverTime, setHoverTime] = useState<string | null>(null);
+  const [hoverY, setHoverY] = useState<number | null>(null);
+  const [hoverDayIndex, setHoverDayIndex] = useState<number | null>(null);
+  const isCreatingMode = weekCreatePhase && weekCreatePhase !== "idle";
   const week = useMemo(() => getWeekDates(state.currentDate), [state.currentDate]);
   const now = new Date();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -264,19 +269,34 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
       </div>
 
       {/* BODY — scrollable */}
-      <div data-week-scroll style={{ flex: 1, position: "relative", overflowY: "auto", overflowX: "hidden", cursor: weekCreatePhase && weekCreatePhase !== "idle" ? "crosshair" : undefined }}
-        onClick={onWeekTimeSelect && weekCreatePhase && weekCreatePhase !== "idle" ? (e) => {
+      <div data-week-scroll style={{ flex: 1, position: "relative", overflowY: "auto", overflowX: "hidden", cursor: isCreatingMode ? "crosshair" : undefined }}
+        onMouseMove={isCreatingMode ? (e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const scrollTop = e.currentTarget.scrollTop;
+          const y = e.clientY - rect.top + scrollTop;
+          const x = e.clientX - rect.left;
+          const gridWidth = rect.width - 36;
+          const colWidth = gridWidth / 7;
+          const dayIdx = Math.min(6, Math.max(0, Math.floor((x - 36) / colWidth)));
+          const totalMinutes = (y / (TOTAL_HOURS * zoomPx)) * TOTAL_HOURS * 60;
+          const snappedMinutes = Math.round(totalMinutes / 5) * 5;
+          const hh = Math.floor(snappedMinutes / 60) % 24;
+          const mm = snappedMinutes % 60;
+          setHoverTime(`${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`);
+          setHoverY(y);
+          setHoverDayIndex(dayIdx);
+        } : undefined}
+        onMouseLeave={isCreatingMode ? () => { setHoverTime(null); setHoverY(null); setHoverDayIndex(null); } : undefined}
+        onClick={onWeekTimeSelect && isCreatingMode ? (e) => {
           const rect = e.currentTarget.getBoundingClientRect();
           const scrollTop = e.currentTarget.scrollTop;
           const x = e.clientX - rect.left;
           const y = e.clientY - rect.top + scrollTop;
-          // Calculate day column (grid: 36px + 7 equal columns)
           const gridWidth = rect.width - 36;
           const colWidth = gridWidth / 7;
           const dayIndex = Math.min(6, Math.max(0, Math.floor((x - 36) / colWidth)));
-          // Calculate time from Y position
           const totalMinutes = (y / (TOTAL_HOURS * zoomPx)) * TOTAL_HOURS * 60;
-          const snappedMinutes = Math.round(totalMinutes / 15) * 15;
+          const snappedMinutes = Math.round(totalMinutes / 5) * 5;
           const hh = Math.floor(snappedMinutes / 60) % 24;
           const mm = snappedMinutes % 60;
           const time = `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
@@ -358,6 +378,34 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
             </>
           );
         })()}
+
+        {/* Hover indicator during creation mode */}
+        {isCreatingMode && hoverTime !== null && hoverY !== null && hoverDayIndex !== null && (
+          <div style={{
+            position: "absolute",
+            left: `calc(36px + (100% - 36px) / 7 * ${hoverDayIndex} + 2px)`,
+            top: `${hoverY}px`,
+            width: `calc((100% - 36px) / 7 - 3px)`,
+            height: 1,
+            background: "rgba(255,255,255,0.25)",
+            zIndex: 21,
+            pointerEvents: "none",
+            transition: "top 50ms linear",
+          }}>
+            <span style={{
+              position: "absolute",
+              right: -2,
+              top: -14,
+              fontSize: 10,
+              fontFamily: "'JetBrains Mono',monospace",
+              color: "rgba(255,255,255,0.5)",
+              whiteSpace: "nowrap",
+              background: "rgba(0,0,0,0.6)",
+              padding: "1px 4px",
+              borderRadius: 3,
+            }}>{hoverTime}</span>
+          </div>
+        )}
 
         {/* Task blocks — independent lane layout, tasks don't overlap each other */}
         {taskLayouts.map((group, di) =>
