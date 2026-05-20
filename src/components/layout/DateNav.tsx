@@ -2,24 +2,32 @@
 
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useViewNavigation } from "@/hooks/useViewNavigation";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/Icons";
-
-const VIEW_LABELS: Record<string, string> = {
-  day: "日",
-  week: "周",
-  month: "月",
-};
 
 export default function DateNav() {
   const { currentDate, viewMode, setViewMode, goToPrevious, goToNext, goToToday } = useViewNavigation();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const lang = useLanguage();
+  const t = getT(lang);
+
+  const VIEW_LABELS: Record<string, string> = {
+    day: t.orbit_view_day,
+    week: t.orbit_view_week,
+    month: t.orbit_view_month,
+  };
 
   const dateObj = new Date(currentDate + "T00:00:00");
-  const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
-  const weekday = weekdays[dateObj.getDay()]!;
+  const weekdayKey = `orbit_weekday_${dateObj.getDay()}` as const;
+  const weekday = t[weekdayKey] ?? "";
   const formatted = isMobile
-    ? `${dateObj.getMonth() + 1}月${dateObj.getDate()}日`
-    : `${dateObj.getFullYear()}年${dateObj.getMonth() + 1}月${dateObj.getDate()}日`;
+    ? lang === "en"
+      ? `${dateObj.toLocaleDateString("en", { month: "short", day: "numeric" })}`
+      : `${dateObj.getMonth() + 1}月${dateObj.getDate()}日`
+    : lang === "en"
+      ? `${dateObj.toLocaleDateString("en", { year: "numeric", month: "short", day: "numeric" })}`
+      : `${dateObj.getFullYear()}年${dateObj.getMonth() + 1}月${dateObj.getDate()}日`;
 
   return (
     <div className={`absolute ${isMobile ? 'top-3 right-4' : 'top-8 right-8'} z-30 flex items-center gap-3`}>
@@ -52,7 +60,7 @@ export default function DateNav() {
           {formatted}
         </div>
         <div className={`font-satoshi mt-0.5 tracking-[0.1em] text-white/30 uppercase ${isMobile ? 'text-[0.55rem]' : 'text-[0.65rem]'}`}>
-          周{weekday}
+          {t.orbit_week_prefix}{weekday}
         </div>
       </div>
 

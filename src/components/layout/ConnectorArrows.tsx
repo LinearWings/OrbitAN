@@ -66,7 +66,8 @@ export default function ConnectorArrows() {
       const svg = svgRef.current;
       if (!svg) return;
 
-      const canvasEl = document.querySelector("canvas") as HTMLCanvasElement | null;
+      const canvasEl = document.querySelector("[data-orbit-canvas]") as HTMLCanvasElement | null
+        ?? document.querySelector("canvas") as HTMLCanvasElement | null;
       if (!canvasEl) return;
 
       const canvasRect = canvasEl.getBoundingClientRect();

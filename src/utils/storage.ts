@@ -100,7 +100,8 @@ export function saveTasks(tasks: TasksByDate): void {
 export function loadMethodologyData<T>(key: string): T | null {
   const data = loadAll();
   const methodologies = data.methodologies ?? {};
-  return (methodologies as Record<string, unknown>)[key] as T | null ?? null;
+  const value = (methodologies as Record<string, unknown>)[key];
+  return value != null ? (value as T) : null;
 }
 
 export function saveMethodologyData<T>(key: string, value: T): void {
@@ -129,7 +130,7 @@ export function loadCustomTypes(): CustomTypeDef[] {
 
 export function saveCustomTypes(types: CustomTypeDef[]): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(CUSTOM_TYPES_KEY, JSON.stringify(types));
+  try { localStorage.setItem(CUSTOM_TYPES_KEY, JSON.stringify(types)); } catch { /* quota exceeded */ }
 }
 
 const FOCUS_STORAGE_KEY = "orbital_focus_v1";

@@ -8,6 +8,9 @@ import { useSelectedTask } from "@/hooks/useSelectedTask";
 import { timeToAngle } from "@/utils/time";
 import { METHODOLOGIES } from "@/data/defaults";
 import { FOCUS_METHOD_COLORS, FOCUS_METHOD_LABELS } from "@/data/focus-defaults";
+import { sanitizeSvg } from "@/utils/colors";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
 
 interface HybridClockProps {
   interactive?: boolean;
@@ -44,6 +47,8 @@ export default function HybridClock({
   const engineRef = useRef<ReturnType<typeof initCanvas> | null>(null);
   const { filteredTasks } = useTasks();
   const { selectedTaskId, selectTask } = useSelectedTask();
+  const lang = useLanguage();
+  const t = getT(lang);
   const hoveredTaskIdRef = useRef<string | null>(null);
   const [hoverTime, setHoverTime] = useState<string | null>(null);
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
@@ -58,12 +63,16 @@ export default function HybridClock({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    let resizeTimer: ReturnType<typeof setTimeout>;
     const init = () => {
       const engine = initCanvas(canvas);
       if (engine) engineRef.current = engine;
     };
     init();
-    const ro = new ResizeObserver(init);
+    const ro = new ResizeObserver(() => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(init, 50);
+    });
     ro.observe(canvas);
     return () => ro.disconnect();
   }, []);
@@ -190,6 +199,13 @@ export default function HybridClock({
   const focusBlockArcsRef = useRef(focusBlockArcs);
   focusBlockArcsRef.current = focusBlockArcs;
 
+  // Cache comet positions — only recompute when tasks change
+  const cachedCometsRef = useRef<ReturnType<typeof computeOverlapAwareCometPositions>>([]);
+  const cometsKeyRef = useRef<string>("");
+  const cometsCxRef = useRef(0);
+  const cometsCyRef = useRef(0);
+  const cometsMaxRRef = useRef(0);
+
   // ── Animation loop ──
   useEffect(() => {
     let raf: number;
@@ -207,8 +223,16 @@ export default function HybridClock({
 
       renderClockCanvas(ctx, width, height, cx, cy, new Date(), dpr);
 
-      // Draw existing task comets
-      const comets = computeOverlapAwareCometPositions(filteredTasks, cx, cy, maxRadius);
+      // Draw existing task comets (cached — only recompute when tasks change)
+      const cometsKey = filteredTasks.map(t => `${t.id}:${t.startTime}:${t.endTime}:${t.type}`).join("|");
+      if (cometsKey !== cometsKeyRef.current || cx !== cometsCxRef.current || cy !== cometsCyRef.current || maxRadius !== cometsMaxRRef.current) {
+        cachedCometsRef.current = computeOverlapAwareCometPositions(filteredTasks, cx, cy, maxRadius);
+        cometsKeyRef.current = cometsKey;
+        cometsCxRef.current = cx;
+        cometsCyRef.current = cy;
+        cometsMaxRRef.current = maxRadius;
+      }
+      const comets = cachedCometsRef.current;
 
       for (const comet of comets) {
         const isSelected = comet.taskId === selectedTaskId;
@@ -224,7 +248,7 @@ export default function HybridClock({
 
       // Draw focus block arcs — visible, glow on hover
       const arcs = focusBlockArcsRef.current;
-      const hoveredFbId = hoveredFocusBlock?.methodId;
+      const hoveredFbId = hoveredFocusRef.current?.methodId;
       if (arcs && arcs.length > 0) {
         arcs.forEach((fb) => {
           let a0 = fb.startAngle;
@@ -322,13 +346,11 @@ export default function HybridClock({
     // Non-interactive: hit-test against comets for hover
     const engine = engineRef.current;
     if (!engine) return;
-    const { cx, cy, width, height } = engine;
-    const maxRadius = Math.min(width, height) * 0.4;
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
-    const comets = computeOverlapAwareCometPositions(filteredTasks, cx, cy, maxRadius);
+    const comets = cachedCometsRef.current;
     let found: string | null = null;
     for (let i = comets.length - 1; i >= 0; i--) {
       const c = comets[i];
@@ -379,13 +401,14 @@ export default function HybridClock({
     }
     setHoveredFocusBlock(fbResult);
     hoveredFocusRef.current = fbResult ? { methodId: fbResult.methodId, color: fbResult.color } : null;
-  }, [interactive, getTimeFromMouse, filteredTasks]);
+  }, [interactive, getTimeFromMouse]);
 
   const handleMouseLeave = useCallback(() => {
     setHoverTime(null);
     setHoverPos(null);
     setHoveredFocusBlock(null);
     hoveredFocusRef.current = null;
+    hoveredTaskIdRef.current = null;
   }, []);
 
   const handleClick = useCallback(
@@ -400,8 +423,6 @@ export default function HybridClock({
       // Non-interactive: select existing task or open methodology
       const engine = engineRef.current;
       if (!engine) return;
-      const { cx, cy, width, height } = engine;
-      const maxRadius = Math.min(width, height) * 0.4;
       const rect = canvasRef.current?.getBoundingClientRect();
       if (!rect) return;
       const mx = e.clientX - rect.left;
@@ -414,7 +435,7 @@ export default function HybridClock({
         return;
       }
 
-      const comets = computeOverlapAwareCometPositions(filteredTasks, cx, cy, maxRadius);
+      const comets = cachedCometsRef.current;
       for (let i = comets.length - 1; i >= 0; i--) {
         const c = comets[i];
         const dx = mx - c.headX;
@@ -427,13 +448,14 @@ export default function HybridClock({
       // Clicked empty space → deselect
       selectTask(null);
     },
-    [interactive, filteredTasks, selectTask, onTimeSelect, getTimeFromMouse, onFocusBlockClick],
+    [interactive, selectTask, onTimeSelect, getTimeFromMouse, onFocusBlockClick],
   );
 
   return (
     <>
       <canvas
         ref={canvasRef}
+        data-orbit-canvas
         className="h-full w-full"
         onClick={handleClick}
         onMouseMove={handleMouseMove}
@@ -477,10 +499,10 @@ export default function HybridClock({
               className="w-5 h-5 [&>svg]:w-full [&>svg]:h-full"
               style={{ color: hoveredFocusBlock.color }}
               dangerouslySetInnerHTML={{
-                __html: (() => {
+                __html: sanitizeSvg((() => {
                   const m = METHODOLOGIES.find(m => m.id === hoveredFocusBlock.methodId);
                   return m ? m.icon.replace(/currentColor/g, hoveredFocusBlock.color) : "";
-                })(),
+                })()),
               }}
             />
             <div className="flex flex-col">
@@ -488,9 +510,9 @@ export default function HybridClock({
                 className="text-[0.65rem] font-semibold leading-tight"
                 style={{ color: hoveredFocusBlock.color, fontFamily: "'Inter','Microsoft YaHei',sans-serif" }}
               >
-                {FOCUS_METHOD_LABELS[hoveredFocusBlock.methodId as keyof typeof FOCUS_METHOD_LABELS]?.zh ?? hoveredFocusBlock.methodId}
+                {(() => { const lbl = FOCUS_METHOD_LABELS[hoveredFocusBlock.methodId as keyof typeof FOCUS_METHOD_LABELS]; return (lang === "en" ? lbl?.en : lbl?.zh) ?? hoveredFocusBlock.methodId; })()}
               </span>
-              <span className="text-[0.5rem] text-white/30 leading-tight">点击进入方法论</span>
+              <span className="text-[0.5rem] text-white/30 leading-tight">{t.orbit_click_to_enter}</span>
             </div>
           </div>
         </div>

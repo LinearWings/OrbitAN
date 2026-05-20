@@ -2,6 +2,8 @@
 
 import { useFilter } from "@/hooks/useFilter";
 import { useAppContext } from "@/context/AppContext";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
 import { TASK_TYPE_LIST } from "@/data/constants";
 import { getTaskColor, getTaskLabel } from "@/utils/colors";
 import { loadCustomTypes } from "@/utils/storage";
@@ -9,6 +11,8 @@ import { loadCustomTypes } from "@/utils/storage";
 export default function LegendBar() {
   const { activeFilter, setFilter, clearFilter } = useFilter();
   const { state } = useAppContext();
+  const lang = useLanguage();
+  const t = getT(lang);
   const todayTasks = state.tasks[state.currentDate] ?? [];
 
   const totalCount = todayTasks.length;
@@ -26,7 +30,7 @@ export default function LegendBar() {
             : "border-white/8 text-white/30 hover:border-white/15 hover:text-white/50"
         }`}
       >
-        全部
+        {t.orbit_filter_all}
         <span className="ml-1.5 font-mono text-[0.6rem] opacity-40">{totalCount}</span>
       </button>
       {TASK_TYPE_LIST.map((type: string) => {
@@ -47,7 +51,7 @@ export default function LegendBar() {
               className="inline-block h-2 w-2 rounded-full"
               style={{ backgroundColor: color }}
             />
-            {label.zh}
+            {lang === "en" ? label.en : label.zh}
             <span className="ml-1 font-mono text-[0.6rem] opacity-40">{count}</span>
           </button>
         );
@@ -62,7 +66,8 @@ export default function LegendBar() {
         return customTypesToday.map(type => {
           const def = defMap.get(type);
           const color = def?.color ?? getTaskColor(type);
-          const label = def?.name ?? getTaskLabel(type).zh;
+          const taskLabel = getTaskLabel(type);
+          const label = def?.name ?? (lang === "en" ? taskLabel.en : taskLabel.zh);
           const count = countByType(type);
           return (
             <button

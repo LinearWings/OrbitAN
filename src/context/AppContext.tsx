@@ -31,10 +31,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case "LOAD": {
       const loaded = action.payload;
-      const keys = Object.keys(loaded);
-      if (keys.length > 0) return { ...state, tasks: loaded };
-      const defaults = getDefaultTasks();
-      return { ...state, tasks: defaults };
+      return { ...state, tasks: loaded };
     }
     case "ADD": {
       const tasks = { ...state.tasks };
@@ -94,14 +91,18 @@ function appReducer(state: AppState, action: AppAction): AppState {
       const tasks = { ...state.tasks };
       const dateTasks = [...(tasks[action.payload.date] ?? [])];
       const idx = dateTasks.findIndex((t) => t.id === action.payload.id);
-      if (idx !== -1) {
-        dateTasks[idx] = { ...dateTasks[idx]!, progress: action.payload.progress, completed: action.payload.progress >= 100 };
+      if (idx === -1) {
+        console.warn("[OrbitAN] UPDATE_PROGRESS: task not found", action.payload.id, "on", action.payload.date);
+        return state;
       }
+      dateTasks[idx] = { ...dateTasks[idx]!, progress: action.payload.progress, completed: action.payload.progress >= 100 };
       tasks[action.payload.date] = dateTasks;
       return { ...state, tasks };
     }
     case "UPDATE_ORBIT_MODE":
       return { ...state, isOrbitModeOpen: action.payload };
+    case "TOGGLE_ORBIT_MODE":
+      return { ...state, isOrbitModeOpen: !state.isOrbitModeOpen };
     case "SET_VIEW_MODE":
       return { ...state, viewMode: action.payload };
     case "LOAD_FOCUS":
@@ -154,11 +155,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const stored = loadTasks();
-    if (Object.keys(stored).length > 0) {
-      dispatch({ type: "LOAD", payload: stored });
-    } else {
-      dispatch({ type: "LOAD", payload: {} });
-    }
+    const hasStored = Object.keys(stored).length > 0;
+    dispatch({ type: "LOAD", payload: hasStored ? stored : getDefaultTasks() });
     const storedFocus = loadFocusBlocks();
     if (Object.keys(storedFocus).length > 0) {
       dispatch({ type: "LOAD_FOCUS", payload: storedFocus });

@@ -1,11 +1,17 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { getPreviousDay, getNextDay, getToday, getWeekDates } from "@/utils/time";
 
 export function useViewNavigation() {
   const { state, dispatch } = useAppContext();
+
+  // Refs to avoid stale closures in rapid navigation
+  const currentDateRef = useRef(state.currentDate);
+  const viewModeRef = useRef(state.viewMode);
+  currentDateRef.current = state.currentDate;
+  viewModeRef.current = state.viewMode;
 
   const setViewMode = useCallback(
     (mode: "day" | "week" | "month") => {
@@ -15,7 +21,8 @@ export function useViewNavigation() {
   );
 
   const goToPrevious = useCallback(() => {
-    const { currentDate, viewMode } = state;
+    const currentDate = currentDateRef.current;
+    const viewMode = viewModeRef.current;
     if (viewMode === "day") {
       dispatch({ type: "SET_DATE", payload: getPreviousDay(currentDate) });
     } else if (viewMode === "week") {
@@ -34,7 +41,8 @@ export function useViewNavigation() {
   }, [state.currentDate, state.viewMode, dispatch]);
 
   const goToNext = useCallback(() => {
-    const { currentDate, viewMode } = state;
+    const currentDate = currentDateRef.current;
+    const viewMode = viewModeRef.current;
     if (viewMode === "day") {
       dispatch({ type: "SET_DATE", payload: getNextDay(currentDate) });
     } else if (viewMode === "week") {
@@ -54,10 +62,10 @@ export function useViewNavigation() {
 
   const goToToday = useCallback(() => {
     dispatch({ type: "SET_DATE", payload: getToday() });
-    if (state.viewMode !== "day") {
+    if (viewModeRef.current !== "day") {
       dispatch({ type: "SET_VIEW_MODE", payload: "day" });
     }
-  }, [dispatch, state.viewMode]);
+  }, [dispatch]);
 
   const navigateToDay = useCallback(
     (date: string) => {

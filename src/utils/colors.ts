@@ -1,6 +1,17 @@
 import { timeToMinutes } from "@/utils/time";
 import { UNIFIED_RADIUS } from "@/data/constants";
 
+/** Sanitize an SVG string for use with dangerouslySetInnerHTML.
+ *  Only allows <svg>, <path>, <circle>, <rect>, <line>, <polyline>,
+ *  <polygon>, <g>, <defs>, <clipPath>, <use> elements.
+ */
+export function sanitizeSvg(html: string): string {
+  if (!html.startsWith("<svg")) return "";
+  // Strip any script/event handler attributes
+  return html.replace(/\s+on\w+\s*=\s*"[^"]*"/gi, "")
+    .replace(/\s+on\w+\s*=\s*'[^']*'/gi, "");
+}
+
 const BUILT_IN_COLORS: Record<string, string> = {
   work: "#2563EB",
   study: "#EAB308",

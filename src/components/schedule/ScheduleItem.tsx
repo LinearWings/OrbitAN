@@ -3,8 +3,10 @@
 import { memo, useState, useRef, useCallback, useEffect } from "react";
 import { CaretUpIcon, CaretDownIcon } from "@/components/ui/Icons";
 import type { Task } from "@/types";
-import { getTaskColor, getTaskLabel } from "@/utils/colors";
+import { getTaskColor, getTaskLabel, sanitizeSvg } from "@/utils/colors";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
 import { getTaskDuration } from "@/utils/time";
 import { FOCUS_METHOD_COLORS } from "@/data/focus-defaults";
 import { METHODOLOGIES } from "@/data/defaults";
@@ -15,9 +17,11 @@ function TimePicker({
   value,
   onChange,
   onDone,
+  confirmLabel,
 }: {
   value: string;
   onChange: (v: string) => void;
+  confirmLabel?: string;
   onDone: () => void;
 }) {
   const [h, m] = value.split(":").map(Number);
@@ -73,7 +77,7 @@ function TimePicker({
           borderTop: "1px solid rgba(255,255,255,0.05)",
         }}
       >
-        确定
+        {confirmLabel ?? "OK"}
       </button>
     </div>
   );
@@ -104,6 +108,8 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
   const color = getTaskColor(task.type);
   const duration = getTaskDuration(task);
   const isTouchDevice = useMediaQuery("(hover: none) and (pointer: coarse)");
+  const lang = useLanguage();
+  const t = getT(lang);
   const [editing, setEditing] = useState<"name" | "start" | "end" | null>(null);
   const [editValue, setEditValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -211,6 +217,7 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
               value={editValue}
               onChange={setEditValue}
               onDone={commitEdit}
+              confirmLabel={t.orbit_confirm}
             />
           </div>
         ) : (
@@ -239,7 +246,7 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
             onBlur={commitEdit}
             onKeyDown={(e) => { if (e.key === "Enter") commitEdit(); if (e.key === "Escape") setEditing(null); }}
             className="w-full bg-transparent outline-none font-satoshi text-[0.8125rem] leading-snug mt-1.5 text-white/90"
-            placeholder="任务名称"
+            placeholder={t.orbit_task_name_placeholder}
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
@@ -255,7 +262,7 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
         <div className={`font-satoshi text-[0.6875rem] leading-normal mt-1 flex items-center gap-x-1.5 transition-colors duration-300 ${isSelected ? "text-white/25" : "text-white/16 group-hover:text-white/22"}`}>
           <span>{duration}min</span>
           <span className="text-white/8">·</span>
-          <span>{getTaskLabel(task.type).zh}</span>
+          <span>{lang === "en" ? getTaskLabel(task.type).en : getTaskLabel(task.type).zh}</span>
           <span className="text-white/8">·</span>
           {editing === "end" ? (
             <span className="relative inline-block">
@@ -271,7 +278,7 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
               onClick={(e) => { e.stopPropagation(); if (isSelected && !isDeleteTarget) startEdit("end", task.endTime); }}
               className="cursor-pointer hover:text-white/40"
             >
-              至 {task.endTime}
+              {t.orbit_time_to} {task.endTime}
             </span>
           )}
         </div>
@@ -294,14 +301,16 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
               e.stopPropagation();
               onSetOrbitPlan?.(task.id);
             }}
-            title={task.method ? "切换方法论" : "设为 Orbit Plan"}
+            title={task.method ? t.orbit_switch_method : t.orbit_set_plan}
           >
             {task.method ? (
               <span
                 className="w-3 h-3 [&>svg]:w-full [&>svg]:h-full"
                 dangerouslySetInnerHTML={{
-                  __html: (METHODOLOGIES.find(m => m.id === task.method)?.icon ?? "")
-                    .replace(/currentColor/g, FOCUS_METHOD_COLORS[task.method]),
+                  __html: sanitizeSvg(
+                    (METHODOLOGIES.find(m => m.id === task.method)?.icon ?? "")
+                      .replace(/currentColor/g, FOCUS_METHOD_COLORS[task.method])
+                  ),
                 }}
               />
             ) : (

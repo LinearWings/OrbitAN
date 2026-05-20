@@ -25,6 +25,8 @@ export function useKeyboard(onCreate?: () => void) {
     onCreate,
   });
   const orbitModeRef = useRef(state.isOrbitModeOpen);
+  const editPanelRef = useRef(isEditPanelOpen);
+  const selectedTaskRef = useRef(selectedTaskId);
 
   // Keep refs current every render (no deps — always runs)
   cbRef.current = {
@@ -35,6 +37,8 @@ export function useKeyboard(onCreate?: () => void) {
     onCreate,
   };
   orbitModeRef.current = state.isOrbitModeOpen;
+  editPanelRef.current = isEditPanelOpen;
+  selectedTaskRef.current = selectedTaskId;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -45,7 +49,7 @@ export function useKeyboard(onCreate?: () => void) {
 
       switch (e.key) {
         case "Escape":
-          if (isEditPanelOpen) {
+          if (editPanelRef.current) {
             cb.closeEdit();
           } else {
             cb.selectTask(null);
@@ -82,18 +86,18 @@ export function useKeyboard(onCreate?: () => void) {
           else cb.openEdit(null);
           break;
         case "Delete":
-          if (selectedTaskId && !isEditPanelOpen) {
-            cb.showDeleteConfirm(true, selectedTaskId);
+          if (selectedTaskRef.current && !editPanelRef.current) {
+            cb.showDeleteConfirm(true, selectedTaskRef.current);
           }
           break;
         case "O":
         case "o":
-          dispatch({ type: "UPDATE_ORBIT_MODE", payload: !orbitModeRef.current });
+          dispatch({ type: "TOGGLE_ORBIT_MODE" });
           break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isEditPanelOpen, selectedTaskId, dispatch]);
+  }, [dispatch]);
 }

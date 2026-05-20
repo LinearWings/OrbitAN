@@ -13,6 +13,7 @@ import {
   FILM_GRAIN_SIZE,
   ORBIT_RING_COLOR_A,
   ORBIT_RING_COLOR_B,
+  ORBIT_RING_RADII_FRACTIONS,
   CONSTRUCTIVIST_ENABLED,
   CONSTRUCTIVIST_YELLOW,
   CONSTRUCTIVIST_BLUE,
@@ -238,11 +239,10 @@ export function drawClock24hTicks(
 
 export function drawOrbitRings(ctx: CanvasRenderingContext2D, cx: number, cy: number, maxRadius: number) {
   // 6 concentric rings outside the clock dial, alternating amber/blue
-  const count = 6;
-  const radii = [0.66, 0.72, 0.78, 0.84, 0.90, 0.96];
+  const count = ORBIT_RING_RADII_FRACTIONS.length;
   ctx.save();
   for (let i = 0; i < count; i++) {
-    const r = radii[i] * maxRadius;
+    const r = ORBIT_RING_RADII_FRACTIONS[i] * maxRadius;
     const color = (i % 2 === 0) ? ORBIT_RING_COLOR_A : ORBIT_RING_COLOR_B;
     const alpha = 0.35 - (i * 0.04);
     ctx.strokeStyle = color;
@@ -396,12 +396,10 @@ export function computePlanetScreenPositions(
   cy: number,
   maxRadius: number,
 ): CanvasPlanetScreenPos[] {
-  const ringRadii = [0.66, 0.72, 0.78, 0.84, 0.90, 0.96];
-
   return tasks.map((task) => {
     const duration = getTaskDuration(task);
     const orbitIdx = getOrbitRingIndex(duration);
-    const orbitR = ringRadii[orbitIdx] * maxRadius;
+    const orbitR = ORBIT_RING_RADII_FRACTIONS[orbitIdx] * maxRadius;
 
     // timeToAngle: 0 rad = 6am (right/+X), π rad = 6pm (left/-X)
     const angle = timeToAngle(task.startTime);

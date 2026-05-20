@@ -33,12 +33,14 @@ import { useAppContext } from "@/context/AppContext";
 import { useViewNavigation } from "@/hooks/useViewNavigation";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import MobileBottomBar from "@/components/layout/MobileBottomBar";
-import { CrosshairIcon, OrbitIcon, MouseScrollIcon, PlusIcon, ArrowRightIcon } from "@/components/ui/Icons";
+import { CrosshairIcon, OrbitIcon, MouseScrollIcon } from "@/components/ui/Icons";
 import WeekGridView from "@/components/layout/WeekGridView";
 import MonthGridView from "@/components/layout/MonthGridView";
 import { timeToMinutes, timeToAngle } from "@/utils/time";
 import { useFocusBlocks } from "@/hooks/useFocusBlocks";
 import { FOCUS_METHOD_COLORS, FOCUS_METHOD_LABELS } from "@/data/focus-defaults";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
 
 function HintKbd({ children }: { children: ReactNode }) {
   return (
@@ -256,6 +258,8 @@ export default function Home() {
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTouchDevice = useMediaQuery("(hover: none) and (pointer: coarse)");
+  const lang = useLanguage();
+  const t = getT(lang);
 
   // Focus Mode overlay state
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -748,12 +752,12 @@ export default function Home() {
       >
         <div className="flex items-center gap-6 px-5 py-2 rounded-2xl border border-white/[0.06] bg-black/30 backdrop-blur-xl">
           <div className="flex items-center gap-2">
-            <span className="font-satoshi text-[0.55rem] tracking-[0.1em] uppercase text-white/20">进度</span>
+            <span className="font-satoshi text-[0.55rem] tracking-[0.1em] uppercase text-white/20">{t.orbit_progress}</span>
             <FloatingProgressCard />
           </div>
           <div className="w-[1px] h-4 bg-white/8" />
           <div className="flex items-center gap-2">
-            <span className="font-satoshi text-[0.55rem] tracking-[0.1em] uppercase text-white/20">分布</span>
+            <span className="font-satoshi text-[0.55rem] tracking-[0.1em] uppercase text-white/20">{t.orbit_distribution}</span>
             <FloatingStatsCard />
           </div>
         </div>
@@ -859,10 +863,10 @@ export default function Home() {
                   <circle cx="12" cy="12" r="3"/>
                 </svg>
                 <p className="mt-4 text-sm text-white/15" style={{ fontFamily: "'Satoshi', sans-serif" }}>
-                  暂无任务
+                  {t.orbit_no_tasks}
                 </p>
                 <p className="mt-1 text-xs text-white/8" style={{ fontFamily: "'Satoshi', sans-serif" }}>
-                  点击下方 + 创建第一个任务
+                  {t.orbit_no_tasks_hint}
                 </p>
               </div>
             ) : null
@@ -952,7 +956,7 @@ export default function Home() {
                   <line x1="7" y1="1" x2="7" y2="13" />
                   <line x1="1" y1="7" x2="13" y2="7" />
                 </svg>
-                <span>新建任务</span>
+                <span>{t.orbit_new_task}</span>
                 <kbd className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[0.55rem] text-white/25">N</kbd>
               </button>
               <div className="h-5 w-[1px] bg-white/8" />
@@ -971,7 +975,7 @@ export default function Home() {
                 {isFocusCreating ? (
                   <>
                     <CrosshairIcon size={15} />
-                    <span>{focusCreatePhase === "idle" ? "取消" : focusCreatePhase === "end" ? "点击表盘选择终点" : "点击表盘选择起点"}</span>
+                    <span>{focusCreatePhase === "idle" ? t.orbit_cancel : focusCreatePhase === "end" ? t.orbit_pick_end : t.orbit_pick_start}</span>
                   </>
                 ) : (
                   <>
@@ -979,7 +983,7 @@ export default function Home() {
                       <line x1="7" y1="1" x2="7" y2="13" />
                       <line x1="1" y1="7" x2="13" y2="7" />
                     </svg>
-                    <span>新建聚焦</span>
+                    <span>{t.orbit_new_focus}</span>
                   </>
                 )}
               </button>
@@ -1008,7 +1012,7 @@ export default function Home() {
               <button
                 onClick={() => { setManualOverrides(new Map()); setLayoutKey((k) => k + 1); }}
                 className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white/50 transition-all hover:bg-white/5 hover:text-white/80"
-                title="自动整理卡片布局"
+                title={t.orbit_auto_arrange}
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                   <rect x="1" y="1" width="5" height="5" rx="1" opacity="0.5" />
@@ -1020,7 +1024,7 @@ export default function Home() {
                   <line x1="3.5" y1="8" x2="3.5" y2="13" strokeWidth="0.8" />
                   <line x1="10.5" y1="8" x2="10.5" y2="13" strokeWidth="0.8" />
                 </svg>
-                <span className="hidden sm:inline">整理</span>
+                <span className="hidden sm:inline">{t.orbit_arrange}</span>
                 <kbd className="rounded border border-white/10 px-1.5 py-0.5 font-mono text-[0.55rem] text-white/25">⇧L</kbd>
               </button>
             </>
@@ -1035,24 +1039,24 @@ export default function Home() {
         {/* Minimal hint bar */}
         {isOrbitModeOpen ? (
           <span className="text-[0.55rem] text-white/20">
-            点击表盘创建聚焦<span className="text-white/8 mx-0.5">·</span><HintKbd>O</HintKbd> 退出聚焦视野
+            {t.orbit_hint_create_focus}<span className="text-white/8 mx-0.5">·</span><HintKbd>O</HintKbd> {t.orbit_hint_exit_focus}
           </span>
         ) : viewMode === "day" ? (
           <span className="text-[0.55rem] text-white/20">
-            <HintKbd>N</HintKbd> 新建<span className="text-white/8 mx-0.5">·</span>
-            <HintKbd>⇧</HintKbd>+拖拽 移动<span className="text-white/8 mx-0.5">·</span>
+            <HintKbd>N</HintKbd> {t.orbit_hint_new}<span className="text-white/8 mx-0.5">·</span>
+            <HintKbd>⇧</HintKbd>+{t.orbit_hint_drag}<span className="text-white/8 mx-0.5">·</span>
             <HintKbd>O</HintKbd> Orbit<span className="text-white/8 mx-0.5">·</span>
-            <HintKbd>⇧</HintKbd><HintKbd>L</HintKbd> 整理
+            <HintKbd>⇧</HintKbd><HintKbd>L</HintKbd> {t.orbit_arrange}
           </span>
         ) : viewMode === "week" ? (
           <span className="text-[0.55rem] text-white/20">
-            <MouseScrollIcon size={13} className="inline-block opacity-40" /> 滚轮<span className="text-white/8 mx-0.5">·</span>
-            <HintKbd>Z</HintKbd>+滚轮 缩放<span className="text-white/8 mx-0.5">·</span>
+            <MouseScrollIcon size={13} className="inline-block opacity-40" /> {t.orbit_hint_scroll}<span className="text-white/8 mx-0.5">·</span>
+            <HintKbd>Z</HintKbd>+{t.orbit_hint_scroll} {t.orbit_hint_zoom}<span className="text-white/8 mx-0.5">·</span>
             <HintKbd>O</HintKbd> Orbit
           </span>
         ) : (
           <span className="text-[0.55rem] text-white/20">
-            点击日期 → 日视图<span className="text-white/8 mx-0.5">·</span>
+            {t.orbit_hint_click_date}<span className="text-white/8 mx-0.5">·</span>
             <HintKbd>O</HintKbd> Orbit
           </span>
         )}

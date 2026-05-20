@@ -1,7 +1,7 @@
 import type { Task, CometPosition, PlanetRadius } from "@/types";
 import { timeToAngle, angleToPosition, timeToMinutes } from "@/utils/time";
 import { getTaskColor, getCometHeadRadius } from "@/utils/colors";
-import { UNIFIED_RADIUS } from "@/data/constants";
+import { UNIFIED_RADIUS, ORBIT_RING_RADII_FRACTIONS } from "@/data/constants";
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
   const s = hex.replace('#', '');
@@ -21,8 +21,7 @@ function timeRangesOverlap(
   return s1 < e2 && s2 < e1;
 }
 
-/** 6 concentric orbit ring radii as fractions of maxRadius. */
-const ORBIT_RING_RADII_FRACTIONS = [0.66, 0.72, 0.78, 0.84, 0.90, 0.96];
+// ORBIT_RING_RADII_FRACTIONS is now imported from @/data/constants
 
 /**
  * Assigns each task to the first available orbit ring, separating overlapping
@@ -38,12 +37,14 @@ export function computeOverlapAwareCometPositions(
   cy: number,
   maxRadius: number,
 ): CometPosition[] {
-  // Sort by start time, then end time (longer tasks first for deterministic ring order)
+  // Sort by start time, then duration (longer tasks first for deterministic ring order)
   const sorted = [...tasks].sort((a, b) => {
     const sa = timeToMinutes(a.startTime);
     const sb = timeToMinutes(b.startTime);
     if (sa !== sb) return sa - sb;
-    return timeToMinutes(b.endTime) - timeToMinutes(a.endTime);
+    const da = (timeToMinutes(a.endTime) - sa + 1440) % 1440;
+    const db = (timeToMinutes(b.endTime) - sb + 1440) % 1440;
+    return db - da;
   });
 
   const ringOccupants: Array<{ start: number; end: number }>[] = [[], [], [], [], [], []];

@@ -23,6 +23,9 @@ export const UNIFIED_RADIUS = {
   ">120": 9,
 } as const;
 
+/** 6 concentric orbit ring radii as fractions of maxRadius. */
+export const ORBIT_RING_RADII_FRACTIONS = [0.66, 0.72, 0.78, 0.84, 0.90, 0.96] as const;
+
 export const TASK_TYPE_LIST: string[] = ["work", "study", "meeting", "personal"];
 
 export const POMODORO_DEFAULTS = {

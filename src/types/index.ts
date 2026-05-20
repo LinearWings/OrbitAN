@@ -1,5 +1,8 @@
 export type TaskType = "work" | "study" | "meeting" | "personal";
 
+/** Filter type: built-in types + "all" + custom type IDs */
+export type FilterType = TaskType | "all" | string;
+
 export interface CustomTypeDef {
   id: string;
   name: string;
@@ -27,7 +30,7 @@ export interface AppState {
   viewMode: "day" | "week" | "month";
   selectedTaskId: string | null;
   editingTaskId: string | null;
-  activeFilter: string;
+  activeFilter: FilterType;
   isEditPanelOpen: boolean;
   isDeleteConfirmOpen: boolean;
   isOrbitModeOpen: boolean;
@@ -40,13 +43,14 @@ export type AppAction =
   | { type: "UPDATE"; payload: { date: string; task: Task } }
   | { type: "DELETE"; payload: { date: string; id: string } }
   | { type: "SET_DATE"; payload: string }
-  | { type: "SET_FILTER"; payload: string }
+  | { type: "SET_FILTER"; payload: FilterType }
   | { type: "SELECT_TASK"; payload: string | null }
   | { type: "OPEN_EDIT"; payload: string | null }
   | { type: "CLOSE_EDIT" }
   | { type: "SHOW_DELETE_CONFIRM"; payload: { show: boolean; taskId: string | null } }
   | { type: "UPDATE_PROGRESS"; payload: { date: string; id: string; progress: number } }
   | { type: "UPDATE_ORBIT_MODE"; payload: boolean }
+  | { type: "TOGGLE_ORBIT_MODE" }
   | { type: "SET_VIEW_MODE"; payload: "day" | "week" | "month" }
   | { type: "ADD_FOCUS_BLOCK"; payload: { date: string; block: import("./focus").FocusBlock } }
   | { type: "UPDATE_FOCUS_BLOCK"; payload: { date: string; block: import("./focus").FocusBlock } }

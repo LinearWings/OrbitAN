@@ -1,14 +1,18 @@
 "use client";
 
 import { OrbitIcon, PlusIcon, GridIcon, ArrangeIcon } from "@/components/ui/Icons";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getT } from "@/lib/i18n";
+import { getTaskLabel } from "@/utils/colors";
 
-const FILTER_OPTIONS = [
-  { key: "all", label: "全部", color: "#ffffff" },
-  { key: "work", label: "工作", color: "#3B82F6" },
-  { key: "study", label: "学习", color: "#EAB308" },
-  { key: "meeting", label: "会议", color: "#4B5563" },
-  { key: "personal", label: "个人", color: "#78716C" },
-] as const;
+const FILTER_KEYS = ["all", "work", "study", "meeting", "personal"] as const;
+const FILTER_COLORS: Record<string, string> = {
+  all: "#ffffff",
+  work: "#3B82F6",
+  study: "#EAB308",
+  meeting: "#4B5563",
+  personal: "#78716C",
+};
 
 interface MobileBottomBarProps {
   activeFilter: string;
@@ -33,7 +37,9 @@ export default function MobileBottomBar({
   onAutoArrange,
   onOpenDocs,
 }: MobileBottomBarProps) {
-  const viewLabel = viewMode === "day" ? "日" : viewMode === "week" ? "周" : "月";
+  const lang = useLanguage();
+  const t = getT(lang);
+  const viewLabel = viewMode === "day" ? t.orbit_view_day : viewMode === "week" ? t.orbit_view_week : t.orbit_view_month;
 
   return (
     <div
@@ -47,20 +53,24 @@ export default function MobileBottomBar({
     >
       {/* Filter pills */}
       <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-1">
-        {FILTER_OPTIONS.map((opt) => (
-          <button
-            key={opt.key}
-            onClick={() => onFilterChange(opt.key)}
-            className="shrink-0 rounded-full px-3 py-1 text-[0.65rem] font-medium transition-all"
-            style={{
-              background: activeFilter === opt.key ? `${opt.color}20` : "rgba(255,255,255,0.04)",
-              border: activeFilter === opt.key ? `1px solid ${opt.color}40` : "1px solid rgba(255,255,255,0.06)",
-              color: activeFilter === opt.key ? opt.color : "rgba(255,255,255,0.4)",
-            }}
-          >
-            {opt.label}
-          </button>
-        ))}
+        {FILTER_KEYS.map((key) => {
+          const color = FILTER_COLORS[key];
+          const label = key === "all" ? t.orbit_filter_all : getTaskLabel(key)[lang];
+          return (
+            <button
+              key={key}
+              onClick={() => onFilterChange(key)}
+              className="shrink-0 rounded-full px-3 py-1 text-[0.65rem] font-medium transition-all"
+              style={{
+                background: activeFilter === key ? `${color}20` : "rgba(255,255,255,0.04)",
+                border: activeFilter === key ? `1px solid ${color}40` : "1px solid rgba(255,255,255,0.06)",
+                color: activeFilter === key ? color : "rgba(255,255,255,0.4)",
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Main action buttons */}
@@ -75,7 +85,7 @@ export default function MobileBottomBar({
           }}
         >
           <PlusIcon size={14} />
-          新建
+          {t.orbit_hint_new}
         </button>
 
         <button
@@ -120,7 +130,7 @@ export default function MobileBottomBar({
             border: "1px solid rgba(255,255,255,0.06)",
             color: "rgba(255,255,255,0.4)",
           }}
-          title="整理"
+          title={t.orbit_arrange}
         >
           <ArrangeIcon size={12} />
         </button>

@@ -2,12 +2,13 @@
 
 import { useCallback } from "react";
 import { useAppContext } from "@/context/AppContext";
+import type { FilterType } from "@/types";
 
 export function useFilter() {
   const { state, dispatch } = useAppContext();
 
   const setFilter = useCallback(
-    (filter: string) => dispatch({ type: "SET_FILTER", payload: filter }),
+    (filter: FilterType) => dispatch({ type: "SET_FILTER", payload: filter }),
     [dispatch],
   );
 

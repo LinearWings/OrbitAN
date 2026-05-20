@@ -16,10 +16,10 @@ import {
   ORBIT_RING_COUNT,
   ORBIT_RING_COLOR_A,
   ORBIT_RING_COLOR_B,
-  UNIFIED_RADIUS,
 } from "@/data/constants";
 import { timeToAngle, timeToMinutes } from "@/utils/time";
 import { getTaskColor } from "@/utils/colors";
+import { getOrbitRingIndex, getPlanetScreenRadius } from "@/utils/orbital";
 
 // ═══════════════════════════════════════════════════════════════
 // TYPES
@@ -147,12 +147,19 @@ interface NebulaParticle {
 }
 
 const NEBULA_PARTICLES: NebulaParticle[] = [];
+let nebulaParamsKey = "";
 
 function ensureNebulaParticles(
   faceA: number,
   baseStep: number,
 ): void {
-  if (NEBULA_PARTICLES.length > 0) return;
+  const key = `${faceA.toFixed(2)}:${baseStep.toFixed(2)}`;
+  if (NEBULA_PARTICLES.length > 0 && nebulaParamsKey === key) return;
+  // Invalidate cache if parameters changed (e.g., on resize)
+  if (nebulaParamsKey !== key) {
+    NEBULA_PARTICLES.length = 0;
+    nebulaParamsKey = key;
+  }
   const colors = [NEBULA_COLOR_AMBER, NEBULA_COLOR_BLUE, NEBULA_COLOR_VIOLET];
   const particlesPerRing = Math.ceil(NEBULA_PARTICLE_COUNT / ORBIT_RING_COUNT);
 
@@ -470,6 +477,23 @@ function drawHandTapered(
 // 5. ORBIT RINGS (elliptical, layered)
 // ═══════════════════════════════════════════════════════════════
 
+/** Get the orbit ring radius at a specific angle, including wobble.
+ *  Used by both ring drawing and planet positioning for consistency.
+ */
+export function getIsoRingRadius(
+  dialRadius: number,
+  bezelSteps: number,
+  orbitIdx: number,
+  angle: number,
+): number {
+  const faceA = dialRadius * 1.22 - bezelSteps * 3;
+  const baseStep = faceA * 0.25;
+  const ra = faceA + (orbitIdx + 1) * baseStep * 0.7;
+  const wobbleAmp = 2.0 + orbitIdx * 0.3;
+  const wobble = Math.sin(angle * 3 + orbitIdx) * wobbleAmp;
+  return ra + wobble;
+}
+
 export function drawIsoOrbitRings(
   ctx: CanvasRenderingContext2D,
   config: IsoDialConfig,
@@ -478,12 +502,12 @@ export function drawIsoOrbitRings(
   const count = ORBIT_RING_COUNT; // 6
   const faceA = dialRadius * 1.22 - bezelSteps * 3;
   const baseStep = faceA * 0.25;   // radius increment per ring
+  const z3d = dialRadius * 0.22;   // same height as planet placement
 
   ctx.save();
 
   for (let i = 0; i < count; i++) {
     const ra = faceA + (i + 1) * baseStep * 0.7;
-    const rb = ra * (0.71 / 1.22); // maintain ellipse ratio
     const color = i % 2 === 0 ? ORBIT_RING_COLOR_A : ORBIT_RING_COLOR_B;
     const alpha = 0.3 - i * 0.04;  // inner brighter, outer dimmer
 
@@ -491,18 +515,17 @@ export function drawIsoOrbitRings(
     ctx.globalAlpha = Math.max(alpha, 0.06);
     ctx.lineWidth = 0.5;
 
-    // Archimedean spiral wobble (gentle sinusoidal perturbation)
+    // Draw using isometric projection (consistent with planet placement)
     ctx.beginPath();
     const segments = 360;
     const wobbleAmp = 2.0 + i * 0.3;
     for (let s = 0; s <= segments; s++) {
       const t = (s / segments) * Math.PI * 2;
       const wobble = Math.sin(t * 3 + i) * wobbleAmp;
-      const wr = ra + wobble;
-      const x = cx + wr * Math.cos(t);
-      const y = cy - rb * Math.sin(t) * (wr / ra);  // maintain shape
-      if (s === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+      const r = ra + wobble;
+      const pt = isoCirclePoint(t, r, z3d, cx, cy);
+      if (s === 0) ctx.moveTo(pt.x, pt.y);
+      else ctx.lineTo(pt.x, pt.y);
     }
     ctx.stroke();
   }
@@ -718,6 +741,7 @@ export function drawIsoPlanet(
     ctx.save();
     ctx.lineWidth = 2;
     ctx.strokeStyle = "rgba(255, 255, 255, 0.55)";
+    ctx.shadowColor = planet.color;
     ctx.shadowBlur = 6;
     ctx.beginPath();
     ctx.arc(px, fy, r + 3.5, -Math.PI / 2, endAngle);
@@ -942,26 +966,14 @@ export function renderIsoFrame(params: IsoRenderParams): void {
 // 11. POSITION COMPUTATION
 // ═══════════════════════════════════════════════════════════════
 
-function getOrbitIndex(startTime: string, endTime: string): number {
-  const s = timeToMinutes(startTime);
-  const e = timeToMinutes(endTime);
-  const d = (e - s + 1440) % 1440;
-  if (d < 30) return 0;
-  if (d <= 60) return 1;
-  if (d <= 120) return 2;
-  if (d <= 180) return 3;
-  if (d <= 240) return 4;
-  return 5;
+function getOrbitIndexFromTimes(startTime: string, endTime: string): number {
+  const d = (timeToMinutes(endTime) - timeToMinutes(startTime) + 1440) % 1440;
+  return getOrbitRingIndex(d);
 }
 
-function getPlanetRadius(startTime: string, endTime: string): number {
-  const s = timeToMinutes(startTime);
-  const e = timeToMinutes(endTime);
-  const d = (e - s + 1440) % 1440;
-  if (d < 30) return UNIFIED_RADIUS["<30"];
-  if (d <= 60) return UNIFIED_RADIUS["30-60"];
-  if (d <= 120) return UNIFIED_RADIUS["60-120"];
-  return UNIFIED_RADIUS[">120"];
+function getPlanetRadiusFromTimes(startTime: string, endTime: string): number {
+  const d = (timeToMinutes(endTime) - timeToMinutes(startTime) + 1440) % 1440;
+  return getPlanetScreenRadius(d);
 }
 
 export function computeIsoPlanetPosition(
@@ -971,16 +983,15 @@ export function computeIsoPlanetPosition(
   dialRadius: number,
 ): IsoPlanet {
   const angle = timeToAngle(task.startTime); // 0..PI, 06:00→0, 18:00→PI
-  const orbitIdx = getOrbitIndex(task.startTime, task.endTime);
-  const bezelWidth = 4 * 3; // bezelSteps * shrinkPerStep
-  const faceRadius = dialRadius - bezelWidth;
-  const orbitR = faceRadius * 1.22 + (orbitIdx + 1) * faceRadius * 0.25 * 0.7;
-  const size = getPlanetRadius(task.startTime, task.endTime);
+  const orbitIdx = getOrbitIndexFromTimes(task.startTime, task.endTime);
+  const bezelSteps = 4;
+  const orbitR = getIsoRingRadius(dialRadius, bezelSteps, orbitIdx, angle);
+  const size = getPlanetRadiusFromTimes(task.startTime, task.endTime);
 
-  // Place planet in 3D on the XY plane at Z=0 (on the dial face)
+  // Place planet on the orbit ring at the correct angle (consistent with ring drawing)
+  const z3d = dialRadius * 0.22; // same as faceThickness
   const x3d = orbitR * Math.cos(angle);
   const y3d = orbitR * Math.sin(angle);
-  const z3d = dialRadius * 0.22; // same as faceThickness
 
   const screen = toScreen(x3d, y3d, z3d);
   const color = getTaskColor(task.type);
