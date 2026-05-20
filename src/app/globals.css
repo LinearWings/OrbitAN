@@ -1465,18 +1465,14 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 	/* ── Focus Clock — Arc Rotation + Pulse ── */
 	.l-focus-clock-svg .l-focus-arc{
-	  transform-origin:110px 110px;
-	  animation:l-focus-arc-spin 20s linear infinite,l-focus-arc-pulse 4s ease-in-out infinite;
+	  animation:l-focus-arc-pulse 4s ease-in-out infinite;
 	}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(1){animation-duration:20s,4s}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(2){animation-duration:26s,4.5s;animation-direction:reverse,normal}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(3){animation-duration:32s,5s}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(4){animation-duration:18s,3.5s;animation-direction:reverse,normal}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(5){animation-duration:36s,5.5s}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(6){animation-duration:22s,4s;animation-direction:reverse,normal}
-	@keyframes l-focus-arc-spin{
-	  to{transform:rotate(360deg)}
-	}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(1){animation-duration:4s}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(2){animation-duration:4.5s}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(3){animation-duration:5s}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(4){animation-duration:3.5s}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(5){animation-duration:5.5s}
+	.l-focus-clock-svg .l-focus-arc:nth-of-type(6){animation-duration:4s}
 	@keyframes l-focus-arc-pulse{
 	  0%,100%{opacity:.55}
 	  50%{opacity:.85}
