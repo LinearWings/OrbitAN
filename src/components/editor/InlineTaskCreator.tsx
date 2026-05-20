@@ -334,33 +334,51 @@ export default function InlineTaskCreator({
                   const sel = type === t;
                   const customDef = customTypes.find((ct) => ct.name === t);
                   const dotColor = customDef ? customDef.color : color;
+                  const isCustom = !!customDef;
                   return (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => handleTypeChange(t)}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all duration-200 flex-shrink-0"
-                      style={{
-                        background: sel ? `${dotColor}20` : "rgba(255,255,255,0.03)",
-                        border: `1px solid ${sel ? `${dotColor}50` : "rgba(255,255,255,0.06)"}`,
-                        boxShadow: sel ? `0 0 12px ${dotColor}30` : "none",
-                      }}
-                    >
-                      {/* Color dot with glow when selected */}
-                      <div
-                        className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    <div key={t} className="relative flex-shrink-0 group">
+                      <button
+                        type="button"
+                        onClick={() => handleTypeChange(t)}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all duration-200"
                         style={{
-                          backgroundColor: dotColor,
-                          boxShadow: sel ? `0 0 6px ${dotColor}` : "none",
+                          background: sel ? `${dotColor}20` : "rgba(255,255,255,0.03)",
+                          border: `1px solid ${sel ? `${dotColor}50` : "rgba(255,255,255,0.06)"}`,
+                          boxShadow: sel ? `0 0 12px ${dotColor}30` : "none",
                         }}
-                      />
-                      <span
-                        className="text-[0.6rem] font-medium whitespace-nowrap"
-                        style={{ color: sel ? dotColor : "rgba(255,255,255,0.45)" }}
                       >
-                        {label.zh}
-                      </span>
-                    </button>
+                        {/* Color dot — clickable for custom types to change color */}
+                        {isCustom ? (
+                          <label className="w-2.5 h-2.5 rounded-full flex-shrink-0 cursor-pointer" style={{ backgroundColor: dotColor, boxShadow: sel ? `0 0 6px ${dotColor}` : "none" }}>
+                            <input type="color" value={dotColor} onChange={(e) => { const updated = customTypes.map(ct => ct.name === t ? { ...ct, color: e.target.value } : ct); setCustomTypes(updated); saveCustomTypes(updated); setCustomTypeCache(updated); }} className="absolute w-0 h-0 opacity-0 pointer-events-none" />
+                          </label>
+                        ) : (
+                          <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: dotColor, boxShadow: sel ? `0 0 6px ${dotColor}` : "none" }} />
+                        )}
+                        <span className="text-[0.6rem] font-medium whitespace-nowrap" style={{ color: sel ? dotColor : "rgba(255,255,255,0.45)" }}>
+                          {label.zh}
+                        </span>
+                      </button>
+                      {/* Delete button for custom types */}
+                      {isCustom && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const updated = customTypes.filter(ct => ct.name !== t);
+                            setCustomTypes(updated);
+                            saveCustomTypes(updated);
+                            setCustomTypeCache(updated);
+                            if (type === t) handleTypeChange("work");
+                          }}
+                          className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                          style={{ fontSize: 8, lineHeight: 1 }}
+                          title={`删除 ${t}`}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
 
