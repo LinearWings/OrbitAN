@@ -12,7 +12,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 interface InlineTaskCreatorProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (task: { name: string; type: string; startTime: string; endTime: string; repeat?: RepeatMode }) => void;
+  onCreate: (task: { name: string; type: string; startTime: string; endTime: string; repeat?: RepeatMode; location?: string }) => void;
   clickPhase: "idle" | "start" | "end";
   pendingStartTime: string | null;
   pendingEndTime: string | null;
@@ -155,6 +155,7 @@ export default function InlineTaskCreator({
   const [name, setName] = useState("");
   const [type, setType] = useState("work");
   const [repeat, setRepeat] = useState<RepeatMode>("none");
+  const [location, setLocation] = useState("");
   const handleTypeChange = useCallback((t: string) => {
     setType(t);
     onTypeChange?.(t);
@@ -187,7 +188,7 @@ export default function InlineTaskCreator({
   useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setName(""); setType("work"); setRepeat("none"); setShowCustomForm(false); setNewCustomName(""); setNewCustomColor(CUSTOM_TYPE_PALETTE[0] ?? "#EC4899"); setCustomTypeError("");
+      setName(""); setType("work"); setRepeat("none"); setLocation(""); setShowCustomForm(false); setNewCustomName(""); setNewCustomColor(CUSTOM_TYPE_PALETTE[0] ?? "#EC4899"); setCustomTypeError("");
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [isOpen]);
@@ -205,7 +206,7 @@ export default function InlineTaskCreator({
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && name.trim() && effectiveStartTime && effectiveEndTime) {
-      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime, repeat });
+      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime, repeat, location: location.trim() || undefined });
     }
     if (e.key === "Escape") onClose();
   }, [name, type, effectiveStartTime, effectiveEndTime, onCreate, onClose]);
@@ -214,7 +215,7 @@ export default function InlineTaskCreator({
 
   const handleConfirm = useCallback(() => {
     if (canConfirm) {
-      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime, repeat });
+      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime, repeat, location: location.trim() || undefined });
     }
   }, [canConfirm, name, type, effectiveStartTime, effectiveEndTime, onCreate]);
 
@@ -324,6 +325,17 @@ export default function InlineTaskCreator({
                   opacity: name ? 0.8 : 0.3,
                 }}
               />
+            </div>
+
+            {/* Location input */}
+            <div className="relative">
+              <input
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="地点（可选）"
+                className="w-full bg-transparent outline-none text-white/50 placeholder-white/15 text-[0.75rem] font-satoshi py-1"
+              />
+              <div className="h-[1px] bg-white/[0.06]" />
             </div>
 
             {/* Category selector — Apple Calendar-like horizontal scrollable row */}

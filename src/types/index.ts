@@ -23,6 +23,7 @@ export interface Task {
   createdAt: string;
   method?: import("./focus").FocusMethodId;
   repeat?: RepeatMode;
+  location?: string;
 }
 
 export type TasksByDate = Record<string, Task[]>;

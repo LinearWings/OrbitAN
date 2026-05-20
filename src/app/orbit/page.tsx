@@ -376,7 +376,7 @@ export default function Home() {
     }
   }, [clickPhase]);
 
-  const handleCreateTask = useCallback((task: { name: string; type: string; startTime: string; endTime: string; repeat?: RepeatMode }) => {
+  const handleCreateTask = useCallback((task: { name: string; type: string; startTime: string; endTime: string; repeat?: RepeatMode; location?: string }) => {
     const baseTask = {
       type: task.type,
       name: task.name,
@@ -386,6 +386,7 @@ export default function Home() {
       completed: false,
       note: "",
       repeat: task.repeat,
+      location: task.location,
     };
     addTask(baseTask);
     // Create repeating instances
