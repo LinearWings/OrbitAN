@@ -147,17 +147,11 @@ export default function OrbitalLaunchWizard() {
         };
         updateTask(updated);
       } else {
-        // Enforce same-day
-        let finalEnd = endTime;
-        if (timeToMinutes(endTime) <= timeToMinutes(startTime)) {
-          const em = ((timeToMinutes(startTime) + 30) % 1440);
-          finalEnd = `${String(Math.floor(em / 60)).padStart(2, "0")}:${String(em % 60).padStart(2, "0")}`;
-        }
         const newTask: Omit<Task, "id" | "createdAt"> = {
           type,
           name,
           startTime,
-          endTime: finalEnd,
+          endTime,
           progress: 0,
           completed: false,
           note,

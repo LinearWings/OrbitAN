@@ -388,12 +388,6 @@ export default function Home() {
       note: "",
       createdAt: new Date().toISOString(),
     };
-    // Enforce same-day: if end <= start, push end to next day
-    if (timeToMinutes(task.endTime) <= timeToMinutes(task.startTime)) {
-      const em = ((timeToMinutes(task.startTime) + 30) % 1440);
-      const eh = Math.floor(em / 60), e = em % 60;
-      newTask.endTime = `${String(eh).padStart(2, "0")}:${String(e).padStart(2, "0")}`;
-    }
     addTask(newTask);
     setIsCreating(false);
     setClickPhase("idle");
@@ -453,11 +447,6 @@ export default function Home() {
       note: "",
       createdAt: new Date().toISOString(),
     };
-    if (timeToMinutes(task.endTime) <= timeToMinutes(task.startTime)) {
-      const em = ((timeToMinutes(task.startTime) + 30) % 1440);
-      const eh = Math.floor(em / 60), e = em % 60;
-      newTask.endTime = `${String(eh).padStart(2, "0")}:${String(e).padStart(2, "0")}`;
-    }
     dispatch({ type: "ADD", payload: { date: weekCreateDay, task: newTask } });
     setWeekCreateDay(null);
     setPendingWeekStartTime(null);
