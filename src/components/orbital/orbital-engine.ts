@@ -115,31 +115,6 @@ export function drawConstructivistGeometry(
   ctx.arc(cx, cy, maxRadius * 0.72 * 0.35, 0, Math.PI * 2);
   ctx.stroke();
 
-  // ── Bold diagonal composition lines ──
-  ctx.strokeStyle = CONSTRUCTIVIST_BLUE;
-  ctx.globalAlpha = CONSTRUCTIVIST_LINE_OPACITY;
-  ctx.lineWidth = 1.5;
-
-  for (let i = 0; i < CONSTRUCTIVIST_DIAG_COUNT; i++) {
-    const offset = i * (h * 0.12);
-    ctx.beginPath();
-    ctx.moveTo(0, offset);
-    ctx.lineTo(w, h + offset);
-    ctx.stroke();
-  }
-
-  // Intersecting diagonals (yellow)
-  ctx.strokeStyle = CONSTRUCTIVIST_YELLOW;
-  ctx.globalAlpha = CONSTRUCTIVIST_LINE_OPACITY * 0.8;
-
-  for (let i = 0; i < CONSTRUCTIVIST_DIAG_COUNT; i++) {
-    const offset = i * (w * 0.15);
-    ctx.beginPath();
-    ctx.moveTo(w + offset, 0);
-    ctx.lineTo(offset, h);
-    ctx.stroke();
-  }
-
   // ── Geometric rectangle block (blue) at upper-left ──
   ctx.strokeStyle = CONSTRUCTIVIST_BLUE;
   ctx.globalAlpha = CONSTRUCTIVIST_RECT_OPACITY;
@@ -183,21 +158,14 @@ export function drawClock24hTicks(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // ── Day/Night zone shading ──
-  // Day: 06:00 (right, angle 0) through 18:00 (left, angle π) — top half in display
-  // Night: 18:00 through 06:00 (next day) — bottom half
-  ctx.fillStyle = "rgba(234, 179, 8, 0.035)";
+  // ── Day/Night zone shading — smooth radial gradient ──
+  const zoneGrad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
+  zoneGrad.addColorStop(0, "rgba(37, 99, 235, 0.015)");
+  zoneGrad.addColorStop(0.5, "rgba(234, 179, 8, 0.02)");
+  zoneGrad.addColorStop(1, "rgba(37, 99, 235, 0.015)");
+  ctx.fillStyle = zoneGrad;
   ctx.beginPath();
-  ctx.moveTo(cx, cy);
-  ctx.arc(cx, cy, outerR, 0, Math.PI, false);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.fillStyle = "rgba(37, 99, 235, 0.03)";
-  ctx.beginPath();
-  ctx.moveTo(cx, cy);
-  ctx.arc(cx, cy, outerR, Math.PI, Math.PI * 2, false);
-  ctx.closePath();
+  ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
   ctx.fill();
 
   // ── Ticks and labels (three-tier hierarchy) ──
@@ -679,9 +647,15 @@ export function renderClockCanvas(
   const maxRadius = Math.min(width, height) * 0.4;
   const dialRadius = maxRadius * 0.62;
 
+  // Clip to circle for clean circular canvas
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, maxRadius * 0.98, 0, Math.PI * 2);
+  ctx.clip();
+
   const bg = ensureStaticBackground(width, height, cx, cy, maxRadius, dialRadius, dpr);
   ctx.drawImage(bg, 0, 0, width, height);
 
   drawClockHands(ctx, cx, cy, now, dialRadius);
-  drawFilmGrain(ctx, width, height, cx, cy, dpr);
+  ctx.restore();
 }
