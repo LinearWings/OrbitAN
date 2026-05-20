@@ -10,7 +10,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "OrbitAN — 轨道计划",
+  title: "OrbitAN",
   description: "A day is an orbit, focus is your gravity. Cosmic-themed daily schedule planner.",
 };
 

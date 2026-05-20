@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**OrbitAN (轨道计划)** — A cosmic-themed daily schedule planner with 6 time-management methodologies, a Canvas 2D orbital visualization, and an isometric pseudo-3D engine. Built with Next.js 16 + React 19 + TypeScript 6 + Tailwind CSS v4.
+**OrbitAN** — A cosmic-themed daily schedule planner with 6 time-management methodologies, a Canvas 2D orbital visualization, and an isometric pseudo-3D engine. Built with Next.js 16 + React 19 + TypeScript 6 + Tailwind CSS v4.
 
 ## Documentation Files
 

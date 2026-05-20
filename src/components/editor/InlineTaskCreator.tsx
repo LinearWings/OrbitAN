@@ -327,7 +327,7 @@ export default function InlineTaskCreator({
 
             {/* Category selector — Apple Calendar-like horizontal scrollable row */}
             <div>
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin" style={{ scrollbarWidth: "thin" }}>
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin" style={{ scrollbarWidth: "thin", maskImage: "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)" }}>
                 {allTypes.map((t) => {
                   const color = getTaskColor(t);
                   const label = getTaskLabel(t);

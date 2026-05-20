@@ -5,12 +5,12 @@ export const DEMO_TASKS: Task[] = [
   {
     id: "demo-1",
     type: "work",
-    name: "轨道计划前端开发",
+    name: "OrbitAN Frontend Dev",
     startTime: "09:00",
     endTime: "11:00",
     progress: 45,
     completed: false,
-    note: "完成 Canvas 轨道引擎的 4 层渲染管线",
+    note: "Complete Canvas orbital engine rendering pipeline",
     createdAt: new Date().toISOString(),
   },
   {

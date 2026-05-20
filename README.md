@@ -1,4 +1,4 @@
-# OrbitAN (轨道计划)
+# OrbitAN
 
 A cosmic-themed daily schedule planner — 24-hour orbital clock visualization, six time-management methodologies, and an isometric pseudo-3D engine. Built as a pure client-side SPA with zero external runtime dependencies.
 

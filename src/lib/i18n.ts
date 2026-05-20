@@ -2,7 +2,7 @@ export type Lang = "zh" | "en";
 
 const translations = {
   zh: {
-    siteTitle: "OrbitAN — 轨道计划",
+    siteTitle: "OrbitAN",
     siteDesc: "日程轨道管理系统。24小时径向时钟，六大方法论，聚焦块。",
     nav_docs: "Docs",
     orbit_now: "Enter Orbit",
@@ -29,7 +29,7 @@ const translations = {
     how_3_desc: "划定时间段，选择方法论。系统自动分配到合适轨道层，以方法论颜色标记。",
     how_4_title: "回顾调整",
     how_4_desc: "检查任务进度，调整计划安排，保持轨道稳定运行。",
-    footer_text: "OrbitAN · 轨道计划 · 日程轨道管理系统",
+    footer_text: "OrbitAN · Orbital Schedule System",
     footer_docs: "Docs",
     footer_launch: "启动",
     doc_title: "Docs",

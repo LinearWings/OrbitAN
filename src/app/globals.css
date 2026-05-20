@@ -114,12 +114,13 @@ body::after {
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 4px;
+  height: 3px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -767,8 +768,8 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-methods::after{
   content:"";position:absolute;inset:0;
   background:
-    linear-gradient(90deg,transparent,rgba(59,130,246,.12),rgba(99,102,241,.08),transparent) no-repeat top/100% 1px,
-    linear-gradient(90deg,transparent,rgba(59,130,246,.1),rgba(99,102,241,.06),transparent) no-repeat bottom/100% 1px;
+    linear-gradient(90deg,transparent,rgba(59,130,246,.04),rgba(99,102,241,.03),transparent) no-repeat top/100% 1px,
+    linear-gradient(90deg,transparent,rgba(59,130,246,.03),rgba(99,102,241,.02),transparent) no-repeat bottom/100% 1px;
   pointer-events:none;
 }
 .l-methods-inner{max-width:1300px;margin:0 auto;position:relative;z-index:1}
@@ -875,8 +876,8 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-focus::after{
   content:"";position:absolute;inset:0;
   background:
-    linear-gradient(90deg,transparent,rgba(245,158,11,.12),rgba(239,68,68,.06),transparent) no-repeat top/100% 1px,
-    linear-gradient(90deg,transparent,rgba(245,158,11,.1),rgba(239,68,68,.05),transparent) no-repeat bottom/100% 1px;
+    linear-gradient(90deg,transparent,rgba(245,158,11,.04),rgba(239,68,68,.02),transparent) no-repeat top/100% 1px,
+    linear-gradient(90deg,transparent,rgba(245,158,11,.03),rgba(239,68,68,.02),transparent) no-repeat bottom/100% 1px;
   pointer-events:none;
 }
 .l-focus-inner{
@@ -933,8 +934,8 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-keys-section::after{
   content:"";position:absolute;inset:0;
   background:
-    linear-gradient(90deg,transparent,rgba(59,130,246,.1),rgba(245,158,11,.08),transparent) no-repeat top/100% 1px,
-    linear-gradient(90deg,transparent,rgba(59,130,246,.08),rgba(245,158,11,.06),transparent) no-repeat bottom/100% 1px;
+    linear-gradient(90deg,transparent,rgba(59,130,246,.04),rgba(245,158,11,.03),transparent) no-repeat top/100% 1px,
+    linear-gradient(90deg,transparent,rgba(59,130,246,.03),rgba(245,158,11,.02),transparent) no-repeat bottom/100% 1px;
   pointer-events:none;
 }
 .l-keys-inner{max-width:900px;margin:0 auto;text-align:center;position:relative;z-index:1}
@@ -995,8 +996,8 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-cta::after{
   content:"";position:absolute;inset:0;
   background:
-    linear-gradient(90deg,transparent,rgba(59,130,246,.15),rgba(245,158,11,.1),rgba(99,102,241,.08),transparent) no-repeat top/100% 1px,
-    linear-gradient(90deg,transparent,rgba(59,130,246,.12),rgba(245,158,11,.08),rgba(99,102,241,.06),transparent) no-repeat bottom/100% 1px;
+    linear-gradient(90deg,transparent,rgba(59,130,246,.05),rgba(245,158,11,.04),rgba(99,102,241,.03),transparent) no-repeat top/100% 1px,
+    linear-gradient(90deg,transparent,rgba(59,130,246,.04),rgba(245,158,11,.03),rgba(99,102,241,.02),transparent) no-repeat bottom/100% 1px;
   pointer-events:none;
 }
 .l-cta-inner{display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1}
@@ -1073,19 +1074,19 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 /* ── Light Beam Track (replaces SectionArrow) ── */
 .l-beam-track{
   display:flex;align-items:center;justify-content:center;
-  padding:clamp(2.5rem,6vh,5rem) 0;overflow:hidden;
+  padding:clamp(1.5rem,4vh,3rem) 0;overflow:hidden;
   position:relative;
 }
 .l-beam-track::before{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(6,8,12,.9) 0%,transparent 35%,transparent 65%,rgba(6,8,12,.9) 100%);
+  background:linear-gradient(180deg,rgba(6,8,12,.95) 0%,transparent 40%,transparent 60%,rgba(6,8,12,.95) 100%);
   pointer-events:none;
 }
 .l-beam-track-line{
-  width:clamp(200px,60vw,800px);height:1px;
-  opacity:0.8;
-  box-shadow:0 0 12px currentColor;
-  animation:l-beam-pulse 4s ease-in-out infinite alternate;
+  width:clamp(120px,40vw,500px);height:1px;
+  opacity:0.25;
+  box-shadow:0 0 6px currentColor;
+  animation:l-beam-pulse 6s ease-in-out infinite alternate;
 }
 @keyframes l-beam-pulse{
   0%{opacity:.4;filter:blur(0px)}
@@ -1222,8 +1223,8 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	.l-engine::after{
 	  content:"";position:absolute;inset:0;
 	  background:
-	    linear-gradient(90deg,transparent,rgba(99,102,241,.15),rgba(59,130,246,.1),transparent) no-repeat top/100% 1px,
-	    linear-gradient(90deg,transparent,rgba(99,102,241,.12),rgba(59,130,246,.08),transparent) no-repeat bottom/100% 1px;
+	    linear-gradient(90deg,transparent,rgba(99,102,241,.05),rgba(59,130,246,.04),transparent) no-repeat top/100% 1px,
+	    linear-gradient(90deg,transparent,rgba(99,102,241,.04),rgba(59,130,246,.03),transparent) no-repeat bottom/100% 1px;
 	  pointer-events:none;
 	}
 	.l-engine-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
