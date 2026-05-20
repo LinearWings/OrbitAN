@@ -111,6 +111,8 @@ const translations = {
     orbit_hint_scroll: "滚轮",
     orbit_hint_zoom: "缩放",
     orbit_hint_click_date: "点击日期 → 日视图",
+    orbit_week_pick_start: "点击时间轴选择起点",
+    orbit_week_pick_end: "点击时间轴选择终点",
   },
   en: {
     siteTitle: "OrbitAN — Orbital Planning",
@@ -222,6 +224,8 @@ const translations = {
     orbit_hint_scroll: "Scroll",
     orbit_hint_zoom: "Zoom",
     orbit_hint_click_date: "Click date → Day view",
+    orbit_week_pick_start: "Click timeline to set start",
+    orbit_week_pick_end: "Click timeline to set end",
   },
 } as const;
 

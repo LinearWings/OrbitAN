@@ -334,6 +334,10 @@ export default function Home() {
 
   // Week view inline creation state
   const [weekCreateDay, setWeekCreateDay] = useState<string | null>(null);
+  const [weekCreatePhase, setWeekCreatePhase] = useState<"idle" | "start" | "end">("idle");
+  const [pendingWeekStartTime, setPendingWeekStartTime] = useState<string | null>(null);
+  const [pendingWeekEndTime, setPendingWeekEndTime] = useState<string | null>(null);
+  const [pendingWeekDate, setPendingWeekDate] = useState<string | null>(null);
 
   const handleStartCreate = useCallback(() => {
     setIsCreating(true);
@@ -392,9 +396,40 @@ export default function Home() {
     setPendingEndTime(null);
   }, [addTask]);
 
-  // Week view: start inline creation for a specific day
+  // Week view: start inline creation for a specific day (from "+" button)
   const handleWeekCreateInline = useCallback((date: string) => {
     setWeekCreateDay(date);
+  }, []);
+
+  // Week view: start timeline creation mode (click on grid to select times)
+  const handleWeekTimelineCreate = useCallback(() => {
+    setWeekCreatePhase("start");
+    setPendingWeekStartTime(null);
+    setPendingWeekEndTime(null);
+    setPendingWeekDate(null);
+  }, []);
+
+  // Week view: handle time selection on grid
+  const handleWeekTimeSelect = useCallback((date: string, time: string) => {
+    if (weekCreatePhase === "start") {
+      setPendingWeekStartTime(time);
+      setPendingWeekDate(date);
+      setWeekCreatePhase("end");
+    } else if (weekCreatePhase === "end") {
+      setPendingWeekEndTime(time);
+      setWeekCreatePhase("idle");
+      // Open the detail panel
+      setWeekCreateDay(date);
+    }
+  }, [weekCreatePhase]);
+
+  // Cancel week timeline creation
+  const handleCancelWeekTimeline = useCallback(() => {
+    setWeekCreatePhase("idle");
+    setPendingWeekStartTime(null);
+    setPendingWeekEndTime(null);
+    setPendingWeekDate(null);
+    setWeekCreateDay(null);
   }, []);
 
   // Week view: create task on the selected day
@@ -861,6 +896,11 @@ export default function Home() {
                 }}
                 onDeleteStart={handleDeleteStart}
                 deleteHighlight={deleteTarget}
+                weekCreatePhase={weekCreatePhase}
+                pendingWeekStartTime={pendingWeekStartTime}
+                pendingWeekEndTime={pendingWeekEndTime}
+                pendingWeekDate={pendingWeekDate}
+                onWeekTimeSelect={handleWeekTimeSelect}
               />
               <FocusTimelineOverlay
                 isOrbitMode={isOrbitModeOpen}
@@ -980,14 +1020,18 @@ export default function Home() {
           {viewMode === "week" && !isOrbitModeOpen && (
             <>
               <button
-                onClick={() => handleWeekCreateInline(state.currentDate)}
-                className="flex items-center gap-2 rounded-xl bg-white/[0.06] px-4 py-2 text-sm font-medium text-white/75 transition-all hover:bg-white/[0.12] hover:text-white"
+                onClick={weekCreatePhase !== "idle" ? handleCancelWeekTimeline : handleWeekTimelineCreate}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all ${
+                  weekCreatePhase !== "idle"
+                    ? "bg-amber-500/15 text-amber-300/80"
+                    : "bg-white/[0.06] text-white/75 hover:bg-white/[0.12] hover:text-white"
+                }`}
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
                   <line x1="7" y1="1" x2="7" y2="13" />
                   <line x1="1" y1="7" x2="13" y2="7" />
                 </svg>
-                <span>{t.orbit_new_task}</span>
+                <span>{weekCreatePhase === "idle" ? t.orbit_new_task : weekCreatePhase === "start" ? t.orbit_pick_start : t.orbit_pick_end}</span>
               </button>
               <div className="h-5 w-[1px] bg-white/8" />
             </>
@@ -1094,6 +1138,10 @@ export default function Home() {
             <HintKbd>O</HintKbd> Orbit<span className="text-white/8 mx-0.5">·</span>
             <HintKbd>⇧</HintKbd><HintKbd>L</HintKbd> {t.orbit_arrange}
           </span>
+        ) : viewMode === "week" && weekCreatePhase !== "idle" ? (
+          <span className="text-[0.55rem] text-amber-300/50">
+            {weekCreatePhase === "start" ? t.orbit_week_pick_start : t.orbit_week_pick_end}
+          </span>
         ) : viewMode === "week" ? (
           <span className="text-[0.55rem] text-white/20">
             <MouseScrollIcon size={13} className="inline-block opacity-40" /> {t.orbit_hint_scroll}<span className="text-white/8 mx-0.5">·</span>
@@ -1194,11 +1242,11 @@ export default function Home() {
     {/* Week view inline creation */}
     <InlineTaskCreator
       isOpen={weekCreateDay !== null}
-      onClose={() => setWeekCreateDay(null)}
+      onClose={handleCancelWeekTimeline}
       onCreate={handleCreateTaskForWeek}
       clickPhase="idle"
-      pendingStartTime={null}
-      pendingEndTime={null}
+      pendingStartTime={pendingWeekStartTime}
+      pendingEndTime={pendingWeekEndTime}
       onNudgeTime={() => {}}
     />
     <EditPanel />

@@ -25,6 +25,12 @@ interface WeekGridViewProps {
   onOpenMethodology?: (methodId: FocusMethodId) => void;
   onDeleteStart?: (id: string, type: "task" | "focus", x: number, y: number) => void;
   deleteHighlight?: { id: string; type: "task" | "focus" } | null;
+  // Week inline creation
+  weekCreatePhase?: "idle" | "start" | "end";
+  pendingWeekStartTime?: string | null;
+  pendingWeekEndTime?: string | null;
+  pendingWeekDate?: string | null;
+  onWeekTimeSelect?: (date: string, time: string) => void;
 }
 
 interface TimedLayoutItem {
@@ -71,7 +77,7 @@ function assignConflictLanes<T extends TimedLayoutItem>(items: T[]): T[] {
   return sorted;
 }
 
-export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight }: WeekGridViewProps) {
+export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight, weekCreatePhase, pendingWeekStartTime, pendingWeekEndTime, pendingWeekDate, onWeekTimeSelect }: WeekGridViewProps) {
   const { state } = useAppContext();
   const today = getToday();
   const [zoomPx, setZoomPx] = useState(DEFAULT_PX);
@@ -258,7 +264,25 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
       </div>
 
       {/* BODY — scrollable */}
-      <div data-week-scroll style={{ flex: 1, position: "relative", overflowY: "auto", overflowX: "hidden" }}>
+      <div data-week-scroll style={{ flex: 1, position: "relative", overflowY: "auto", overflowX: "hidden", cursor: weekCreatePhase && weekCreatePhase !== "idle" ? "crosshair" : undefined }}
+        onClick={onWeekTimeSelect && weekCreatePhase && weekCreatePhase !== "idle" ? (e) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const scrollTop = e.currentTarget.scrollTop;
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top + scrollTop;
+          // Calculate day column (grid: 36px + 7 equal columns)
+          const gridWidth = rect.width - 36;
+          const colWidth = gridWidth / 7;
+          const dayIndex = Math.min(6, Math.max(0, Math.floor((x - 36) / colWidth)));
+          // Calculate time from Y position
+          const totalMinutes = (y / (TOTAL_HOURS * zoomPx)) * TOTAL_HOURS * 60;
+          const snappedMinutes = Math.round(totalMinutes / 15) * 15;
+          const hh = Math.floor(snappedMinutes / 60) % 24;
+          const mm = snappedMinutes % 60;
+          const time = `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+          onWeekTimeSelect(week[dayIndex], time);
+        } : undefined}
+      >
         {/* Scrollable inner container with min-height so there's always content to scroll */}
         <div style={{ position: "relative", height: `${TOTAL_HOURS * zoomPx}px` }}>
           {/* Grid background — absolute fills the inner container */}
@@ -300,6 +324,34 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
               );
             })}
           </div>
+
+        {/* Week creation time indicator */}
+        {weekCreatePhase && weekCreatePhase !== "idle" && pendingWeekStartTime && pendingWeekDate && (() => {
+          const PX_PER_MIN = zoomPx / 60;
+          const startMin = timeToMinutes(pendingWeekStartTime);
+          const dayIndex = week.indexOf(pendingWeekDate);
+          if (dayIndex < 0) return null;
+          const topPx = startMin * PX_PER_MIN;
+          return (
+            <div style={{
+              position: "absolute",
+              left: `calc(36px + (100% - 36px) / 7 * ${dayIndex} + 2px)`,
+              top: `${topPx}px`,
+              width: `calc((100% - 36px) / 7 - 3px)`,
+              height: 2,
+              background: "#F59E0B",
+              boxShadow: "0 0 8px rgba(245,158,11,0.4)",
+              zIndex: 20,
+              pointerEvents: "none",
+            }}>
+              <span style={{
+                position: "absolute", left: 0, top: -16,
+                fontSize: 10, fontFamily: "'JetBrains Mono',monospace",
+                color: "#F59E0B", whiteSpace: "nowrap",
+              }}>{pendingWeekStartTime}</span>
+            </div>
+          );
+        })()}
 
         {/* Task blocks — independent lane layout, tasks don't overlap each other */}
         {taskLayouts.map((group, di) =>
