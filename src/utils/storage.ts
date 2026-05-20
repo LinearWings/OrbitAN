@@ -2,6 +2,7 @@ import type {
   TasksByDate,
   Task,
   CustomTypeDef,
+  DailyReminder,
   GTDItem,
   ParetoItem,
   MoffattSession,
@@ -147,4 +148,21 @@ export function saveFocusBlocks(blocks: FocusBlocksByDate): void {
   if (typeof window === "undefined") return;
   try { localStorage.setItem(FOCUS_STORAGE_KEY, JSON.stringify(blocks)); }
   catch (e) { console.error("[OrbitAN] Failed to save focus blocks (quota exceeded?):", e); }
+}
+
+// ── Daily Reminders ──
+const REMINDERS_KEY = "orbital_reminders_v1";
+
+export function loadReminders(): Record<string, DailyReminder[]> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(REMINDERS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+export function saveReminders(reminders: Record<string, DailyReminder[]>): void {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(REMINDERS_KEY, JSON.stringify(reminders)); }
+  catch (e) { console.error("[OrbitAN] Failed to save reminders:", e); }
 }

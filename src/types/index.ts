@@ -11,6 +11,16 @@ export interface CustomTypeDef {
 
 export type RepeatMode = "none" | "daily" | "weekly" | "weekdays";
 
+export interface DailyReminder {
+  id: string;
+  name: string;
+  done: boolean;
+  estimatedDuration?: number; // minutes
+  tag?: string; // task type for color
+  date: string; // YYYY-MM-DD
+  createdAt: string;
+}
+
 export interface Task {
   id: string;
   type: string;
@@ -39,6 +49,7 @@ export interface AppState {
   isDeleteConfirmOpen: boolean;
   isOrbitModeOpen: boolean;
   focusBlocks: Record<string, import("./focus").FocusBlock[]>;
+  dailyReminders: Record<string, DailyReminder[]>;
 }
 
 export type AppAction =
@@ -60,7 +71,12 @@ export type AppAction =
   | { type: "UPDATE_FOCUS_BLOCK"; payload: { date: string; block: import("./focus").FocusBlock } }
   | { type: "DELETE_FOCUS_BLOCK"; payload: { date: string; id: string } }
   | { type: "SET_FOCUS_BLOCK_STATUS"; payload: { date: string; id: string; status: import("./focus").FocusBlockStatus } }
-  | { type: "LOAD_FOCUS"; payload: import("./focus").FocusBlocksByDate };
+  | { type: "LOAD_FOCUS"; payload: import("./focus").FocusBlocksByDate }
+  | { type: "LOAD_REMINDERS"; payload: Record<string, DailyReminder[]> }
+  | { type: "ADD_REMINDER"; payload: { date: string; reminder: DailyReminder } }
+  | { type: "TOGGLE_REMINDER"; payload: { date: string; id: string } }
+  | { type: "DELETE_REMINDER"; payload: { date: string; id: string } }
+  | { type: "UPDATE_REMINDER"; payload: { date: string; id: string; updates: Partial<Pick<DailyReminder, "name" | "tag" | "estimatedDuration">> } };
 
 export interface CometPosition {
   tailX: number;

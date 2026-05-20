@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import type { AppState, AppAction } from "@/types";
-import { loadTasks, saveTasks, loadCustomTypes } from "@/utils/storage";
+import { loadTasks, saveTasks, loadCustomTypes, loadReminders, saveReminders } from "@/utils/storage";
 import { loadFocusBlocks, saveFocusBlocks } from "@/utils/storage";
 import { setCustomTypeCache } from "@/utils/colors";
 import { getToday } from "@/utils/time";
@@ -26,6 +26,7 @@ const initialState: AppState = {
   isDeleteConfirmOpen: false,
   isOrbitModeOpen: false,
   focusBlocks: {},
+  dailyReminders: {},
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -139,6 +140,35 @@ function appReducer(state: AppState, action: AppAction): AppState {
       fb[action.payload.date] = arr;
       return { ...state, focusBlocks: fb };
     }
+    case "LOAD_REMINDERS":
+      return { ...state, dailyReminders: action.payload };
+    case "ADD_REMINDER": {
+      const rm = { ...state.dailyReminders };
+      rm[action.payload.date] = [...(rm[action.payload.date] ?? []), action.payload.reminder];
+      return { ...state, dailyReminders: rm };
+    }
+    case "TOGGLE_REMINDER": {
+      const rm = { ...state.dailyReminders };
+      const arr = [...(rm[action.payload.date] ?? [])];
+      const idx = arr.findIndex((r) => r.id === action.payload.id);
+      if (idx !== -1) arr[idx] = { ...arr[idx]!, done: !arr[idx]!.done };
+      rm[action.payload.date] = arr;
+      return { ...state, dailyReminders: rm };
+    }
+    case "DELETE_REMINDER": {
+      const rm = { ...state.dailyReminders };
+      rm[action.payload.date] = (rm[action.payload.date] ?? []).filter((r) => r.id !== action.payload.id);
+      if (rm[action.payload.date]!.length === 0) delete rm[action.payload.date];
+      return { ...state, dailyReminders: rm };
+    }
+    case "UPDATE_REMINDER": {
+      const rm = { ...state.dailyReminders };
+      const arr = [...(rm[action.payload.date] ?? [])];
+      const idx = arr.findIndex((r) => r.id === action.payload.id);
+      if (idx !== -1) arr[idx] = { ...arr[idx]!, ...action.payload.updates };
+      rm[action.payload.date] = arr;
+      return { ...state, dailyReminders: rm };
+    }
     default:
       return state;
   }
@@ -162,6 +192,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (Object.keys(storedFocus).length > 0) {
       dispatch({ type: "LOAD_FOCUS", payload: storedFocus });
     }
+    dispatch({ type: "LOAD_REMINDERS", payload: loadReminders() });
     // Sync custom type colors to the global cache for getTaskColor()
     setCustomTypeCache(loadCustomTypes());
   }, []);
@@ -177,6 +208,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (isFirstFocusRender.current) { isFirstFocusRender.current = false; return; }
     saveFocusBlocks(state.focusBlocks);
   }, [state.focusBlocks]);
+
+  const isFirstReminderRender = useRef(true);
+  useEffect(() => {
+    if (isFirstReminderRender.current) { isFirstReminderRender.current = false; return; }
+    saveReminders(state.dailyReminders);
+  }, [state.dailyReminders]);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>

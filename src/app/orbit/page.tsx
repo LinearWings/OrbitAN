@@ -14,6 +14,7 @@ import type { CardPosition } from "@/components/schedule/ScheduleItem";
 import LegendBar from "@/components/layout/LegendBar";
 import EditPanel from "@/components/editor/EditPanel";
 import InlineTaskCreator from "@/components/editor/InlineTaskCreator";
+import DailyReminderList from "@/components/schedule/DailyReminderList";
 import DeleteBubble from "@/components/editor/DeleteBubble";
 import OrbitModeTransition from "@/components/orbital/OrbitModeTransition";
 import FocusTimelineOverlay from "@/components/focus/FocusTimelineOverlay";
@@ -932,6 +933,15 @@ export default function Home() {
           ) : (
             <MonthGridView onDayClick={navigateToDay} />
           )}
+        </div>
+      )}
+
+      {/* Daily Reminders — below clock, above schedule cards */}
+      {viewMode === "day" && (
+        <div className={`relative z-10 mx-auto ${isMobile ? 'w-full px-4' : 'w-[min(62vw,68vh)]'}`}
+          style={{ marginTop: isMobile ? "0.25rem" : "max(0.5rem, 1vh)" }}
+        >
+          <DailyReminderList isOrbitMode={isOrbitModeOpen} />
         </div>
       )}
 
