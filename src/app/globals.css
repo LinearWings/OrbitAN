@@ -1103,6 +1103,10 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 /* ── Cinematic Reveal ── */
 .cinematic-fade{
+  opacity:0;
+  transform:translateY(40px);
+}
+.l-hero-v2.cinematic-fade{
   opacity:1;
   transform:none;
 }
