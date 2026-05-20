@@ -325,31 +325,37 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
             })}
           </div>
 
-        {/* Week creation time indicator */}
-        {weekCreatePhase && weekCreatePhase !== "idle" && pendingWeekStartTime && pendingWeekDate && (() => {
+        {/* Week creation time indicators — visible during creation AND while panel is open */}
+        {pendingWeekStartTime && pendingWeekDate && (() => {
           const PX_PER_MIN = zoomPx / 60;
           const startMin = timeToMinutes(pendingWeekStartTime);
           const dayIndex = week.indexOf(pendingWeekDate);
           if (dayIndex < 0) return null;
-          const topPx = startMin * PX_PER_MIN;
+          const left = `calc(36px + (100% - 36px) / 7 * ${dayIndex} + 2px)`;
+          const width = `calc((100% - 36px) / 7 - 3px)`;
           return (
-            <div style={{
-              position: "absolute",
-              left: `calc(36px + (100% - 36px) / 7 * ${dayIndex} + 2px)`,
-              top: `${topPx}px`,
-              width: `calc((100% - 36px) / 7 - 3px)`,
-              height: 2,
-              background: "#F59E0B",
-              boxShadow: "0 0 8px rgba(245,158,11,0.4)",
-              zIndex: 20,
-              pointerEvents: "none",
-            }}>
-              <span style={{
-                position: "absolute", left: 0, top: -16,
-                fontSize: 10, fontFamily: "'JetBrains Mono',monospace",
-                color: "#F59E0B", whiteSpace: "nowrap",
-              }}>{pendingWeekStartTime}</span>
-            </div>
+            <>
+              {/* Start time line */}
+              <div style={{ position: "absolute", left, top: `${startMin * PX_PER_MIN}px`, width, height: 2, background: "#F59E0B", boxShadow: "0 0 8px rgba(245,158,11,0.4)", zIndex: 20, pointerEvents: "none" }}>
+                <span style={{ position: "absolute", left: 0, top: -16, fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: "#F59E0B", whiteSpace: "nowrap" }}>{pendingWeekStartTime}</span>
+              </div>
+              {/* End time line */}
+              {pendingWeekEndTime && (() => {
+                const endMin = timeToMinutes(pendingWeekEndTime);
+                const topPx = endMin * PX_PER_MIN;
+                const rangeHeight = Math.max(2, (endMin - startMin) * PX_PER_MIN);
+                return (
+                  <>
+                    {/* Range fill between start and end */}
+                    <div style={{ position: "absolute", left, top: `${startMin * PX_PER_MIN}px`, width, height: `${rangeHeight}px`, background: "rgba(245,158,11,0.08)", zIndex: 19, pointerEvents: "none" }} />
+                    {/* End time line */}
+                    <div style={{ position: "absolute", left, top: `${topPx}px`, width, height: 2, background: "#3B82F6", boxShadow: "0 0 8px rgba(59,130,246,0.4)", zIndex: 20, pointerEvents: "none" }}>
+                      <span style={{ position: "absolute", left: 0, top: 4, fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: "#3B82F6", whiteSpace: "nowrap" }}>{pendingWeekEndTime}</span>
+                    </div>
+                  </>
+                );
+              })()}
+            </>
           );
         })()}
 

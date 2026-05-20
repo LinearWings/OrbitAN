@@ -417,9 +417,10 @@ export default function Home() {
       setWeekCreatePhase("end");
     } else if (weekCreatePhase === "end") {
       setPendingWeekEndTime(time);
+      setPendingWeekDate(date);
       setWeekCreatePhase("idle");
-      // Open the detail panel
-      setWeekCreateDay(date);
+      // Open detail panel after state settles
+      setTimeout(() => setWeekCreateDay(date), 0);
     }
   }, [weekCreatePhase]);
 
@@ -453,6 +454,10 @@ export default function Home() {
     }
     dispatch({ type: "ADD", payload: { date: weekCreateDay, task: newTask } });
     setWeekCreateDay(null);
+    setPendingWeekStartTime(null);
+    setPendingWeekEndTime(null);
+    setPendingWeekDate(null);
+    setWeekCreatePhase("idle");
   }, [weekCreateDay, dispatch]);
 
   const handleNudgeTime = useCallback((field: "start" | "end", delta: number) => {
