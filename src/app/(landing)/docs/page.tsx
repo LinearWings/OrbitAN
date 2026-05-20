@@ -10,6 +10,7 @@ export default function DocsPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-8 py-16">
+      <Link href="/" className="text-xs text-white/20 hover:text-white/40 transition-colors mb-8 inline-block">← {lang === "zh" ? "返回首页" : "Back to Home"}</Link>
       <h1 className="text-4xl font-semibold tracking-tight mb-4 text-white/85" style={{ fontFamily: "'Clash Display', sans-serif" }}>
         {t.doc_title}
       </h1>
