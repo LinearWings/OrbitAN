@@ -546,6 +546,12 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   backdrop-filter:blur(12px);
   border-bottom:1px solid rgba(255,255,255,.04);
 }
+@media(max-width:768px){
+  .l-nav{padding:5px 1rem;gap:6px}
+  .l-nav-tagline{display:none!important}
+  .l-nav-actions{gap:6px}
+  .l-nav-btn{padding:4px 10px;font-size:0.7rem}
+}
 .l-nav-logo{
   font-family:"Clash Display",sans-serif;font-size:1.125rem;font-weight:600;
   color:#fff;text-decoration:none;letter-spacing:.04em;
@@ -594,10 +600,13 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   display:flex;flex-direction:column;align-items:center;
   pointer-events:none;
 }
+@media(max-width:768px){
+  .l-hero-v2-content{top:52%;width:90%}
+}
 .l-hero-v2-content .l-hero-btn,
 .l-hero-v2-content a{pointer-events:auto}
 /* ── OrbitAN Logo ── */
-	.l-logo-hero{width:clamp(520px,75vw,950px)}
+	.l-logo-hero{width:clamp(280px,75vw,950px)}
 	.l-logo-nav{width:clamp(200px,30vw,340px);flex-shrink:0}
 	.l-logo-svg{display:block}
 
