@@ -259,14 +259,14 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
         )}
 
         {/* Meta row: duration · type · end time */}
-        <div className={`font-satoshi text-[0.6875rem] leading-normal mt-1 flex items-center gap-x-1.5 transition-colors duration-300 ${isSelected ? "text-white/25" : "text-white/16 group-hover:text-white/22"}`}>
+        <div className={`font-satoshi text-[0.75rem] sm:text-[0.6875rem] leading-normal mt-1 flex items-center gap-x-1.5 transition-colors duration-300 ${isSelected ? "text-white/25" : "text-white/16 group-hover:text-white/22"}`}>
           <span>{duration}min</span>
           <span className="text-white/8">·</span>
           <span>{lang === "en" ? getTaskLabel(task.type).en : getTaskLabel(task.type).zh}</span>
           <span className="text-white/8">·</span>
           {editing === "end" ? (
             <span className="relative inline-block">
-              <span className="font-mono text-[0.6875rem] text-white/80">{editValue}</span>
+              <span className="font-mono text-[0.75rem] sm:text-[0.6875rem] text-white/80">{editValue}</span>
               <TimePicker
                 value={editValue}
                 onChange={setEditValue}

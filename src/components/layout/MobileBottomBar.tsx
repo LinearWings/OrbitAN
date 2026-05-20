@@ -60,7 +60,7 @@ export default function MobileBottomBar({
             <button
               key={key}
               onClick={() => onFilterChange(key)}
-              className="shrink-0 rounded-full px-3 py-1 text-[0.65rem] font-medium transition-all"
+              className="shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-all"
               style={{
                 background: activeFilter === key ? `${color}20` : "rgba(255,255,255,0.04)",
                 border: activeFilter === key ? `1px solid ${color}40` : "1px solid rgba(255,255,255,0.06)",
@@ -124,7 +124,7 @@ export default function MobileBottomBar({
 
         <button
           onClick={onAutoArrange}
-          className="flex items-center justify-center w-10 h-10 rounded-xl transition-all shrink-0"
+          className="flex items-center justify-center w-11 h-11 rounded-xl transition-all shrink-0"
           style={{
             background: "rgba(255,255,255,0.04)",
             border: "1px solid rgba(255,255,255,0.06)",

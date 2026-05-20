@@ -87,6 +87,7 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
   const [hoverY, setHoverY] = useState<number | null>(null);
   const [hoverDayIndex, setHoverDayIndex] = useState<number | null>(null);
   const isCreatingMode = weekCreatePhase && weekCreatePhase !== "idle";
+  const longPressRef = useRef(false);
   const week = useMemo(() => getWeekDates(state.currentDate), [state.currentDate]);
   const now = new Date();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -290,7 +291,7 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
                 return (
                   <div key={h} style={{ position: "absolute", left: 0, right: 0, top: `${(h / TOTAL_HOURS) * 100}%`, textAlign: "right", paddingRight: 8, transform: "translateY(-100%)" }}>
                     {showLabel && (
-                      <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: "rgba(255,255,255,0.15)", lineHeight: 1, letterSpacing: "-0.02em" }}>
+                      <span style={{ fontSize: isMobile ? 12 : 11, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: "rgba(255,255,255,0.15)", lineHeight: 1, letterSpacing: "-0.02em" }}>
                         {String(hour).padStart(2, "0")}
                       </span>
                     )}
@@ -390,13 +391,18 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
               title={`${t.name}  ${t.startTime}–${t.endTime}`}
               onPointerDown={onDeleteStart && !isOrbitMode ? (e) => {
                 if (e.button !== 0 || e.shiftKey) return;
+                longPressRef.current = false;
                 const el = e.currentTarget as HTMLElement;
-                const timer = setTimeout(() => onDeleteStart(t.taskId, "task", e.clientX, e.clientY), 600);
+                const timer = setTimeout(() => {
+                  longPressRef.current = true;
+                  onDeleteStart(t.taskId, "task", e.clientX, e.clientY);
+                }, 600);
                 const clear = () => { clearTimeout(timer); el.removeEventListener("pointerup", clear); el.removeEventListener("pointerleave", clear); };
                 el.addEventListener("pointerup", clear);
                 el.addEventListener("pointerleave", clear);
               } : undefined}
               onClick={() => {
+                if (longPressRef.current) { longPressRef.current = false; return; }
                 if (isOrbitMode) return;
                 if (deleteHighlight) return;
                 if (isCreatingMode) return;
@@ -429,11 +435,11 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
             >
               {t.heightPx > 22 ? (
                 <div style={{ padding: "3px 6px" }}>
-                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 500, color: `${t.color}c0`, lineHeight: 1.3, letterSpacing: "-0.02em" }}>{t.startTime}–{t.endTime}</div>
-                  <div style={{ fontSize: 11, lineHeight: 1.3, color: "rgba(255,255,255,0.8)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 1, fontWeight: 500 }}>{t.name}</div>
+                  <div style={{ fontSize: isMobile ? 11 : 10, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 500, color: `${t.color}c0`, lineHeight: 1.3, letterSpacing: "-0.02em" }}>{t.startTime}–{t.endTime}</div>
+                  <div style={{ fontSize: isMobile ? 12 : 11, lineHeight: 1.3, color: "rgba(255,255,255,0.8)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 1, fontWeight: 500 }}>{t.name}</div>
                 </div>
               ) : (
-                <div style={{ padding: "1px 5px", fontSize: 10, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: `${t.color}c0`, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{t.startTime}–{t.endTime}</div>
+                <div style={{ padding: "1px 5px", fontSize: isMobile ? 11 : 10, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: `${t.color}c0`, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{t.startTime}–{t.endTime}</div>
               )}
             </div>
           ))
@@ -489,7 +495,7 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
           {allTypes.map((type) => (
             <div key={type} style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <div style={{ width: 7, height: 7, borderRadius: "50%", background: getTaskColor(type), flexShrink: 0, opacity: 0.7 }} />
-              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontFamily: "'Inter','Microsoft YaHei',sans-serif" }}>{getTaskLabel(type).zh}</span>
+              <span style={{ fontSize: isMobile ? 12 : 11, color: "rgba(255,255,255,0.3)", fontFamily: "'Inter','Microsoft YaHei',sans-serif" }}>{getTaskLabel(type).zh}</span>
             </div>
           ))}
         </div>

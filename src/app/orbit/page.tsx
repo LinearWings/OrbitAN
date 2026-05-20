@@ -818,7 +818,7 @@ export default function Home() {
     <>
     <main className="relative flex h-dvh w-full flex-col overflow-hidden">
       {!isTouchDevice && <OrbitalCursor />}
-      {viewMode === "day" && !isMobile && !isTouchDevice && <ConnectorArrows />}
+      {viewMode === "day" && !(isMobile && isTouchDevice) && <ConnectorArrows />}
       {!isTouchDevice && <NoiseOverlay />}
       <TitleHeader onOpenDocs={() => setIsDocsOverlayOpen(true)} />
       <DateNav />
@@ -965,30 +965,52 @@ export default function Home() {
                 <div
                   key={task.id}
                   className={isMobile ? "swipe-delete-target" : undefined}
-                  {...(isMobile ? {
-                    onTouchStart: (e: React.TouchEvent) => {
-                      if (e.touches.length !== 1) return;
-                      swipeStartRef.current.set(task.id, {
-                        x: e.touches[0]!.clientX,
-                        y: e.touches[0]!.clientY,
-                      });
-                    },
-                    onTouchEnd: (e: React.TouchEvent) => {
-                      if (e.changedTouches.length !== 1) return;
-                      const start = swipeStartRef.current.get(task.id);
-                      if (!start) return;
-                      swipeStartRef.current.delete(task.id);
-                      const dx = e.changedTouches[0]!.clientX - start.x;
-                      const dy = e.changedTouches[0]!.clientY - start.y;
-                      // Swipe left: trigger delete
-                      if (dx < -70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-                        const el = e.currentTarget as HTMLElement;
-                        const rect = el.getBoundingClientRect();
-                        navigator.vibrate?.(10);
-                        handleDeleteStart(task.id, "task", rect.left + rect.width, rect.top + rect.height / 2);
-                      }
-                    },
-                  } : {
+                  {...(isMobile ? (() => {
+                    let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+                    let longPressFired = false;
+                    return {
+                      onTouchStart: (e: React.TouchEvent) => {
+                        if (e.touches.length !== 1) return;
+                        longPressFired = false;
+                        const touch = e.touches[0]!;
+                        swipeStartRef.current.set(task.id, { x: touch.clientX, y: touch.clientY });
+                        longPressTimer = setTimeout(() => {
+                          longPressFired = true;
+                          const el = e.currentTarget as HTMLElement;
+                          const rect = el.getBoundingClientRect();
+                          navigator.vibrate?.(10);
+                          handleDeleteStart(task.id, "task", rect.left + rect.width, rect.top + rect.height / 2);
+                        }, 500);
+                      },
+                      onTouchMove: (e: React.TouchEvent) => {
+                        if (!longPressTimer) return;
+                        const start = swipeStartRef.current.get(task.id);
+                        if (!start) return;
+                        const dx = Math.abs(e.touches[0]!.clientX - start.x);
+                        const dy = Math.abs(e.touches[0]!.clientY - start.y);
+                        if (dx > 10 || dy > 10) {
+                          clearTimeout(longPressTimer);
+                          longPressTimer = null;
+                        }
+                      },
+                      onTouchEnd: (e: React.TouchEvent) => {
+                        if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+                        if (longPressFired) return;
+                        if (e.changedTouches.length !== 1) return;
+                        const start = swipeStartRef.current.get(task.id);
+                        if (!start) return;
+                        swipeStartRef.current.delete(task.id);
+                        const dx = e.changedTouches[0]!.clientX - start.x;
+                        const dy = e.changedTouches[0]!.clientY - start.y;
+                        if (dx < -70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                          const el = e.currentTarget as HTMLElement;
+                          const rect = el.getBoundingClientRect();
+                          navigator.vibrate?.(10);
+                          handleDeleteStart(task.id, "task", rect.left + rect.width, rect.top + rect.height / 2);
+                        }
+                      },
+                    };
+                  })() : {
                     onPointerDown: (e: React.PointerEvent) => {
                       if (e.pointerType !== "mouse" || e.button !== 0 || e.shiftKey) return;
                       const el = e.currentTarget;
