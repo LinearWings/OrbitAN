@@ -307,7 +307,7 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
             <div key={t.taskId}
               data-task-id={t.taskId}
               title={`${t.name}  ${t.startTime}–${t.endTime}`}
-              onPointerDown={onDeleteStart ? (e) => {
+              onPointerDown={onDeleteStart && !isOrbitMode ? (e) => {
                 if (e.button !== 0 || e.shiftKey) return;
                 const el = e.currentTarget as HTMLElement;
                 const timer = setTimeout(() => onDeleteStart(t.taskId, "task", e.clientX, e.clientY), 600);
@@ -347,11 +347,11 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
             >
               {t.heightPx > 22 ? (
                 <div style={{ padding: "3px 6px" }}>
-                  <div style={{ fontSize: 11, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 500, color: `${t.color}c0`, lineHeight: 1.3, letterSpacing: "-0.02em" }}>{t.startTime}</div>
+                  <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 500, color: `${t.color}c0`, lineHeight: 1.3, letterSpacing: "-0.02em" }}>{t.startTime}–{t.endTime}</div>
                   <div style={{ fontSize: 11, lineHeight: 1.3, color: "rgba(255,255,255,0.8)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 1, fontWeight: 500 }}>{t.name}</div>
                 </div>
               ) : (
-                <div style={{ padding: "1px 5px", fontSize: 11, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: `${t.color}c0`, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{t.startTime}</div>
+                <div style={{ padding: "1px 5px", fontSize: 10, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: `${t.color}c0`, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{t.startTime}–{t.endTime}</div>
               )}
             </div>
           ))
@@ -362,7 +362,7 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
           group.map((f, bi) => (
             <div
               key={f.block.id}
-              onPointerDown={onDeleteStart ? (e) => {
+              onPointerDown={onDeleteStart && isOrbitMode ? (e) => {
                 if (e.button !== 0 || e.shiftKey) return;
                 const el = e.currentTarget as HTMLElement;
                 const timer = setTimeout(() => onDeleteStart(f.block.id, "focus", e.clientX, e.clientY), 600);

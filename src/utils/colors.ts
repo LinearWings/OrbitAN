@@ -1,5 +1,6 @@
 import { timeToMinutes } from "@/utils/time";
 import { UNIFIED_RADIUS } from "@/data/constants";
+import type { CustomTypeDef } from "@/types";
 
 /** Sanitize an SVG string for use with dangerouslySetInnerHTML.
  *  Only allows <svg>, <path>, <circle>, <rect>, <line>, <polyline>,
@@ -33,17 +34,33 @@ export const TASK_TYPE_LABELS: Record<string, { zh: string; en: string }> = {
   personal: { zh: "个人", en: "Personal" },
 };
 
-const CUSTOM_TYPE_PALETTE = ["#EC4899", "#10B981", "#F59E0B", "#8B5CF6", "#06B6D4", "#F97316", "#84CC16", "#BE185D"];
+export const CUSTOM_TYPE_PALETTE = [
+  "#EC4899", "#10B981", "#F59E0B", "#8B5CF6",
+  "#06B6D4", "#F97316", "#84CC16", "#BE185D",
+  "#3B82F6", "#EF4444", "#14B8A6", "#A855F7",
+  "#F43F5E", "#22C55E", "#E11D48", "#7C3AED",
+];
 
+/** Module-level cache for custom type colors, synced from storage. */
+let _customTypeColorCache: Record<string, string> = {};
+
+/** Update the custom type color cache. Call this when custom types change. */
+export function setCustomTypeCache(types: CustomTypeDef[]): void {
+  _customTypeColorCache = {};
+  for (const ct of types) {
+    _customTypeColorCache[ct.name] = ct.color;
+  }
+}
+
+/** Get the color for a task type. Checks stored custom types first, then built-in, then hash. */
 export function getTaskColor(type: string): string {
+  if (_customTypeColorCache[type]) return _customTypeColorCache[type];
   if (BUILT_IN_COLORS[type]) return BUILT_IN_COLORS[type];
   // Hash the type name to pick a consistent color from the palette
   let hash = 0;
   for (let i = 0; i < type.length; i++) hash = ((hash << 5) - hash) + type.charCodeAt(i);
   return CUSTOM_TYPE_PALETTE[Math.abs(hash) % CUSTOM_TYPE_PALETTE.length];
 }
-
-export { CUSTOM_TYPE_PALETTE };
 
 export function getTaskLabel(type: string): { zh: string; en: string } {
   return TASK_TYPE_LABELS[type] ?? { zh: type, en: type };

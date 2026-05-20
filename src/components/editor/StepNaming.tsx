@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { getTaskColor, getTaskLabel } from "@/utils/colors";
+import type { CustomTypeDef } from "@/types";
 
 export function StepNaming({
   name,
@@ -11,6 +12,7 @@ export function StepNaming({
   typeColor,
   onNext,
   transitionClass,
+  customTypes,
 }: {
   name: string;
   setName: (v: string) => void;
@@ -19,6 +21,7 @@ export function StepNaming({
   typeColor: string;
   onNext: () => void;
   transitionClass: string;
+  customTypes?: CustomTypeDef[];
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -32,7 +35,8 @@ export function StepNaming({
     }
   };
 
-  const types: string[] = ["work", "study", "meeting", "personal"];
+  const builtInTypes: string[] = ["work", "study", "meeting", "personal"];
+  const types = [...builtInTypes, ...(customTypes?.map(ct => ct.name) ?? [])];
 
   return (
     <div

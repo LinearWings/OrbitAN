@@ -14,7 +14,8 @@ import {
   getTaskLabel,
 } from "@/utils/colors";
 import { timeToMinutes } from "@/utils/time";
-import type { Task } from "@/types";
+import type { Task, CustomTypeDef } from "@/types";
+import { loadCustomTypes } from "@/utils/storage";
 import { StepNaming } from "./StepNaming";
 import { StepPositioning } from "./StepPositioning";
 import { StepIndicator } from "./StepIndicator";
@@ -45,6 +46,7 @@ export default function OrbitalLaunchWizard() {
   // Form state
   const [name, setName] = useState<string>(editingTask?.name ?? "");
   const [type, setType] = useState<string>(editingTask?.type ?? "work");
+  const [customTypes, setCustomTypes] = useState<CustomTypeDef[]>(loadCustomTypes);
   const [startTime, setStartTime] = useState<string>(
     editingTask?.startTime ?? "09:00",
   );
@@ -261,6 +263,7 @@ export default function OrbitalLaunchWizard() {
               typeColor={typeColor}
               onNext={nextStep}
               transitionClass={getTransitionClass(1)}
+              customTypes={customTypes}
             />
 
             {/* Step 2: Orbit Launch */}

@@ -332,6 +332,9 @@ export default function Home() {
   const [pendingStartTime, setPendingStartTime] = useState<string | null>(null);
   const [pendingEndTime, setPendingEndTime] = useState<string | null>(null);
 
+  // Week view inline creation state
+  const [weekCreateDay, setWeekCreateDay] = useState<string | null>(null);
+
   const handleStartCreate = useCallback(() => {
     setIsCreating(true);
     setClickPhase("start");
@@ -388,6 +391,34 @@ export default function Home() {
     setPendingStartTime(null);
     setPendingEndTime(null);
   }, [addTask]);
+
+  // Week view: start inline creation for a specific day
+  const handleWeekCreateInline = useCallback((date: string) => {
+    setWeekCreateDay(date);
+  }, []);
+
+  // Week view: create task on the selected day
+  const handleCreateTaskForWeek = useCallback((task: { name: string; type: string; startTime: string; endTime: string }) => {
+    if (!weekCreateDay) return;
+    const newTask: Task = {
+      id: crypto.randomUUID(),
+      type: task.type,
+      name: task.name,
+      startTime: task.startTime,
+      endTime: task.endTime,
+      progress: 0,
+      completed: false,
+      note: "",
+      createdAt: new Date().toISOString(),
+    };
+    if (timeToMinutes(task.endTime) <= timeToMinutes(task.startTime)) {
+      const em = ((timeToMinutes(task.startTime) + 30) % 1440);
+      const eh = Math.floor(em / 60), e = em % 60;
+      newTask.endTime = `${String(eh).padStart(2, "0")}:${String(e).padStart(2, "0")}`;
+    }
+    dispatch({ type: "ADD", payload: { date: weekCreateDay, task: newTask } });
+    setWeekCreateDay(null);
+  }, [weekCreateDay, dispatch]);
 
   const handleNudgeTime = useCallback((field: "start" | "end", delta: number) => {
     // Auto-initialize with defaults on mobile (clock not interactive)
@@ -820,7 +851,7 @@ export default function Home() {
             <div className="relative w-full h-full">
               <WeekGridView
                 onDayClick={navigateToDay}
-                onCreateTask={handleWeekCreate}
+                onCreateTask={handleWeekCreateInline}
                 isOrbitMode={isOrbitModeOpen}
                 selectedBlockId={selectedBlockId}
                 onSelectBlock={setSelectedBlockId}
@@ -946,6 +977,21 @@ export default function Home() {
 
         <div className="flex items-center gap-2 rounded-2xl border border-white/8 bg-black/50 px-3 py-2 backdrop-blur-xl">
           {/* Day view specific: new task (normal) / new focus (Orbit Mode) */}
+          {viewMode === "week" && !isOrbitModeOpen && (
+            <>
+              <button
+                onClick={() => handleWeekCreateInline(state.currentDate)}
+                className="flex items-center gap-2 rounded-xl bg-white/[0.06] px-4 py-2 text-sm font-medium text-white/75 transition-all hover:bg-white/[0.12] hover:text-white"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <line x1="7" y1="1" x2="7" y2="13" />
+                  <line x1="1" y1="7" x2="13" y2="7" />
+                </svg>
+                <span>{t.orbit_new_task}</span>
+              </button>
+              <div className="h-5 w-[1px] bg-white/8" />
+            </>
+          )}
           {viewMode === "day" && !isOrbitModeOpen && (
             <>
               <button
@@ -1143,6 +1189,17 @@ export default function Home() {
       pendingStartTime={pendingStartTime}
       pendingEndTime={pendingEndTime}
       onNudgeTime={handleNudgeTime}
+    />
+
+    {/* Week view inline creation */}
+    <InlineTaskCreator
+      isOpen={weekCreateDay !== null}
+      onClose={() => setWeekCreateDay(null)}
+      onCreate={handleCreateTaskForWeek}
+      clickPhase="idle"
+      pendingStartTime={null}
+      pendingEndTime={null}
+      onNudgeTime={() => {}}
     />
     <EditPanel />
     </>

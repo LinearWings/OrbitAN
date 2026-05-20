@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import type { CustomTypeDef } from "@/types";
-import { getTaskColor, getTaskLabel, CUSTOM_TYPE_PALETTE } from "@/utils/colors";
+import { getTaskColor, getTaskLabel, CUSTOM_TYPE_PALETTE, setCustomTypeCache } from "@/utils/colors";
 import { timeToMinutes } from "@/utils/time";
 import { loadCustomTypes, saveCustomTypes } from "@/utils/storage";
 import { uid } from "@/utils/uid";
@@ -238,6 +238,7 @@ export default function InlineTaskCreator({
     const updated = [...customTypes, newType];
     setCustomTypes(updated);
     saveCustomTypes(updated);
+    setCustomTypeCache(updated);
     setType(nameTrimmed);
     setShowCustomForm(false);
     setNewCustomName("");
@@ -438,7 +439,7 @@ export default function InlineTaskCreator({
                   )}
 
                   {/* Color swatches */}
-                  <div className="flex items-center gap-1.5 mt-2">
+                  <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                     {CUSTOM_TYPE_PALETTE.map((c) => (
                       <button
                         key={c}
@@ -452,6 +453,22 @@ export default function InlineTaskCreator({
                         }}
                       />
                     ))}
+                    {/* Custom color picker */}
+                    <label
+                      className="w-4 h-4 rounded-full cursor-pointer flex items-center justify-center transition-all duration-200"
+                      style={{
+                        background: `conic-gradient(red, yellow, lime, aqua, blue, magenta, red)`,
+                        boxShadow: !CUSTOM_TYPE_PALETTE.includes(newCustomColor) ? `0 0 8px ${newCustomColor}, 0 0 0 2px rgba(255,255,255,0.3)` : "none",
+                        transform: !CUSTOM_TYPE_PALETTE.includes(newCustomColor) ? "scale(1.2)" : "scale(1)",
+                      }}
+                    >
+                      <input
+                        type="color"
+                        value={newCustomColor}
+                        onChange={(e) => setNewCustomColor(e.target.value)}
+                        className="absolute w-0 h-0 opacity-0 pointer-events-none"
+                      />
+                    </label>
                   </div>
                 </div>
               )}

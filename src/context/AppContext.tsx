@@ -9,8 +9,9 @@ import {
   type ReactNode,
 } from "react";
 import type { AppState, AppAction } from "@/types";
-import { loadTasks, saveTasks } from "@/utils/storage";
+import { loadTasks, saveTasks, loadCustomTypes } from "@/utils/storage";
 import { loadFocusBlocks, saveFocusBlocks } from "@/utils/storage";
+import { setCustomTypeCache } from "@/utils/colors";
 import { getToday } from "@/utils/time";
 import { getDefaultTasks } from "@/data/defaults";
 
@@ -161,6 +162,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (Object.keys(storedFocus).length > 0) {
       dispatch({ type: "LOAD_FOCUS", payload: storedFocus });
     }
+    // Sync custom type colors to the global cache for getTaskColor()
+    setCustomTypeCache(loadCustomTypes());
   }, []);
 
   const isFirstRender = useRef(true);
