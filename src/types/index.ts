@@ -9,6 +9,8 @@ export interface CustomTypeDef {
   color: string;
 }
 
+export type RepeatMode = "none" | "daily" | "weekly" | "weekdays";
+
 export interface Task {
   id: string;
   type: string;
@@ -20,6 +22,7 @@ export interface Task {
   note: string;
   createdAt: string;
   method?: import("./focus").FocusMethodId;
+  repeat?: RepeatMode;
 }
 
 export type TasksByDate = Record<string, Task[]>;

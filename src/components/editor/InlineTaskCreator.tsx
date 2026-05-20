@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowRightIcon } from "@/components/ui/Icons";
-import type { CustomTypeDef } from "@/types";
+import type { CustomTypeDef, RepeatMode } from "@/types";
 import { getTaskColor, getTaskLabel, CUSTOM_TYPE_PALETTE, setCustomTypeCache } from "@/utils/colors";
 import { timeToMinutes } from "@/utils/time";
 import { loadCustomTypes, saveCustomTypes } from "@/utils/storage";
@@ -12,7 +12,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 interface InlineTaskCreatorProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (task: { name: string; type: string; startTime: string; endTime: string }) => void;
+  onCreate: (task: { name: string; type: string; startTime: string; endTime: string; repeat?: RepeatMode }) => void;
   clickPhase: "idle" | "start" | "end";
   pendingStartTime: string | null;
   pendingEndTime: string | null;
@@ -154,6 +154,7 @@ export default function InlineTaskCreator({
 }: InlineTaskCreatorProps) {
   const [name, setName] = useState("");
   const [type, setType] = useState("work");
+  const [repeat, setRepeat] = useState<RepeatMode>("none");
   const handleTypeChange = useCallback((t: string) => {
     setType(t);
     onTypeChange?.(t);
@@ -186,7 +187,7 @@ export default function InlineTaskCreator({
   useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setName(""); setType("work"); setShowCustomForm(false); setNewCustomName(""); setNewCustomColor(CUSTOM_TYPE_PALETTE[0] ?? "#EC4899"); setCustomTypeError("");
+      setName(""); setType("work"); setRepeat("none"); setShowCustomForm(false); setNewCustomName(""); setNewCustomColor(CUSTOM_TYPE_PALETTE[0] ?? "#EC4899"); setCustomTypeError("");
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [isOpen]);
@@ -204,7 +205,7 @@ export default function InlineTaskCreator({
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter" && name.trim() && effectiveStartTime && effectiveEndTime) {
-      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime });
+      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime, repeat });
     }
     if (e.key === "Escape") onClose();
   }, [name, type, effectiveStartTime, effectiveEndTime, onCreate, onClose]);
@@ -213,7 +214,7 @@ export default function InlineTaskCreator({
 
   const handleConfirm = useCallback(() => {
     if (canConfirm) {
-      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime });
+      onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime, repeat });
     }
   }, [canConfirm, name, type, effectiveStartTime, effectiveEndTime, onCreate]);
 
@@ -531,6 +532,29 @@ export default function InlineTaskCreator({
                   </span>
                 </div>
               )}
+            </div>
+
+            {/* Repeat selector */}
+            <div className="flex items-center gap-1.5">
+              {(["none", "daily", "weekly", "weekdays"] as RepeatMode[]).map((r) => {
+                const labels: Record<RepeatMode, string> = { none: "不重复", daily: "每天", weekly: "每周", weekdays: "工作日" };
+                const sel = repeat === r;
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRepeat(r)}
+                    className="px-2 py-1 rounded-full text-[0.6rem] font-medium transition-all duration-200"
+                    style={{
+                      background: sel ? `${typeColor}20` : "rgba(255,255,255,0.03)",
+                      border: `1px solid ${sel ? `${typeColor}40` : "rgba(255,255,255,0.06)"}`,
+                      color: sel ? typeColor : "rgba(255,255,255,0.35)",
+                    }}
+                  >
+                    {labels[r]}
+                  </button>
+                );
+              })}
             </div>
 
             {/* Confirm + Cancel */}

@@ -23,7 +23,7 @@ import OrbitPlanPicker from "@/components/focus/OrbitPlanPicker";
 import MethodologyDrawer from "@/components/orbital/MethodologyDrawer";
 import DocsOverlay from "@/components/docs/DocsOverlay";
 import type { FocusMethodId, FocusBlock } from "@/types/focus";
-import type { Task } from "@/types";
+import type { Task, RepeatMode } from "@/types";
 import { useTasks } from "@/hooks/useTasks";
 import { useSelectedTask } from "@/hooks/useSelectedTask";
 import { useKeyboard } from "@/hooks/useKeyboard";
@@ -376,9 +376,8 @@ export default function Home() {
     }
   }, [clickPhase]);
 
-  const handleCreateTask = useCallback((task: { name: string; type: string; startTime: string; endTime: string }) => {
-    const newTask: Task = {
-      id: crypto.randomUUID(),
+  const handleCreateTask = useCallback((task: { name: string; type: string; startTime: string; endTime: string; repeat?: RepeatMode }) => {
+    const baseTask = {
       type: task.type,
       name: task.name,
       startTime: task.startTime,
@@ -386,9 +385,22 @@ export default function Home() {
       progress: 0,
       completed: false,
       note: "",
-      createdAt: new Date().toISOString(),
+      repeat: task.repeat,
     };
-    addTask(newTask);
+    addTask(baseTask);
+    // Create repeating instances
+    if (task.repeat && task.repeat !== "none") {
+      const days = task.repeat === "daily" ? 7 : task.repeat === "weekly" ? 4 : 5;
+      const d = new Date(state.currentDate + "T00:00:00");
+      for (let i = 1; i <= days; i++) {
+        const next = new Date(d);
+        if (task.repeat === "weekly") next.setDate(d.getDate() + i * 7);
+        else if (task.repeat === "weekdays") { next.setDate(d.getDate() + i); if (next.getDay() === 0 || next.getDay() === 6) continue; }
+        else next.setDate(d.getDate() + i);
+        const dateStr = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}-${String(next.getDate()).padStart(2, "0")}`;
+        dispatch({ type: "ADD", payload: { date: dateStr, task: { ...baseTask, id: crypto.randomUUID(), createdAt: new Date().toISOString() } as Task } });
+      }
+    }
     setIsCreating(false);
     setClickPhase("idle");
     setPendingStartTime(null);
