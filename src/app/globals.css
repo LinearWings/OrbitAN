@@ -740,14 +740,32 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
   background:#020408;
-  background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(59,130,246,.04),transparent),radial-gradient(ellipse 60% 40% at 20% 100%,rgba(99,102,241,.03),transparent);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,.07),transparent),
+    radial-gradient(ellipse 60% 50% at 20% 100%,rgba(99,102,241,.05),transparent),
+    radial-gradient(ellipse 40% 40% at 80% 60%,rgba(245,158,11,.03),transparent),
+    radial-gradient(circle 1px at 50% 50%,rgba(255,255,255,.025) 0%,transparent 1px);
+  background-size:100% 100%,100% 100%,100% 100%,20px 20px;
 }
-.l-methods-inner{max-width:1300px;margin:0 auto}
+.l-methods::before{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(135deg,rgba(59,130,246,.03) 0%,transparent 40%),
+    linear-gradient(315deg,rgba(99,102,241,.03) 0%,transparent 40%);
+  pointer-events:none;z-index:0;
+}
+.l-methods::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(59,130,246,.12),rgba(99,102,241,.08),transparent);
+  pointer-events:none;
+}
+.l-methods-inner{max-width:1300px;margin:0 auto;position:relative;z-index:1}
 .l-methods-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:2rem;margin-bottom:clamp(4rem,10vh,8rem)}
 .l-methods-h2{
   font-family:"Clash Display",sans-serif;
   font-size:clamp(2rem,5vw,4.5rem);font-weight:500;
   line-height:1.02;letter-spacing:-.03em;color:rgba(255,255,255,.65);
+  animation:l-heading-float 6s ease-in-out infinite;
 }
 .l-methods-disc{
   font-family:"JetBrains Mono",monospace;font-size:.5rem;
@@ -827,11 +845,30 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-focus{
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
-  background-image:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(245,158,11,.025),transparent);
+  background-color:#060810;
+  background-image:
+    radial-gradient(ellipse 70% 60% at 50% 50%,rgba(245,158,11,.06),transparent),
+    radial-gradient(ellipse 50% 40% at 30% 20%,rgba(239,68,68,.03),transparent),
+    radial-gradient(ellipse 40% 40% at 70% 80%,rgba(59,130,246,.03),transparent),
+    radial-gradient(circle 1px at 50% 50%,rgba(245,158,11,.02) 0%,transparent 1px);
+  background-size:100% 100%,100% 100%,100% 100%,28px 28px;
+}
+.l-focus::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(245,158,11,.04) 0%,transparent 50%),
+    linear-gradient(180deg,rgba(6,8,16,0) 0%,rgba(6,8,16,.5) 100%);
+  pointer-events:none;z-index:0;
+}
+.l-focus::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(245,158,11,.12),rgba(239,68,68,.06),transparent);
+  pointer-events:none;
 }
 .l-focus-inner{
   max-width:1100px;margin:0 auto;
   display:flex;flex-direction:column;align-items:center;gap:clamp(2rem,5vh,4rem);
+  position:relative;z-index:1;
 }
 @media(min-width:768px){
   .l-focus-inner{flex-direction:row;align-items:center}
@@ -845,6 +882,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   font-size:clamp(1.8rem,4vw,3.5rem);font-weight:500;
   line-height:1.05;letter-spacing:-.03em;color:rgba(255,255,255,.65);
   margin-bottom:clamp(.75rem,2vh,1.5rem);
+  animation:l-heading-float 7s ease-in-out infinite;
 }
 .l-focus-desc{
   font-family:"Satoshi",sans-serif;font-size:.9375rem;line-height:1.7;
@@ -864,12 +902,30 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
   background:#020408;
-  background-image:radial-gradient(ellipse 70% 50% at 80% 20%,rgba(245,158,11,.03),transparent),radial-gradient(ellipse 50% 40% at 10% 80%,rgba(59,130,246,.025),transparent);
+  background-image:
+    radial-gradient(ellipse 70% 60% at 80% 20%,rgba(245,158,11,.06),transparent),
+    radial-gradient(ellipse 60% 50% at 10% 80%,rgba(59,130,246,.05),transparent),
+    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(99,102,241,.03),transparent),
+    linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px),
+    linear-gradient(0deg,rgba(255,255,255,.015) 1px,transparent 1px);
+  background-size:100% 100%,100% 100%,100% 100%,60px 60px,60px 60px;
 }
-.l-keys-inner{max-width:900px;margin:0 auto;text-align:center}
+.l-keys-section::before{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,rgba(6,8,16,.3) 0%,transparent 30%,transparent 70%,rgba(6,8,16,.3) 100%);
+  pointer-events:none;z-index:0;
+}
+.l-keys-section::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(59,130,246,.1),rgba(245,158,11,.08),transparent);
+  pointer-events:none;
+}
+.l-keys-inner{max-width:900px;margin:0 auto;text-align:center;position:relative;z-index:1}
 .l-keys-h2{
   font-family:"Clash Display",sans-serif;
   font-size:clamp(1.8rem,4vw,3.5rem);font-weight:500;
+  animation:l-heading-float 6.5s ease-in-out infinite;
   line-height:1.05;letter-spacing:-.03em;color:rgba(255,255,255,.65);
   margin-bottom:clamp(.5rem,1.5vh,1rem);
 }
@@ -905,9 +961,27 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   position:relative;z-index:1;
   min-height:80vh;display:flex;align-items:center;justify-content:center;
   padding:clamp(4rem,12vh,8rem) clamp(1rem,3vw,2rem);
-  background-image:radial-gradient(ellipse 50% 60% at 50% 30%,rgba(59,130,246,.04),transparent);
+  background-color:#060810;
+  background-image:
+    radial-gradient(ellipse 60% 70% at 50% 30%,rgba(59,130,246,.08),transparent),
+    radial-gradient(ellipse 50% 50% at 30% 70%,rgba(245,158,11,.05),transparent),
+    radial-gradient(ellipse 50% 50% at 70% 70%,rgba(99,102,241,.04),transparent),
+    radial-gradient(circle 1px at 50% 50%,rgba(255,255,255,.02) 0%,transparent 1px);
+  background-size:100% 100%,100% 100%,100% 100%,32px 32px;
 }
-.l-cta-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
+.l-cta::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(circle at 50% 40%,rgba(59,130,246,.06) 0%,transparent 60%),
+    linear-gradient(180deg,rgba(6,8,16,.4) 0%,transparent 30%,transparent 70%,rgba(6,8,16,.5) 100%);
+  pointer-events:none;z-index:0;
+}
+.l-cta::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(59,130,246,.15),rgba(245,158,11,.1),rgba(99,102,241,.08),transparent);
+  pointer-events:none;
+}
+.l-cta-inner{display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1}
 .l-cta-crosses{display:flex;gap:clamp(2.5rem,6vw,5rem);color:rgba(255,255,255,.14);transition:color .4s ease;margin-bottom:clamp(2rem,5vh,3.5rem)}
 .l-cta-x{font-family:"JetBrains Mono",monospace;font-size:.875rem;opacity:.5}
 .l-cta-title{
@@ -981,27 +1055,154 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 /* ── Light Beam Track (replaces SectionArrow) ── */
 .l-beam-track{
   display:flex;align-items:center;justify-content:center;
-  padding:clamp(1rem,3vh,2rem) 0;overflow:hidden;
+  padding:clamp(1.5rem,4vh,3rem) 0;overflow:hidden;
+  position:relative;
 }
 .l-beam-track-line{
   width:clamp(200px,60vw,800px);height:1px;
-  opacity:0.6;
+  opacity:0.8;
+  box-shadow:0 0 12px currentColor;
   animation:l-beam-pulse 4s ease-in-out infinite alternate;
 }
 @keyframes l-beam-pulse{
-  0%{opacity:.3;filter:blur(0px)}
-  50%{opacity:.8;filter:blur(1px)}
-  100%{opacity:.4;filter:blur(0px)}
+  0%{opacity:.4;filter:blur(0px)}
+  50%{opacity:1;filter:blur(1px)}
+  100%{opacity:.5;filter:blur(0px)}
 }
 
-/* ── Cinematic Fade ── */
-@media(prefers-reduced-motion:reduce){
-  .cinematic-fade{opacity:1!important}
+/* ── Cinematic Reveal ── */
+.cinematic-fade{
+  opacity:1;
+  transform:none;
 }
+
+/* ── Section Layout ── */
+.l-section-wrap{
+  position:relative;
+}
+
+/* ══════════════════════════════════════════
+   DYNAMIC AMBIENT ANIMATIONS
+   ══════════════════════════════════════════ */
+
+/* ── Animated Gradient Drift ── */
+@keyframes l-gradient-drift{
+  0%{background-position:0% 0%}
+  25%{background-position:100% 50%}
+  50%{background-position:50% 100%}
+  75%{background-position:0% 50%}
+  100%{background-position:0% 0%}
+}
+@keyframes l-gradient-drift-slow{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* ── Floating Particles ── */
+@keyframes l-particle-float{
+  0%,100%{transform:translateY(0) translateX(0);opacity:0}
+  10%{opacity:1}
+  90%{opacity:.6}
+  100%{transform:translateY(-120px) translateX(var(--drift,20px));opacity:0}
+}
+.l-section-particles{
+  position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;
+}
+.l-section-particles span{
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:var(--particle-color,rgba(255,255,255,.6));
+  box-shadow:0 0 8px var(--particle-color,rgba(255,255,255,.4)),0 0 16px var(--particle-color,rgba(255,255,255,.2));
+  animation:l-particle-float var(--duration,8s) var(--delay,0s) linear infinite;
+}
+
+/* ── Animated Border Sweep ── */
+@keyframes l-border-sweep{
+  0%{background-position:-200% 0}
+  100%{background-position:200% 0}
+}
+.l-section-border-animated{
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%,var(--border-color,rgba(59,130,246,.4)) 50%,transparent 100%);
+  background-size:200% 100%;
+  animation:l-border-sweep 4s ease-in-out infinite;
+  box-shadow:0 0 12px var(--border-color,rgba(59,130,246,.3));
+}
+
+/* ── Ambient Glow Pulse ── */
+@keyframes l-glow-pulse{
+  0%,100%{opacity:.5;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.1)}
+}
+.l-section-glow{
+  position:absolute;pointer-events:none;z-index:0;
+  border-radius:50%;
+  filter:blur(60px);
+  animation:l-glow-pulse 6s ease-in-out infinite;
+}
+
+/* ── Grid Line Shimmer ── */
+@keyframes l-grid-shimmer{
+  0%{opacity:.5}
+  50%{opacity:1}
+  100%{opacity:.5}
+}
+.l-grid-overlay{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  animation:l-grid-shimmer 6s ease-in-out infinite;
+}
+
+/* ── Section Heading Float ── */
+@keyframes l-heading-float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+
+/* ── Section Background Sizes (gradients oversized for drift animation) ── */
+.l-engine{background-size:200% 200%,200% 200%,24px 24px !important}
+.l-methods{background-size:200% 200%,200% 200%,200% 200%,20px 20px !important}
+.l-focus{background-size:200% 200%,200% 200%,200% 200%,28px 28px !important}
+.l-keys-section{background-size:200% 200%,200% 200%,200% 200%,60px 60px,60px 60px !important}
+.l-cta{background-size:200% 200%,200% 200%,200% 200%,32px 32px !important}
+
+/* ── Animated Gradient Drift ── */
+@keyframes l-gradient-drift{
+  0%{background-position:0% 0%,100% 100%,50% 50%}
+  25%{background-position:100% 0%,0% 100%,80% 20%}
+  50%{background-position:100% 100%,0% 0%,50% 80%}
+  75%{background-position:0% 100%,100% 0%,20% 50%}
+  100%{background-position:0% 0%,100% 100%,50% 50%}
+}
+.l-engine{animation:l-gradient-drift 15s ease-in-out infinite}
+.l-methods{animation:l-gradient-drift 18s ease-in-out infinite}
+.l-focus{animation:l-gradient-drift 16s ease-in-out infinite}
+.l-keys-section{animation:l-gradient-drift 14s ease-in-out infinite}
+.l-cta{animation:l-gradient-drift 17s ease-in-out infinite}
 
 /* ── System Components Deck ── */
-	.l-engine{position:relative;z-index:1;padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);background-image:radial-gradient(ellipse 70% 40% at 70% 20%,rgba(99,102,241,.03),transparent)}
-	.l-engine-inner{max-width:1100px;margin:0 auto}
+	.l-engine{
+	  position:relative;z-index:1;
+	  padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
+	  background-color:#060810;
+	  background-image:
+	    radial-gradient(ellipse 80% 60% at 70% 20%,rgba(99,102,241,.06),transparent),
+	    radial-gradient(ellipse 50% 50% at 20% 80%,rgba(59,130,246,.04),transparent),
+	    radial-gradient(circle 1px at 50% 50%,rgba(255,255,255,.03) 0%,transparent 1px);
+	  background-size:100% 100%,100% 100%,24px 24px;
+	}
+	.l-engine::before{
+	  content:"";position:absolute;inset:0;
+	  background:
+	    linear-gradient(180deg,rgba(6,8,16,0) 0%,rgba(6,8,16,.6) 100%),
+	    linear-gradient(0deg,rgba(6,8,16,0) 0%,rgba(6,8,16,.4) 100%);
+	  pointer-events:none;z-index:0;
+	}
+	.l-engine::after{
+	  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+	  background:linear-gradient(90deg,transparent,rgba(99,102,241,.15),rgba(59,130,246,.1),transparent);
+	  pointer-events:none;
+	}
+	.l-engine-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
 	.l-engine-deck{display:grid;grid-template-columns:1fr;gap:1px;background:rgba(255,255,255,.025);border-radius:16px;overflow:hidden}
 	@media(min-width:768px){.l-engine-deck{grid-template-columns:repeat(3,1fr)}}
 	.l-engine-card{background:#0A0A0F;padding:clamp(2rem,4vw,3.5rem);display:flex;flex-direction:column;gap:1.25rem;transition:background .7s ease,border-color .7s ease;border:1px solid transparent;background-image:radial-gradient(ellipse 100% 60% at 30% 0%,rgba(59,130,246,.03),transparent)}

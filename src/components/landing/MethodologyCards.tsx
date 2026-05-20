@@ -2,8 +2,8 @@
 
 import { useRef, useEffect, useCallback } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useCinematicScroll } from "@/hooks/useCinematicScroll";
+import { SectionParticles } from "./SectionParticles";
 
 const METHODS = [
   {
@@ -52,10 +52,7 @@ const METHODS = [
 
 export function MethodologyCards() {
   const lang = useLanguage();
-  const { ref: scrollRef, progress } = useScrollProgress();
-  const { ref: cinematicRef } = useCinematicScroll({
-    enter: { opacity: 0, translateY: 30 },
-  });
+  const { ref: cinematicRef } = useCinematicScroll();
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -65,34 +62,38 @@ export function MethodologyCards() {
     e.currentTarget.style.setProperty("--my", `${y}%`);
   }, []);
 
-  const fanProgress = Math.min(1, progress / 0.6);
-  const contentReveal = Math.max(0, Math.min(1, (progress - 0.3) / 0.5));
-  const rotations = [-12, -7, -3, 3, 7, 12];
-  const animTriggered = useRef(false);
-
   const sectionRef = useRef<HTMLElement | null>(null);
 
   // Add scroll-trigger class once when section enters viewport
   useEffect(() => {
-    if (fanProgress > 0.05 && !animTriggered.current) {
-      animTriggered.current = true;
-      sectionRef.current?.classList.add("l-methods-animating");
-    }
-  }, [fanProgress]);
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("l-methods-animating");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section className="l-methods cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; sectionRef.current = el; }}>
+    <section className="l-methods cinematic-fade" ref={(el) => { cinematicRef(el); sectionRef.current = el; }}>
+      <SectionParticles count={14} color="rgba(59,130,246,.65)" />
+      <div className="l-grid-overlay" style={{ backgroundImage: "radial-gradient(circle 1px at 50% 50%,rgba(255,255,255,.07) 0%,transparent 1px)", backgroundSize: "20px 20px" }} />
+      <div className="l-section-border-animated" style={{ "--border-color": "rgba(59,130,246,.35)" } as React.CSSProperties} />
+      <div className="l-section-glow" style={{ top: "10%", left: "50%", width: 400, height: 400, background: "rgba(59,130,246,.18)", transform: "translateX(-50%)" }} />
+      <div className="l-section-glow" style={{ bottom: "5%", left: "15%", width: 300, height: 300, background: "rgba(99,102,241,.15)", animationDelay: "3s" }} />
       <div className="l-methods-inner">
         <div className="l-methods-top">
-          <h2 className="l-methods-h2" style={{
-            opacity: Math.min(1, fanProgress * 2),
-            transform: `translateY(${(1 - Math.min(1, fanProgress * 2)) * 18}px)`,
-          }}>
+          <h2 className="l-methods-h2">
             {lang === "zh" ? "六维时间管理" : "Six Dimensions of Time Management"}
           </h2>
-          <p className="l-methods-disc" style={{
-            opacity: Math.min(1, fanProgress * 2 - 0.2),
-          }}>
+          <p className="l-methods-disc">
             {lang === "zh"
               ? "六种经典方法论，各有专属面板。"
               : "Six proven methodologies, each with its own dedicated panel."}
@@ -100,57 +101,34 @@ export function MethodologyCards() {
         </div>
 
         <div className="l-methods-grid">
-          {METHODS.map((m, i) => {
-            const stagger = Math.max(0, fanProgress - i * 0.08);
-            const cardProgress = Math.min(1, stagger / 0.6);
-            const eased = 1 - Math.pow(1 - cardProgress, 3);
-            const rot = rotations[i] * (1 - eased);
-            const contentVisible = contentReveal > i * 0.1;
-            return (
-              <div
-                key={m.id}
-                className="l-method-card"
-                data-method={m.id}
-                onMouseMove={handleMouseMove}
-                style={{
-                  opacity: eased,
-                  transform: `rotate(${rot}deg) scale(${0.8 + eased * 0.2})`,
-                }}
-              >
-                <span className="l-method-tag" style={{
-                  color: m.color, background: `${m.color}18`,
-                  opacity: contentVisible ? 1 : 0,
-                  transition: "opacity 0.5s",
-                }}>
-                  {m.tag}
-                </span>
-                <h3 className="l-method-name" style={{
-                  color: m.color,
-                  opacity: contentVisible ? 1 : 0,
-                  transform: `translateY(${contentVisible ? 0 : 12}px)`,
-                  transition: "opacity 0.5s 0.08s, transform 0.5s 0.08s cubic-bezier(0.16,1,0.3,1)",
-                }}>
-                  {m.name[lang === "zh" ? "zh" : "en"]}
-                </h3>
-                <p className="l-method-desc" style={{
-                  opacity: contentVisible ? 1 : 0,
-                  transition: "opacity 0.5s 0.15s",
-                }}>
-                  {m.desc[lang === "zh" ? "zh" : "en"]}
-                </p>
-                <div className="l-method-preview" style={{ borderColor: `${m.color}20` }}>
-                  <div className="l-method-preview-inner" style={{ background: `${m.color}08` }}>
-                    {m.id === "gtd" && <GTDPreview color={m.color} />}
-                    {m.id === "pomodoro" && <PomodoroPreview color={m.color} />}
-                    {m.id === "pareto" && <ParetoPreview color={m.color} />}
-                    {m.id === "moffatt" && <MoffattPreview color={m.color} />}
-                    {m.id === "howell" && <HowellPreview color={m.color} />}
-                    {m.id === "swot" && <SWOTPreview color={m.color} />}
-                  </div>
+          {METHODS.map((m) => (
+            <div
+              key={m.id}
+              className="l-method-card"
+              data-method={m.id}
+              onMouseMove={handleMouseMove}
+            >
+              <span className="l-method-tag" style={{ color: m.color, background: `${m.color}18` }}>
+                {m.tag}
+              </span>
+              <h3 className="l-method-name" style={{ color: m.color }}>
+                {m.name[lang === "zh" ? "zh" : "en"]}
+              </h3>
+              <p className="l-method-desc">
+                {m.desc[lang === "zh" ? "zh" : "en"]}
+              </p>
+              <div className="l-method-preview" style={{ borderColor: `${m.color}20` }}>
+                <div className="l-method-preview-inner" style={{ background: `${m.color}08` }}>
+                  {m.id === "gtd" && <GTDPreview color={m.color} />}
+                  {m.id === "pomodoro" && <PomodoroPreview color={m.color} />}
+                  {m.id === "pareto" && <ParetoPreview color={m.color} />}
+                  {m.id === "moffatt" && <MoffattPreview color={m.color} />}
+                  {m.id === "howell" && <HowellPreview color={m.color} />}
+                  {m.id === "swot" && <SWOTPreview color={m.color} />}
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
     </section>

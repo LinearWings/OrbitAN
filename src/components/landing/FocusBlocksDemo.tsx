@@ -1,8 +1,8 @@
 "use client";
 
 import { useLanguage } from "@/hooks/useLanguage";
-import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useCinematicScroll } from "@/hooks/useCinematicScroll";
+import { SectionParticles } from "./SectionParticles";
 
 const FOCUS_METHODS = [
   { id: "gtd", label: "GTD", color: "#22C55E" },
@@ -15,22 +15,16 @@ const FOCUS_METHODS = [
 
 export function FocusBlocksDemo() {
   const lang = useLanguage();
-  const { ref: scrollRef, progress } = useScrollProgress();
-  const { ref: cinematicRef } = useCinematicScroll({
-    enter: { opacity: 0, translateY: 25 },
-  });
-
-  // Phase 1: housing fades in (0→30%)
-  // Phase 2: arcs draw around clock (20%→75%)
-  // Phase 3: legend items cascade in (50%→100%)
-  const housingOpacity = Math.min(1, progress / 0.3);
-  const arcProgress = Math.max(0, Math.min(1, (progress - 0.2) / 0.55));
-  const legendProgress = Math.max(0, (progress - 0.5) / 0.5);
+  const { ref: cinematicRef } = useCinematicScroll();
 
   return (
-    <section className="l-focus cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
+    <section className="l-focus cinematic-fade" ref={cinematicRef}>
+      <SectionParticles count={12} color="rgba(245,158,11,.7)" />
+      <div className="l-grid-overlay" style={{ backgroundImage: "radial-gradient(circle 1px at 50% 50%,rgba(245,158,11,.07) 0%,transparent 1px)", backgroundSize: "28px 28px" }} />
+      <div className="l-section-border-animated" style={{ "--border-color": "rgba(245,158,11,.35)" } as React.CSSProperties} />
+      <div className="l-section-glow" style={{ top: "30%", left: "50%", width: 400, height: 400, background: "rgba(245,158,11,.2)", transform: "translateX(-50%)" }} />
       <div className="l-focus-inner">
-        <div className="l-focus-clock" style={{ opacity: housingOpacity }}>
+        <div className="l-focus-clock">
           <svg viewBox="0 0 220 220" className="l-focus-clock-svg">
             <defs>
               <filter id="focusGlow">
@@ -47,7 +41,6 @@ export function FocusBlocksDemo() {
               const startAngle = (i / 6) * Math.PI * 2 - Math.PI / 2;
               const sweep = (0.22 + (i / FOCUS_METHODS.length) * 0.22) * Math.PI * 2;
               const circumference = r * sweep;
-              const drawn = arcProgress * circumference;
               const rd = (v: number) => Math.round(v * 1e6) / 1e6;
               const x1 = rd(110 + r * Math.cos(startAngle));
               const y1 = rd(110 + r * Math.sin(startAngle));
@@ -66,7 +59,7 @@ export function FocusBlocksDemo() {
                   filter="url(#focusGlow)"
                   opacity="0.7"
                   strokeDasharray={circumference}
-                  strokeDashoffset={circumference - drawn}
+                  strokeDashoffset={0}
                 />
               );
             })}
@@ -78,24 +71,18 @@ export function FocusBlocksDemo() {
         </div>
 
         <div className="l-focus-content">
-          <h2 className="l-focus-h2" style={{
-            opacity: housingOpacity,
-            transform: `translateY(${(1 - housingOpacity) * 18}px)`,
-          }}>
+          <h2 className="l-focus-h2">
             {lang === "zh" ? "专注块系统" : "Focus Blocks"}
           </h2>
-          <p className="l-focus-desc" style={{ opacity: Math.min(1, housingOpacity + 0.2) }}>
+          <p className="l-focus-desc">
             {lang === "zh"
               ? "将方法论会话时间盒化，显示在时钟外环。planned → active → paused → completed。"
               : "Time-box your methodology sessions. Visualized as colored arcs on the clock's outer rings."}
           </p>
 
           <div className="l-focus-legend">
-            {FOCUS_METHODS.map((m, i) => (
-              <span key={m.id} className="l-focus-legend-item" style={{
-                opacity: Math.max(0, Math.min(1, (legendProgress - i * 0.08) / 0.4)),
-                transform: `translateY(${Math.max(0, (1 - Math.min(1, (legendProgress - i * 0.08) / 0.4))) * 12}px)`,
-              }}>
+            {FOCUS_METHODS.map((m) => (
+              <span key={m.id} className="l-focus-legend-item">
                 <span className="l-focus-legend-dot" style={{ background: m.color }} />
                 {m.label}
               </span>

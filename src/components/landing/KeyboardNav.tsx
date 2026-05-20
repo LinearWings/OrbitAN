@@ -1,8 +1,8 @@
 "use client";
 
 import { useLanguage } from "@/hooks/useLanguage";
-import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useCinematicScroll } from "@/hooks/useCinematicScroll";
+import { SectionParticles } from "./SectionParticles";
 
 const SHORTCUTS = [
   { keys: ["←", "→"], label: { zh: "前一天/后一天", en: "Prev/Next Day" } },
@@ -17,53 +17,34 @@ const SHORTCUTS = [
 
 export function KeyboardNav() {
   const lang = useLanguage();
-  const { ref: scrollRef, progress } = useScrollProgress();
-  const { ref: cinematicRef } = useCinematicScroll({
-    enter: { opacity: 0, translateY: 30 },
-  });
-
-  // Heading appears quickly, then cards spring in as a wave
-  const headingProgress = Math.min(1, progress / 0.25);
+  const { ref: cinematicRef } = useCinematicScroll();
 
   return (
-    <section className="l-keys-section cinematic-fade" ref={(el) => { cinematicRef(el); scrollRef.current = el; }}>
+    <section className="l-keys-section cinematic-fade" ref={cinematicRef}>
+      <SectionParticles count={10} color="rgba(59,130,246,.6)" />
+      <div className="l-grid-overlay" style={{ backgroundImage: "linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(0deg,rgba(255,255,255,.05) 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
+      <div className="l-section-border-animated" style={{ "--border-color": "rgba(59,130,246,.3)" } as React.CSSProperties} />
+      <div className="l-section-glow" style={{ top: "15%", right: "10%", width: 300, height: 300, background: "rgba(245,158,11,.15)" }} />
+      <div className="l-section-glow" style={{ bottom: "20%", left: "10%", width: 250, height: 250, background: "rgba(59,130,246,.15)", animationDelay: "3s" }} />
       <div className="l-keys-inner">
-        <h2 className="l-keys-h2" style={{
-          opacity: headingProgress,
-          transform: `translateY(${(1 - headingProgress) * 18}px)`,
-        }}>
+        <h2 className="l-keys-h2">
           {lang === "zh" ? "全键盘操作" : "Full Keyboard Navigation"}
         </h2>
-        <p className="l-keys-sub" style={{
-          opacity: Math.min(1, headingProgress - 0.2),
-        }}>
+        <p className="l-keys-sub">
           {lang === "zh" ? "每个操作，一次按键。" : "Every action, one keystroke away."}
         </p>
 
         <div className="l-keys-grid">
-          {SHORTCUTS.map((s, i) => {
-            const stagger = Math.max(0, (progress - 0.1) / 0.5);
-            const cardProgress = Math.min(1, stagger - i * 0.04);
-            const spring = cardProgress < 0
-              ? 0
-              : cardProgress < 0.7
-                ? cardProgress / 0.7 * 1.08
-                : 1.08 - (cardProgress - 0.7) / 0.3 * 0.08;
-            const scale = Math.min(1.08, Math.max(0, spring));
-            return (
-              <div key={i} className="l-keys-card" style={{
-                opacity: Math.min(1, cardProgress * 2),
-                transform: `translateY(${(1 - scale) * 40}px) scale(${scale}) rotate(${-2 * (1 - Math.min(1, cardProgress))}deg)`,
-              }}>
-                <div className="l-keys-keys">
-                  {s.keys.map((k) => (
-                    <kbd key={k} className="l-keys-kbd">{k}</kbd>
-                  ))}
-                </div>
-                <span className="l-keys-label">{s.label[lang === "zh" ? "zh" : "en"]}</span>
+          {SHORTCUTS.map((s, i) => (
+            <div key={i} className="l-keys-card">
+              <div className="l-keys-keys">
+                {s.keys.map((k) => (
+                  <kbd key={k} className="l-keys-kbd">{k}</kbd>
+                ))}
               </div>
-            );
-          })}
+              <span className="l-keys-label">{s.label[lang === "zh" ? "zh" : "en"]}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>

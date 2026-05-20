@@ -61,9 +61,7 @@ export function HeroSection() {
   const lang = useLanguage();
   const t = getT(lang);
   const { ref: scrollRef } = useScrollProgress();
-  const { ref: cinematicRef } = useCinematicScroll({
-    exit: { opacity: 0 },
-  });
+  const { ref: cinematicRef } = useCinematicScroll();
   const isZh = lang === "zh";
   const logoRef = useRef<HTMLDivElement>(null);
 

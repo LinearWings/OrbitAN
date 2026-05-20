@@ -26,13 +26,13 @@ function useActiveSection(ids: string[]) {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
             const idx = ids.indexOf(entry.target.id);
             if (idx >= 0) setIndex(idx);
           }
         }
       },
-      { threshold: 0.3 }
+      { threshold: [0.3] }
     );
     ids.forEach((id) => {
       const el = document.getElementById(id);
@@ -54,22 +54,22 @@ export default function LandingPage() {
       <LandingLightEffects sectionIndex={sectionIndex} />
       <LandingNav />
 
-      <div id="hero"><HeroSection /></div>
+      <div id="hero" className="l-section-wrap"><HeroSection /></div>
 
       <LightBeamTrack />
-      <div id="features"><OrbitEngineDemo /></div>
+      <div id="features" className="l-section-wrap"><OrbitEngineDemo /></div>
 
       <LightBeamTrack color="rgba(99,102,241,.10)" />
-      <div id="methods"><MethodologyCards /></div>
+      <div id="methods" className="l-section-wrap"><MethodologyCards /></div>
 
       <LightBeamTrack color="rgba(245,158,11,.08)" />
-      <div id="focus"><FocusBlocksDemo /></div>
+      <div id="focus" className="l-section-wrap"><FocusBlocksDemo /></div>
 
       <LightBeamTrack color="rgba(59,130,246,.10)" />
-      <div id="keyboard"><KeyboardNav /></div>
+      <div id="keyboard" className="l-section-wrap"><KeyboardNav /></div>
 
       <LightBeamTrack color="rgba(99,102,241,.08)" />
-      <div id="cta"><CTASection /></div>
+      <div id="cta" className="l-section-wrap"><CTASection /></div>
 
       <LightBeamTrack color="rgba(245,158,11,.06)" />
       <LandingFooter />
