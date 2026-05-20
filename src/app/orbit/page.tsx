@@ -39,6 +39,7 @@ import MonthGridView from "@/components/layout/MonthGridView";
 import { timeToMinutes, timeToAngle } from "@/utils/time";
 import { useFocusBlocks } from "@/hooks/useFocusBlocks";
 import { FOCUS_METHOD_COLORS, FOCUS_METHOD_LABELS } from "@/data/focus-defaults";
+import { getTaskColor } from "@/utils/colors";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
 
@@ -339,11 +340,15 @@ export default function Home() {
   const [pendingWeekEndTime, setPendingWeekEndTime] = useState<string | null>(null);
   const [pendingWeekDate, setPendingWeekDate] = useState<string | null>(null);
 
+  // Preview type for real-time color updates during creation
+  const [previewType, setPreviewType] = useState<string>("work");
+
   const handleStartCreate = useCallback(() => {
     setIsCreating(true);
     setClickPhase("start");
     setPendingStartTime(null);
     setPendingEndTime(null);
+    setPreviewType("work");
   }, []);
 
   const handleWeekCreate = useCallback((date: string) => {
@@ -407,6 +412,7 @@ export default function Home() {
     setPendingWeekStartTime(null);
     setPendingWeekEndTime(null);
     setPendingWeekDate(null);
+    setPreviewType("work");
   }, []);
 
   // Week view: handle time selection on grid
@@ -901,6 +907,7 @@ export default function Home() {
                 }}
                 onDeleteStart={handleDeleteStart}
                 deleteHighlight={deleteTarget}
+                creationColor={getTaskColor(previewType)}
                 weekCreatePhase={weekCreatePhase}
                 pendingWeekStartTime={pendingWeekStartTime}
                 pendingWeekEndTime={pendingWeekEndTime}
@@ -1242,6 +1249,7 @@ export default function Home() {
       pendingStartTime={pendingStartTime}
       pendingEndTime={pendingEndTime}
       onNudgeTime={handleNudgeTime}
+      onTypeChange={setPreviewType}
     />
 
     {/* Week view inline creation */}
@@ -1253,6 +1261,7 @@ export default function Home() {
       pendingStartTime={pendingWeekStartTime}
       pendingEndTime={pendingWeekEndTime}
       onNudgeTime={() => {}}
+      onTypeChange={setPreviewType}
     />
     <EditPanel />
     </>

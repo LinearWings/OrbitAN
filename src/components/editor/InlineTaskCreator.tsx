@@ -17,6 +17,7 @@ interface InlineTaskCreatorProps {
   pendingStartTime: string | null;
   pendingEndTime: string | null;
   onNudgeTime?: (field: "start" | "end", delta: number) => void;
+  onTypeChange?: (type: string) => void;
 }
 
 const BUILT_IN_TYPES = ["work", "study", "meeting", "personal"];
@@ -149,9 +150,14 @@ export default function InlineTaskCreator({
   pendingStartTime,
   pendingEndTime,
   onNudgeTime,
+  onTypeChange,
 }: InlineTaskCreatorProps) {
   const [name, setName] = useState("");
   const [type, setType] = useState("work");
+  const handleTypeChange = useCallback((t: string) => {
+    setType(t);
+    onTypeChange?.(t);
+  }, [onTypeChange]);
   const [customTypes, setCustomTypes] = useState<CustomTypeDef[]>([]);
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [newCustomName, setNewCustomName] = useState("");
@@ -239,7 +245,7 @@ export default function InlineTaskCreator({
     setCustomTypes(updated);
     saveCustomTypes(updated);
     setCustomTypeCache(updated);
-    setType(nameTrimmed);
+    handleTypeChange(nameTrimmed);
     setShowCustomForm(false);
     setNewCustomName("");
     setCustomTypeError("");
@@ -332,7 +338,7 @@ export default function InlineTaskCreator({
                     <button
                       key={t}
                       type="button"
-                      onClick={() => setType(t)}
+                      onClick={() => handleTypeChange(t)}
                       className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all duration-200 flex-shrink-0"
                       style={{
                         background: sel ? `${dotColor}20` : "rgba(255,255,255,0.03)",

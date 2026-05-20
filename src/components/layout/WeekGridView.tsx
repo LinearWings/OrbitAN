@@ -31,6 +31,7 @@ interface WeekGridViewProps {
   pendingWeekEndTime?: string | null;
   pendingWeekDate?: string | null;
   onWeekTimeSelect?: (date: string, time: string) => void;
+  creationColor?: string;
 }
 
 interface TimedLayoutItem {
@@ -77,7 +78,7 @@ function assignConflictLanes<T extends TimedLayoutItem>(items: T[]): T[] {
   return sorted;
 }
 
-export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight, weekCreatePhase, pendingWeekStartTime, pendingWeekEndTime, pendingWeekDate, onWeekTimeSelect }: WeekGridViewProps) {
+export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight, weekCreatePhase, pendingWeekStartTime, pendingWeekEndTime, pendingWeekDate, onWeekTimeSelect, creationColor = "#F59E0B" }: WeekGridViewProps) {
   const { state } = useAppContext();
   const today = getToday();
   const [zoomPx, setZoomPx] = useState(DEFAULT_PX);
@@ -227,32 +228,6 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
               }}>
                 {dayNum}
               </span>
-              {onCreateTask && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); onCreateTask(date); }}
-                  title="新建任务"
-                  style={{
-                    marginTop: 2, width: 18, height: 18, borderRadius: "50%",
-                    border: "1px solid rgba(255,255,255,0.08)", background: "transparent",
-                    color: "rgba(255,255,255,0.2)", cursor: "pointer",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 12, lineHeight: 1, padding: 0,
-                    transition: "color 0.15s, border-color 0.15s, background 0.15s",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.6)";
-                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)";
-                    (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.2)";
-                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
-                    (e.currentTarget as HTMLElement).style.background = "transparent";
-                  }}
-                >
-                  +
-                </button>
-              )}
               {count > 0 && (
                 <div style={{ marginTop: 3, display: "flex", gap: 2 }}>
                   {types.slice(0, 3).map(t => (
@@ -353,11 +328,12 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
           if (dayIndex < 0) return null;
           const left = `calc(36px + (100% - 36px) / 7 * ${dayIndex} + 2px)`;
           const width = `calc((100% - 36px) / 7 - 3px)`;
+          const cc = creationColor;
           return (
             <>
               {/* Start time line */}
-              <div style={{ position: "absolute", left, top: `${startMin * PX_PER_MIN}px`, width, height: 2, background: "#F59E0B", boxShadow: "0 0 8px rgba(245,158,11,0.4)", zIndex: 20, pointerEvents: "none" }}>
-                <span style={{ position: "absolute", left: 0, top: -16, fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: "#F59E0B", whiteSpace: "nowrap" }}>{pendingWeekStartTime}</span>
+              <div style={{ position: "absolute", left, top: `${startMin * PX_PER_MIN}px`, width, height: 2, background: cc, boxShadow: `0 0 8px ${cc}66`, zIndex: 20, pointerEvents: "none" }}>
+                <span style={{ position: "absolute", left: 0, top: -16, fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: cc, whiteSpace: "nowrap" }}>{pendingWeekStartTime}</span>
               </div>
               {/* End time line */}
               {pendingWeekEndTime && (() => {
@@ -367,10 +343,10 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
                 return (
                   <>
                     {/* Range fill between start and end */}
-                    <div style={{ position: "absolute", left, top: `${startMin * PX_PER_MIN}px`, width, height: `${rangeHeight}px`, background: "rgba(245,158,11,0.08)", zIndex: 19, pointerEvents: "none" }} />
+                    <div style={{ position: "absolute", left, top: `${startMin * PX_PER_MIN}px`, width, height: `${rangeHeight}px`, background: `${cc}14`, zIndex: 19, pointerEvents: "none" }} />
                     {/* End time line */}
-                    <div style={{ position: "absolute", left, top: `${topPx}px`, width, height: 2, background: "#3B82F6", boxShadow: "0 0 8px rgba(59,130,246,0.4)", zIndex: 20, pointerEvents: "none" }}>
-                      <span style={{ position: "absolute", left: 0, top: 4, fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: "#3B82F6", whiteSpace: "nowrap" }}>{pendingWeekEndTime}</span>
+                    <div style={{ position: "absolute", left, top: `${topPx}px`, width, height: 2, background: cc, boxShadow: `0 0 8px ${cc}66`, zIndex: 20, pointerEvents: "none" }}>
+                      <span style={{ position: "absolute", left: 0, top: 4, fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: cc, whiteSpace: "nowrap" }}>{pendingWeekEndTime}</span>
                     </div>
                   </>
                 );
@@ -423,6 +399,7 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
               onClick={() => {
                 if (isOrbitMode) return;
                 if (deleteHighlight) return;
+                if (isCreatingMode) return;
                 onDayClick(t.date);
               }}
               style={{
