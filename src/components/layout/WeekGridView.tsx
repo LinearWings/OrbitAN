@@ -390,7 +390,6 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
             background: "rgba(255,255,255,0.25)",
             zIndex: 21,
             pointerEvents: "none",
-            transition: "top 50ms linear",
           }}>
             <span style={{
               position: "absolute",
