@@ -19,6 +19,7 @@ const DAY_LABELS_ZH = ["一", "二", "三", "四", "五", "六", "日"];
 interface WeekGridViewProps {
   onDayClick: (date: string) => void;
   onCreateTask?: (date: string) => void;
+  onTaskClick?: (taskId: string) => void;
   isOrbitMode?: boolean;
   selectedBlockId?: string | null;
   onSelectBlock?: (id: string | null) => void;
@@ -78,7 +79,7 @@ function assignConflictLanes<T extends TimedLayoutItem>(items: T[]): T[] {
   return sorted;
 }
 
-export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight, weekCreatePhase, pendingWeekStartTime, pendingWeekEndTime, pendingWeekDate, onWeekTimeSelect, creationColor = "#F59E0B" }: WeekGridViewProps) {
+export default function WeekGridView({ onDayClick, onCreateTask, onTaskClick, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight, weekCreatePhase, pendingWeekStartTime, pendingWeekEndTime, pendingWeekDate, onWeekTimeSelect, creationColor = "#F59E0B" }: WeekGridViewProps) {
   const { state } = useAppContext();
   const today = getToday();
   const [zoomPx, setZoomPx] = useState(DEFAULT_PX);
@@ -126,6 +127,7 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
       taskId: string; date: string;
       topPx: number; heightPx: number;
       color: string; name: string; startTime: string; endTime: string;
+      location?: string;
       col: number; span: number;
     }[][] = [];
 
@@ -144,6 +146,7 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
           heightPx: Math.max(3, dur * PX_PER_MIN),
           color: getTaskColor(task.type),
           name: task.name, startTime: task.startTime, endTime: task.endTime,
+          location: task.location,
           col: 0, span: 1,
         };
       });
@@ -406,7 +409,7 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
                 if (isOrbitMode) return;
                 if (deleteHighlight) return;
                 if (isCreatingMode) return;
-                onDayClick(t.date);
+                if (onTaskClick) { onTaskClick(t.taskId); } else { onDayClick(t.date); }
               }}
               style={{
                 position: "absolute",
@@ -437,6 +440,9 @@ export default function WeekGridView({ onDayClick, onCreateTask, isOrbitMode, se
                 <div style={{ padding: "3px 6px" }}>
                   <div style={{ fontSize: isMobile ? 11 : 10, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", fontWeight: 500, color: `${t.color}c0`, lineHeight: 1.3, letterSpacing: "-0.02em" }}>{t.startTime}–{t.endTime}</div>
                   <div style={{ fontSize: isMobile ? 12 : 11, lineHeight: 1.3, color: "rgba(255,255,255,0.8)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 1, fontWeight: 500 }}>{t.name}</div>
+                  {t.location && t.heightPx > 40 && (
+                    <div style={{ fontSize: 9, lineHeight: 1.2, color: "rgba(255,255,255,0.3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 1 }}>📍 {t.location}</div>
+                  )}
                 </div>
               ) : (
                 <div style={{ padding: "1px 5px", fontSize: isMobile ? 11 : 10, fontFamily: "'JetBrains Mono','Microsoft YaHei',monospace", color: `${t.color}c0`, lineHeight: 1.2, letterSpacing: "-0.02em" }}>{t.startTime}–{t.endTime}</div>

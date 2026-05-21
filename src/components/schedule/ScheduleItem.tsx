@@ -283,6 +283,35 @@ function ScheduleItem({ task, isSelected, isFiltered, zIndex, position, onSelect
           )}
         </div>
 
+        {/* Repeat + Location indicators */}
+        {(task.repeat && task.repeat !== "none" || task.location) && (
+          <div className={`mt-1 flex items-center gap-x-1.5 transition-colors duration-300 ${isSelected ? "text-white/20" : "text-white/12"}`}>
+            {task.repeat && task.repeat !== "none" && (
+              <span className="flex items-center gap-0.5">
+                <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M1,6 A5,5 0 0,1 11,6" />
+                  <polyline points="9,4 11,6 9,8" />
+                </svg>
+                <span className="text-[0.6rem] font-mono">
+                  {task.repeat === "daily" ? (lang === "zh" ? "每天" : "Daily") : task.repeat === "weekly" ? (lang === "zh" ? "每周" : "Weekly") : (lang === "zh" ? "工作日" : "Weekdays")}
+                </span>
+              </span>
+            )}
+            {task.repeat && task.repeat !== "none" && task.location && (
+              <span className="text-white/8">·</span>
+            )}
+            {task.location && (
+              <span className="flex items-center gap-0.5">
+                <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M6,1 C3.5,1 2,3 2,5.5 C2,8 6,11 6,11 C6,11 10,8 10,5.5 C10,3 8.5,1 6,1Z" />
+                  <circle cx="6" cy="5" r="1.5" />
+                </svg>
+                <span className="text-[0.6rem] truncate max-w-[80px]">{task.location}</span>
+              </span>
+            )}
+          </div>
+        )}
+
         {/* Orbit Plan methodology badge */}
         {isOrbitMode && (
           <button

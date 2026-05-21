@@ -27,6 +27,7 @@ import DocsOverlay from "@/components/docs/DocsOverlay";
 import type { FocusMethodId, FocusBlock } from "@/types/focus";
 import type { Task, RepeatMode } from "@/types";
 import { useTasks } from "@/hooks/useTasks";
+import { useEditPanel } from "@/hooks/useEditPanel";
 import { useSelectedTask } from "@/hooks/useSelectedTask";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import { useOrbital } from "@/hooks/useOrbital";
@@ -258,6 +259,7 @@ export default function Home() {
   const { activeFilter } = useFilter();
   const { viewMode, navigateToDay, setViewMode, goToPrevious, goToNext } = useViewNavigation();
   const { focusBlocksForDate, addFocusBlock, deleteFocusBlock } = useFocusBlocks();
+  const { openEdit } = useEditPanel();
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isTouchDevice = useMediaQuery("(hover: none) and (pointer: coarse)");
@@ -451,7 +453,7 @@ export default function Home() {
   }, []);
 
   // Week view: create task on the selected day
-  const handleCreateTaskForWeek = useCallback((task: { name: string; type: string; startTime: string; endTime: string }) => {
+  const handleCreateTaskForWeek = useCallback((task: { name: string; type: string; startTime: string; endTime: string; repeat?: RepeatMode; location?: string }) => {
     if (!weekCreateDay) return;
     const newTask: Task = {
       id: crypto.randomUUID(),
@@ -463,8 +465,23 @@ export default function Home() {
       completed: false,
       note: "",
       createdAt: new Date().toISOString(),
+      repeat: task.repeat,
+      location: task.location,
     };
     dispatch({ type: "ADD", payload: { date: weekCreateDay, task: newTask } });
+    // Create repeating instances
+    if (task.repeat && task.repeat !== "none") {
+      const days = task.repeat === "daily" ? 7 : task.repeat === "weekly" ? 4 : 5;
+      const d = new Date(weekCreateDay + "T00:00:00");
+      for (let i = 1; i <= days; i++) {
+        const next = new Date(d);
+        if (task.repeat === "weekly") next.setDate(d.getDate() + i * 7);
+        else if (task.repeat === "weekdays") { next.setDate(d.getDate() + i); if (next.getDay() === 0 || next.getDay() === 6) continue; }
+        else next.setDate(d.getDate() + i);
+        const dateStr = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}-${String(next.getDate()).padStart(2, "0")}`;
+        dispatch({ type: "ADD", payload: { date: dateStr, task: { ...newTask, id: crypto.randomUUID(), createdAt: new Date().toISOString() } } });
+      }
+    }
     setWeekCreateDay(null);
     setPendingWeekStartTime(null);
     setPendingWeekEndTime(null);
@@ -903,6 +920,7 @@ export default function Home() {
               <WeekGridView
                 onDayClick={navigateToDay}
                 onCreateTask={handleWeekCreateInline}
+                onTaskClick={(taskId) => openEdit(taskId)}
                 isOrbitMode={isOrbitModeOpen}
                 selectedBlockId={selectedBlockId}
                 onSelectBlock={setSelectedBlockId}

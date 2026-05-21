@@ -14,7 +14,7 @@ import {
   getTaskLabel,
 } from "@/utils/colors";
 import { timeToMinutes } from "@/utils/time";
-import type { Task, CustomTypeDef } from "@/types";
+import type { Task, CustomTypeDef, RepeatMode } from "@/types";
 import { loadCustomTypes } from "@/utils/storage";
 import { StepNaming } from "./StepNaming";
 import { StepPositioning } from "./StepPositioning";
@@ -54,6 +54,8 @@ export default function OrbitalLaunchWizard() {
     editingTask?.endTime ?? "10:00",
   );
   const [note, setNote] = useState<string>(editingTask?.note ?? "");
+  const [repeat, setRepeat] = useState<RepeatMode>(editingTask?.repeat ?? "none");
+  const [location, setLocation] = useState<string>(editingTask?.location ?? "");
 
   // Wizard state
   const [step, setStep] = useState<WizardStep>(1);
@@ -70,6 +72,8 @@ export default function OrbitalLaunchWizard() {
     setStartTime(editingTask?.startTime ?? "09:00");
     setEndTime(editingTask?.endTime ?? "10:00");
     setNote(editingTask?.note ?? "");
+    setRepeat(editingTask?.repeat ?? "none");
+    setLocation(editingTask?.location ?? "");
     setStep(1);
     setTransitionPhase("idle");
     setIsLaunched(false);
@@ -144,6 +148,8 @@ export default function OrbitalLaunchWizard() {
           startTime,
           endTime,
           note,
+          repeat,
+          location: location.trim() || undefined,
         };
         updateTask(updated);
       } else {
@@ -278,6 +284,10 @@ export default function OrbitalLaunchWizard() {
               onPrev={prevStep}
               onLaunch={handleLaunch}
               transitionClass={getTransitionClass(2)}
+              repeat={repeat}
+              setRepeat={setRepeat}
+              location={location}
+              setLocation={setLocation}
             />
           </div>
 

@@ -145,6 +145,10 @@ export function StepPositioning({
   onPrev,
   onLaunch,
   transitionClass,
+  repeat,
+  setRepeat,
+  location,
+  setLocation,
 }: {
   startTime: string;
   endTime: string;
@@ -162,6 +166,10 @@ export function StepPositioning({
   onPrev: () => void;
   onLaunch: () => void;
   transitionClass: string;
+  repeat?: string;
+  setRepeat?: (v: "none" | "daily" | "weekly" | "weekdays") => void;
+  location?: string;
+  setLocation?: (v: string) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -550,6 +558,48 @@ export function StepPositioning({
                 style={{ fontFamily: "'Inter', sans-serif" }}
               />
             </div>
+
+            {/* Location */}
+            {setLocation && (
+              <div className="space-y-1">
+                <label className="block text-[0.55rem] text-white/25 font-mono tracking-wide uppercase">地点</label>
+                <input
+                  value={location ?? ""}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="地点（可选）"
+                  className="w-full rounded-xl border border-white/[0.06] bg-black/30 px-4 py-2 text-sm text-white/60 placeholder:text-white/12 outline-none transition-all duration-200 focus:border-white/15"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                />
+              </div>
+            )}
+
+            {/* Repeat */}
+            {setRepeat && (
+              <div className="space-y-1">
+                <label className="block text-[0.55rem] text-white/25 font-mono tracking-wide uppercase">重复</label>
+                <div className="flex items-center gap-1.5">
+                  {(["none", "daily", "weekly", "weekdays"] as const).map((r) => {
+                    const labels: Record<string, string> = { none: "不重复", daily: "每天", weekly: "每周", weekdays: "工作日" };
+                    const sel = (repeat ?? "none") === r;
+                    return (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setRepeat(r)}
+                        className="px-2.5 py-1 rounded-full text-[0.6rem] font-medium transition-all duration-200"
+                        style={{
+                          background: sel ? `${typeColor}20` : "rgba(255,255,255,0.03)",
+                          border: `1px solid ${sel ? `${typeColor}40` : "rgba(255,255,255,0.06)"}`,
+                          color: sel ? typeColor : "rgba(255,255,255,0.35)",
+                        }}
+                      >
+                        {labels[r]}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
