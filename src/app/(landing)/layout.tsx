@@ -5,12 +5,10 @@ import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { CloseIcon, MenuIcon } from "@/components/ui/Icons";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { getT } from "@/lib/i18n";
 import LangSwitch from "@/components/landing/LangSwitch";
 
 export default function LandingLayout({ children }: { children: React.ReactNode }) {
   const lang = useLanguage();
-  const t = getT(lang);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [menuOpen, setMenuOpen] = useState(false);
 

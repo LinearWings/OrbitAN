@@ -35,7 +35,7 @@ export default function MobileBottomBar({
   onCycleView,
   onNewTask,
   onAutoArrange,
-  onOpenDocs,
+  onOpenDocs: _onOpenDocs,
 }: MobileBottomBarProps) {
   const lang = useLanguage();
   const t = getT(lang);

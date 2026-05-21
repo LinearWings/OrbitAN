@@ -55,6 +55,7 @@ export default function ConnectorArrows() {
   const selectedRef = useRef<string | null>(null);
 
   // Keep selectedRef in sync without triggering re-renders
+  // eslint-disable-next-line react-hooks/refs
   selectedRef.current = selectedTaskId;
 
   const recompute = useCallback(

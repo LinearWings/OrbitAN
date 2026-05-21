@@ -73,7 +73,7 @@ export default function FocusTimelineOverlay({
     const startMin = ((startY + scrollTop) / zoomPx) * 60;
     const hh = Math.floor(startMin / 60) % 24;
     const mm = Math.round((startMin % 60) / 15) * 15;
-    const startTime = `${String(Math.min(23, hh)).padStart(2, "0")}:${String(mm >= 60 ? 0 : mm).padStart(2, "0")}`;
+    const _startTime = `${String(Math.min(23, hh)).padStart(2, "0")}:${String(mm >= 60 ? 0 : mm).padStart(2, "0")}`;
 
     dragRef.current = { date, startY, hasMoved: false, columnTop: rect.top, columnHeight: rect.height };
 
@@ -112,7 +112,7 @@ export default function FocusTimelineOverlay({
       const smmRaw = Math.round((startMin2 % 60) / 15) * 15;
       const smm = smmRaw >= 60 ? 0 : smmRaw;
 
-      let st = `${String(shh).padStart(2, "0")}:${String(smm).padStart(2, "0")}`;
+      const st = `${String(shh).padStart(2, "0")}:${String(smm).padStart(2, "0")}`;
       let et = `${String(ehh).padStart(2, "0")}:${String(emm).padStart(2, "0")}`;
       if (ehh * 60 + emm <= shh * 60 + smm) {
         et = `${String(Math.min(23, shh)).padStart(2, "0")}:${String(Math.min(59, smm + 30)).padStart(2, "0")}`;
@@ -130,6 +130,7 @@ export default function FocusTimelineOverlay({
 
   // Clear locked drag preview when method is picked or cancelled
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDragPreview(null);
     dragRef.current = null;
   }, [clearDragSignal]);

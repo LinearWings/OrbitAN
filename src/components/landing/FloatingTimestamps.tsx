@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 function seed(i: number, s: number): number {
   return ((i * 127 + s * 31 + 773) % 1000) / 1000;

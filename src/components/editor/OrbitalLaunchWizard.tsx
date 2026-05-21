@@ -46,7 +46,7 @@ export default function OrbitalLaunchWizard() {
   // Form state
   const [name, setName] = useState<string>(editingTask?.name ?? "");
   const [type, setType] = useState<string>(editingTask?.type ?? "work");
-  const [customTypes, setCustomTypes] = useState<CustomTypeDef[]>(loadCustomTypes);
+  const [customTypes, _setCustomTypes] = useState<CustomTypeDef[]>(loadCustomTypes);
   const [startTime, setStartTime] = useState<string>(
     editingTask?.startTime ?? "09:00",
   );
@@ -161,6 +161,8 @@ export default function OrbitalLaunchWizard() {
           progress: 0,
           completed: false,
           note,
+          repeat,
+          location: location.trim() || undefined,
         };
         addTask(newTask);
       }
@@ -174,6 +176,8 @@ export default function OrbitalLaunchWizard() {
     startTime,
     endTime,
     note,
+    repeat,
+    location,
     updateTask,
     addTask,
     closeEdit,

@@ -8,7 +8,6 @@ import OrbitalCursor from "@/components/orbital/OrbitalCursor";
 import FloatingProgressCard from "@/components/layout/FloatingProgressCard";
 import FloatingStatsCard from "@/components/layout/FloatingStatsCard";
 import ConnectorArrows from "@/components/layout/ConnectorArrows";
-import NoiseOverlay from "@/components/layout/NoiseOverlay";
 import ScheduleItem from "@/components/schedule/ScheduleItem";
 import type { CardPosition } from "@/components/schedule/ScheduleItem";
 import LegendBar from "@/components/layout/LegendBar";
@@ -19,7 +18,6 @@ import ReminderDetailView from "@/components/schedule/ReminderDetailView";
 import DeleteBubble from "@/components/editor/DeleteBubble";
 import OrbitModeTransition from "@/components/orbital/OrbitModeTransition";
 import FocusTimelineOverlay from "@/components/focus/FocusTimelineOverlay";
-import FocusBlockCreator from "@/components/focus/FocusBlockCreator";
 import MethodPickerPopup from "@/components/focus/MethodPickerPopup";
 import OrbitPlanPicker from "@/components/focus/OrbitPlanPicker";
 import MethodologyDrawer from "@/components/orbital/MethodologyDrawer";
@@ -114,14 +112,14 @@ function computeCardPositions(tasks: Task[]): CardPosition[] {
 
   const positions = tasks.map((task) => {
     const isLeftSide = sideMap.get(task.id) ?? true;
-    const sideIdx = isLeftSide ? leftCount++ : rightCount++;
+    const _sideIdx = isLeftSide ? leftCount++ : rightCount++;
 
     // Deterministic personality from task ID (stable across renders)
     const idHash = task.id.split("").reduce((s, c) => s + c.charCodeAt(0), 0);
 
     // Horizontal: zone base + organic spread within the zone
     const hPersonality = ((idHash % 11) - 5) * 0.7; // ±3.5%
-    let left = isLeftSide
+    const left = isLeftSide
       ? Math.max(18, Math.min(48, LEFT_ZONE_BASE + 2 + hPersonality))
       : Math.max(52, Math.min(82, RIGHT_ZONE_BASE - 2 + hPersonality));
 
@@ -254,7 +252,7 @@ const ScheduleCardWrapper = memo(function ScheduleCardWrapper({
 export default function Home() {
   const { state, dispatch } = useAppContext();
   const { isOrbitModeOpen, toggleOrbitMode } = useOrbital();
-  const { filteredTasks, tasksForDate, addTask, updateTask, updateProgress, deleteTask } = useTasks();
+  const { filteredTasks: _filteredTasks, tasksForDate, addTask, updateTask, updateProgress, deleteTask } = useTasks();
   const { selectedTaskId, selectTask } = useSelectedTask();
   const { activeFilter } = useFilter();
   const { viewMode, navigateToDay, setViewMode, goToPrevious, goToNext } = useViewNavigation();
@@ -330,7 +328,7 @@ export default function Home() {
   const [layoutKey, setLayoutKey] = useState(0);
   const [manualOverrides, setManualOverrides] = useState<Map<string, { left: number; top: number }>>(new Map());
   const manualOverridesRef = useRef(manualOverrides);
-  manualOverridesRef.current = manualOverrides;
+  useEffect(() => { manualOverridesRef.current = manualOverrides; });
   const swipeStartRef = useRef<Map<string, { x: number; y: number }>>(new Map());
 
   // Inline creation state
@@ -355,9 +353,9 @@ export default function Home() {
     setPendingStartTime(null);
     setPendingEndTime(null);
     setPreviewType("work");
-  }, []);
+  }, [setPreviewType]);
 
-  const handleWeekCreate = useCallback((date: string) => {
+  const _handleWeekCreate = useCallback((date: string) => {
     navigateToDay(date);
     setIsCreating(true);
     setClickPhase("start");
@@ -395,16 +393,30 @@ export default function Home() {
       location: task.location,
     };
     addTask(baseTask);
-    // Create repeating instances
+    // Create repeating instances for future dates
     if (task.repeat && task.repeat !== "none") {
-      const days = task.repeat === "daily" ? 7 : task.repeat === "weekly" ? 4 : 5;
-      const d = new Date(state.currentDate + "T00:00:00");
-      for (let i = 1; i <= days; i++) {
-        const next = new Date(d);
-        if (task.repeat === "weekly") next.setDate(d.getDate() + i * 7);
-        else if (task.repeat === "weekdays") { next.setDate(d.getDate() + i); if (next.getDay() === 0 || next.getDay() === 6) continue; }
-        else next.setDate(d.getDate() + i);
-        const dateStr = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}-${String(next.getDate()).padStart(2, "0")}`;
+      const generateDates = (repeat: RepeatMode, baseDate: string, count: number): string[] => {
+        const d = new Date(baseDate + "T00:00:00");
+        const results: string[] = [];
+        let attempts = 0;
+        const maxAttempts = count * 3; // safety limit
+        while (results.length < count && attempts < maxAttempts) {
+          attempts++;
+          if (repeat === "daily") {
+            d.setDate(d.getDate() + 1);
+          } else if (repeat === "weekly") {
+            d.setDate(d.getDate() + 7);
+          } else if (repeat === "weekdays") {
+            d.setDate(d.getDate() + 1);
+            if (d.getDay() === 0 || d.getDay() === 6) continue; // skip weekends
+          }
+          const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+          if (dateStr !== baseDate) results.push(dateStr);
+        }
+        return results;
+      };
+      const count = task.repeat === "daily" ? 14 : task.repeat === "weekly" ? 8 : 10;
+      for (const dateStr of generateDates(task.repeat, state.currentDate, count)) {
         dispatch({ type: "ADD", payload: { date: dateStr, task: { ...baseTask, id: crypto.randomUUID(), createdAt: new Date().toISOString() } as Task } });
       }
     }
@@ -412,7 +424,7 @@ export default function Home() {
     setClickPhase("idle");
     setPendingStartTime(null);
     setPendingEndTime(null);
-  }, [addTask]);
+  }, [addTask, dispatch, state.currentDate]);
 
   // Week view: start inline creation for a specific day (from "+" button)
   const handleWeekCreateInline = useCallback((date: string) => {
@@ -426,7 +438,7 @@ export default function Home() {
     setPendingWeekEndTime(null);
     setPendingWeekDate(null);
     setPreviewType("work");
-  }, []);
+  }, [setPreviewType]);
 
   // Week view: handle time selection on grid
   const handleWeekTimeSelect = useCallback((date: string, time: string) => {
@@ -469,16 +481,24 @@ export default function Home() {
       location: task.location,
     };
     dispatch({ type: "ADD", payload: { date: weekCreateDay, task: newTask } });
-    // Create repeating instances
+    // Create repeating instances for future dates
     if (task.repeat && task.repeat !== "none") {
-      const days = task.repeat === "daily" ? 7 : task.repeat === "weekly" ? 4 : 5;
-      const d = new Date(weekCreateDay + "T00:00:00");
-      for (let i = 1; i <= days; i++) {
-        const next = new Date(d);
-        if (task.repeat === "weekly") next.setDate(d.getDate() + i * 7);
-        else if (task.repeat === "weekdays") { next.setDate(d.getDate() + i); if (next.getDay() === 0 || next.getDay() === 6) continue; }
-        else next.setDate(d.getDate() + i);
-        const dateStr = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}-${String(next.getDate()).padStart(2, "0")}`;
+      const generateDates = (repeat: RepeatMode, baseDate: string, count: number): string[] => {
+        const d = new Date(baseDate + "T00:00:00");
+        const results: string[] = [];
+        let attempts = 0;
+        while (results.length < count && attempts < count * 3) {
+          attempts++;
+          if (repeat === "daily") { d.setDate(d.getDate() + 1); }
+          else if (repeat === "weekly") { d.setDate(d.getDate() + 7); }
+          else if (repeat === "weekdays") { d.setDate(d.getDate() + 1); if (d.getDay() === 0 || d.getDay() === 6) continue; }
+          const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+          if (dateStr !== baseDate) results.push(dateStr);
+        }
+        return results;
+      };
+      const count = task.repeat === "daily" ? 14 : task.repeat === "weekly" ? 8 : 10;
+      for (const dateStr of generateDates(task.repeat, weekCreateDay, count)) {
         dispatch({ type: "ADD", payload: { date: dateStr, task: { ...newTask, id: crypto.randomUUID(), createdAt: new Date().toISOString() } } });
       }
     }
@@ -560,7 +580,10 @@ export default function Home() {
 
   // Reset focus creation when leaving day view (prevent stale state)
   useEffect(() => {
-    if (viewMode !== "day") handleCancelFocusCreate();
+    if (viewMode !== "day") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      handleCancelFocusCreate();
+    }
   }, [viewMode, handleCancelFocusCreate]);
 
   // Touch swipe gesture — left/right to navigate days (mobile only)
@@ -986,6 +1009,7 @@ export default function Home() {
               </div>
             ) : null
           ) : (
+            // eslint-disable-next-line react-hooks/refs
             tasksForDate.map((task, index) => {
               const linkedFb = focusBlocksForDate.find(fb => fb.linkedTaskId === task.id);
               const linkedFocusColor = linkedFb

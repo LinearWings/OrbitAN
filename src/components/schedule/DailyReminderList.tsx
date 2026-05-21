@@ -19,7 +19,7 @@ interface DailyReminderListProps {
 export default function DailyReminderList({ isOrbitMode, onReminderClick, onViewAll }: DailyReminderListProps) {
   const { todayReminders, addReminder, toggleReminder, deleteReminder, updateReminder } = useDailyReminders();
   const lang = useLanguage();
-  const t = getT(lang);
+  const _t = getT(lang);
   const [newName, setNewName] = useState("");
   const [expanded, setExpanded] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);

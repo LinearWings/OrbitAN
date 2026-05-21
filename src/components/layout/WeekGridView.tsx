@@ -79,7 +79,7 @@ function assignConflictLanes<T extends TimedLayoutItem>(items: T[]): T[] {
   return sorted;
 }
 
-export default function WeekGridView({ onDayClick, onCreateTask, onTaskClick, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight, weekCreatePhase, pendingWeekStartTime, pendingWeekEndTime, pendingWeekDate, onWeekTimeSelect, creationColor = "#F59E0B" }: WeekGridViewProps) {
+export default function WeekGridView({ onDayClick, onCreateTask: _onCreateTask, onTaskClick, isOrbitMode, selectedBlockId, onOpenMethodology, onDeleteStart, deleteHighlight, weekCreatePhase, pendingWeekStartTime, pendingWeekEndTime, pendingWeekDate, onWeekTimeSelect, creationColor = "#F59E0B" }: WeekGridViewProps) {
   const { state } = useAppContext();
   const today = getToday();
   const [zoomPx, setZoomPx] = useState(DEFAULT_PX);

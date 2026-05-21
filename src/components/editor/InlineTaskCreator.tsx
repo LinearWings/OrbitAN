@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import type { CustomTypeDef, RepeatMode } from "@/types";
 import { getTaskColor, getTaskLabel, CUSTOM_TYPE_PALETTE, setCustomTypeCache } from "@/utils/colors";
@@ -212,7 +212,7 @@ export default function InlineTaskCreator({
       onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime, repeat, location: location.trim() || undefined });
     }
     if (e.key === "Escape") onClose();
-  }, [name, type, effectiveStartTime, effectiveEndTime, onCreate, onClose]);
+  }, [name, type, effectiveStartTime, effectiveEndTime, onCreate, onClose, repeat, location]);
 
   const canConfirm = name.trim().length > 0 && effectiveStartTime && effectiveEndTime;
 
@@ -220,10 +220,10 @@ export default function InlineTaskCreator({
     if (canConfirm) {
       onCreate({ name: name.trim(), type, startTime: effectiveStartTime, endTime: effectiveEndTime, repeat, location: location.trim() || undefined });
     }
-  }, [canConfirm, name, type, effectiveStartTime, effectiveEndTime, onCreate]);
+  }, [canConfirm, name, type, effectiveStartTime, effectiveEndTime, onCreate, repeat, location]);
 
   // All available types: built-in + custom
-  const allTypes = [...BUILT_IN_TYPES, ...customTypes.map((ct) => ct.name)];
+  const allTypes = useMemo(() => [...BUILT_IN_TYPES, ...customTypes.map((ct) => ct.name)], [customTypes]);
   const trimmedCustomName = newCustomName.trim();
   const customTypeExists = allTypes.some((existing) =>
     existing.trim().toLowerCase() === trimmedCustomName.toLowerCase(),
@@ -254,7 +254,7 @@ export default function InlineTaskCreator({
     setShowCustomForm(false);
     setNewCustomName("");
     setCustomTypeError("");
-  }, [newCustomName, newCustomColor, customTypes, customTypeExists]);
+  }, [newCustomName, newCustomColor, customTypes, customTypeExists, handleTypeChange]);
 
   // Pick next available color from palette
   const getNextColor = useCallback((): string => {
@@ -362,7 +362,7 @@ export default function InlineTaskCreator({
 
             {/* Category selector — Apple Calendar-like horizontal scrollable row */}
             <div>
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin tag-scroll-row" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,0.12) transparent", maskImage: "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)" }}>
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 tag-scroll-row" style={{ scrollbarWidth: "none", msOverflowStyle: "none", maskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)", WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)" }}>
                 {allTypes.map((t) => {
                   const color = getTaskColor(t);
                   const label = getTaskLabel(t);
@@ -582,6 +582,25 @@ export default function InlineTaskCreator({
                   </span>
                 </div>
               )}
+            </div>
+
+            {/* All-day toggle */}
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  onNudgeTime?.("start", timeToMinutes("00:00") - timeToMinutes(effectiveStartTime ?? "09:00"));
+                  onNudgeTime?.("end", timeToMinutes("23:59") - timeToMinutes(effectiveEndTime ?? "10:00"));
+                }}
+                className="px-2 py-1 rounded-full text-[0.6rem] font-medium transition-all duration-200"
+                style={{
+                  background: effectiveStartTime === "00:00" && effectiveEndTime === "23:59" ? `${typeColor}20` : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${effectiveStartTime === "00:00" && effectiveEndTime === "23:59" ? `${typeColor}40` : "rgba(255,255,255,0.06)"}`,
+                  color: effectiveStartTime === "00:00" && effectiveEndTime === "23:59" ? typeColor : "rgba(255,255,255,0.35)",
+                }}
+              >
+                全天
+              </button>
             </div>
 
             {/* Repeat selector */}

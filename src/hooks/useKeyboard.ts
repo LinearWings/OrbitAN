@@ -11,7 +11,7 @@ import { useSelectedTask } from "@/hooks/useSelectedTask";
 export function useKeyboard(onCreate?: () => void) {
   const { goToPrevious, goToNext, goToToday } = useViewNavigation();
   const { setFilter, clearFilter } = useFilter();
-  const { deleteTask } = useTasks();
+  const { deleteTask: _deleteTask } = useTasks();
   const { openEdit, closeEdit, showDeleteConfirm, isEditPanelOpen } = useEditPanel();
   const { selectTask, selectedTaskId } = useSelectedTask();
   const { state, dispatch } = useAppContext();
@@ -28,17 +28,19 @@ export function useKeyboard(onCreate?: () => void) {
   const editPanelRef = useRef(isEditPanelOpen);
   const selectedTaskRef = useRef(selectedTaskId);
 
-  // Keep refs current every render (no deps — always runs)
-  cbRef.current = {
-    goToPrevious, goToNext, goToToday,
-    setFilter, clearFilter,
-    openEdit, closeEdit, showDeleteConfirm,
-    selectTask,
-    onCreate,
-  };
-  orbitModeRef.current = state.isOrbitModeOpen;
-  editPanelRef.current = isEditPanelOpen;
-  selectedTaskRef.current = selectedTaskId;
+  // Sync refs in useEffect to avoid react-hooks/refs error
+  useEffect(() => {
+    cbRef.current = {
+      goToPrevious, goToNext, goToToday,
+      setFilter, clearFilter,
+      openEdit, closeEdit, showDeleteConfirm,
+      selectTask,
+      onCreate,
+    };
+    orbitModeRef.current = state.isOrbitModeOpen;
+    editPanelRef.current = isEditPanelOpen;
+    selectedTaskRef.current = selectedTaskId;
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

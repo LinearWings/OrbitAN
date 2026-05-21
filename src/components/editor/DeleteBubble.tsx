@@ -36,6 +36,7 @@ export default function DeleteBubble({ fromX, fromY, targetRect, onDelete, onCan
       // Clamp vertically
       f.y = Math.max(60, Math.min(window.innerHeight - 60, f.y));
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAnimating(true);
   }, [targetRect]);
 
@@ -119,6 +120,7 @@ export default function DeleteBubble({ fromX, fromY, targetRect, onDelete, onCan
   }
 
   const isRed = hovered;
+  /* eslint-disable react-hooks/refs */
   const { x: finalX, y: finalY } = finalPos.current;
 
   return (

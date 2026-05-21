@@ -19,7 +19,7 @@ function getContentRect(el: HTMLElement): DOMRect {
   return new DOMRect(rect.left, top, rect.width, bottom - top);
 }
 
-export function useScrollProgress(threshold = 0) {
+export function useScrollProgress(_threshold = 0) {
   const ref = useRef<HTMLElement>(null);
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);

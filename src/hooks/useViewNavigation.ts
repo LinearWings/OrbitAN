@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { getPreviousDay, getNextDay, getToday, getWeekDates } from "@/utils/time";
 
@@ -10,8 +10,12 @@ export function useViewNavigation() {
   // Refs to avoid stale closures in rapid navigation
   const currentDateRef = useRef(state.currentDate);
   const viewModeRef = useRef(state.viewMode);
-  currentDateRef.current = state.currentDate;
-  viewModeRef.current = state.viewMode;
+
+  // Sync refs after render to avoid react-hooks/refs error
+  useEffect(() => {
+    currentDateRef.current = state.currentDate;
+    viewModeRef.current = state.viewMode;
+  });
 
   const setViewMode = useCallback(
     (mode: "day" | "week" | "month") => {
@@ -32,13 +36,13 @@ export function useViewNavigation() {
       dispatch({ type: "SET_DATE", payload: startOfPrevWeek });
     } else if (viewMode === "month") {
       const d = new Date(currentDate + "T00:00:00");
-      d.setDate(1); // Prevent month overflow (e.g. Jan 31 → setMonth(+0) → Mar 3)
+      d.setDate(1);
       d.setMonth(d.getMonth() - 1);
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, "0");
       dispatch({ type: "SET_DATE", payload: `${y}-${m}-01` });
     }
-  }, [state.currentDate, state.viewMode, dispatch]);
+  }, [dispatch]);
 
   const goToNext = useCallback(() => {
     const currentDate = currentDateRef.current;
@@ -52,13 +56,13 @@ export function useViewNavigation() {
       dispatch({ type: "SET_DATE", payload: startOfNextWeek });
     } else if (viewMode === "month") {
       const d = new Date(currentDate + "T00:00:00");
-      d.setDate(1); // Prevent month overflow (e.g. Jan 31 → setMonth(+1) → Mar 3)
+      d.setDate(1);
       d.setMonth(d.getMonth() + 1);
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, "0");
       dispatch({ type: "SET_DATE", payload: `${y}-${m}-01` });
     }
-  }, [state.currentDate, state.viewMode, dispatch]);
+  }, [dispatch]);
 
   const goToToday = useCallback(() => {
     dispatch({ type: "SET_DATE", payload: getToday() });

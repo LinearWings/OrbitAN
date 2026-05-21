@@ -15,12 +15,6 @@ import {
   ORBIT_RING_COLOR_B,
   ORBIT_RING_RADII_FRACTIONS,
   CONSTRUCTIVIST_ENABLED,
-  CONSTRUCTIVIST_YELLOW,
-  CONSTRUCTIVIST_BLUE,
-  CONSTRUCTIVIST_CIRCLE_OPACITY,
-  CONSTRUCTIVIST_LINE_OPACITY,
-  CONSTRUCTIVIST_RECT_OPACITY,
-  CONSTRUCTIVIST_DIAG_COUNT,
 } from "@/data/constants";
 // no external color helpers needed here
 
@@ -82,42 +76,15 @@ function ensureFilmGrainTexture() {
 }
 
 export function drawConstructivistGeometry(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  maxRadius: number,
-  w: number,
-  h: number,
+  _ctx: CanvasRenderingContext2D,
+  _cx: number,
+  _cy: number,
+  _maxRadius: number,
+  _w: number,
+  _h: number,
 ) {
   if (!CONSTRUCTIVIST_ENABLED) return;
-
-  ctx.save();
-
-  // ── Large concentric circles (constructivist signature) ──
-  ctx.strokeStyle = CONSTRUCTIVIST_YELLOW;
-  ctx.globalAlpha = CONSTRUCTIVIST_CIRCLE_OPACITY;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(cx, cy, maxRadius * 0.72, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.strokeStyle = CONSTRUCTIVIST_BLUE;
-  ctx.globalAlpha = CONSTRUCTIVIST_CIRCLE_OPACITY * 0.85;
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.arc(cx, cy, maxRadius * 0.72 * 0.62, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.strokeStyle = CONSTRUCTIVIST_YELLOW;
-  ctx.globalAlpha = CONSTRUCTIVIST_CIRCLE_OPACITY * 0.7;
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.arc(cx, cy, maxRadius * 0.72 * 0.35, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Rectangles and diagonals removed for cleaner clock face
-
-  ctx.restore();
+  // Clean clock face: no constructivist circles, no 45° diagonals, no rectangles
 }
 
 // PUBLIC API
@@ -134,11 +101,11 @@ export function drawClock24hTicks(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // ── Day/Night zone shading — very subtle radial gradient ──
+  // ── Day/Night zone shading — very subtle, uniform ──
   const zoneGrad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
-  zoneGrad.addColorStop(0, "rgba(37, 99, 235, 0.008)");
-  zoneGrad.addColorStop(0.5, "rgba(234, 179, 8, 0.010)");
-  zoneGrad.addColorStop(1, "rgba(37, 99, 235, 0.008)");
+  zoneGrad.addColorStop(0, "rgba(37, 99, 235, 0.006)");
+  zoneGrad.addColorStop(0.5, "rgba(37, 99, 235, 0.004)");
+  zoneGrad.addColorStop(1, "rgba(37, 99, 235, 0.006)");
   ctx.fillStyle = zoneGrad;
   ctx.beginPath();
   ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
@@ -371,7 +338,7 @@ export function drawCometTrail(
   const { r: cr, g: cg, b: cb } = colorRgb;
   const glow = isSelected || isHovered;
 
-  let cStart = startAngle;
+  const cStart = startAngle;
   let cEnd = endAngle;
   // Normalize end angle for overnight tasks so arc always sweeps clockwise
   if (cEnd <= cStart) cEnd += Math.PI * 2;
@@ -519,7 +486,7 @@ export function drawCometLabel(
   isSelected: boolean,
   isHovered: boolean,
 ) {
-  const { headX, headY, headRadius, color, colorRgb, taskName, taskId } = comet;
+  const { headX, headY, headRadius, color, colorRgb, taskName, taskId: _taskId } = comet;
   if (!taskName) return;
 
   const labelY = headY - headRadius - 14;

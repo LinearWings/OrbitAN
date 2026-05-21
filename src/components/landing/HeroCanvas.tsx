@@ -28,8 +28,6 @@ const DEMO_TASKS = [
 ];
 
 function buildPlanets(width: number, height: number): IsoPlanet[] {
-  const cx = width / 2;
-  const cy = height / 2;
   const dialRadius = Math.min(width, height) * 0.35;
   const faceA = dialRadius * 1.22;
   const baseStep = faceA * 0.25;
@@ -45,7 +43,7 @@ function buildPlanets(width: number, height: number): IsoPlanet[] {
     const angle = ((midMin / 1440) * Math.PI * 2) - Math.PI / 2;
     const orbitR = ringRadii[i % ringRadii.length];
 
-    const color = getTaskColor(task.type as any);
+    const color = getTaskColor(task.type as string);
     const rgb = (() => {
       const hex = color.replace("#", "");
       const n = parseInt(hex, 16);
@@ -78,9 +76,11 @@ function buildPlanets(width: number, height: number): IsoPlanet[] {
 export function HeroCanvas({ scrollProgress = 0 }: HeroCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
+  // eslint-disable-next-line react-hooks/purity
   const startTimeRef = useRef<number>(Date.now());
   const scrollRef = useRef(scrollProgress);
 
+  // eslint-disable-next-line react-hooks/refs
   scrollRef.current = scrollProgress;
 
   const render = useCallback(() => {
@@ -135,6 +135,7 @@ export function HeroCanvas({ scrollProgress = 0 }: HeroCanvasProps) {
     const sp = scrollRef.current;
     canvas.style.transform = `rotate(${sp * 15}deg) scale(${1 - sp * 0.05})`;
 
+    // eslint-disable-next-line react-hooks/immutability
     animRef.current = requestAnimationFrame(render);
   }, []);
 

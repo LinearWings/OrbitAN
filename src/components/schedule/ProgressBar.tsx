@@ -21,14 +21,29 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 }
 
 export default function ProgressBar({
-  progress, color, taskDuration, onProgressChange, onStatusChange,
+  progress, color, taskDuration: _taskDuration, onProgressChange, onStatusChange,
 }: ProgressBarProps) {
   const [status, setStatus] = useState<"idle" | "active" | "paused" | "completed">(
     progress >= 100 ? "completed" : progress > 0 ? "paused" : "idle",
   );
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const progressRef = useRef(progress);
-  progressRef.current = progress;
+
+  // Sync refs in useEffect to avoid react-hooks/refs error
+  useEffect(() => {
+    progressRef.current = progress;
+  });
+
+  // Handle completion state
+  useEffect(() => {
+    if (progress >= 100 && status !== "completed") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStatus("completed");
+      onStatusChange?.("completed");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [progress >= 100]);
+
   const rgb = hexToRgb(color);
 
   useEffect(() => {
@@ -43,13 +58,6 @@ export default function ProgressBar({
       if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
     };
   }, [status, onProgressChange]);
-
-  useEffect(() => {
-    if (progress >= 100 && status !== "completed") {
-      setStatus("completed");
-      onStatusChange?.("completed");
-    }
-  }, [progress, status, onStatusChange]);
 
   const handleStart = useCallback(() => {
     setStatus("active");

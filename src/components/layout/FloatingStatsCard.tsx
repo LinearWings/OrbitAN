@@ -9,7 +9,7 @@ export default function FloatingStatsCard() {
   const { filteredTasks } = useTasks();
   const lang = useLanguage();
   const t = getT(lang);
-  const total = filteredTasks.length;
+  const _total = filteredTasks.length;
 
   const counts: Record<string, number> = {};
   for (const t of filteredTasks) {

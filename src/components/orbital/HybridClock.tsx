@@ -7,7 +7,7 @@ import { useTasks } from "@/hooks/useTasks";
 import { useSelectedTask } from "@/hooks/useSelectedTask";
 import { timeToAngle } from "@/utils/time";
 import { METHODOLOGIES } from "@/data/defaults";
-import { FOCUS_METHOD_COLORS, FOCUS_METHOD_LABELS } from "@/data/focus-defaults";
+import { FOCUS_METHOD_LABELS } from "@/data/focus-defaults";
 import { sanitizeSvg } from "@/utils/colors";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
@@ -195,9 +195,9 @@ export default function HybridClock({
 
   // Refs to always access latest values in rAF loop (avoid stale closures)
   const drawMarkersRef = useRef(drawInteractiveMarkers);
-  drawMarkersRef.current = drawInteractiveMarkers;
   const focusBlockArcsRef = useRef(focusBlockArcs);
-  focusBlockArcsRef.current = focusBlockArcs;
+  useEffect(() => { drawMarkersRef.current = drawInteractiveMarkers; });
+  useEffect(() => { focusBlockArcsRef.current = focusBlockArcs; });
 
   // Cache comet positions — only recompute when tasks change
   const cachedCometsRef = useRef<ReturnType<typeof computeOverlapAwareCometPositions>>([]);
@@ -251,7 +251,7 @@ export default function HybridClock({
       const hoveredFbId = hoveredFocusRef.current?.methodId;
       if (arcs && arcs.length > 0) {
         arcs.forEach((fb) => {
-          let a0 = fb.startAngle;
+          const a0 = fb.startAngle;
           let a1 = fb.endAngle;
           if (a1 <= a0) a1 += Math.PI * 2;
           const arcR = maxRadius * (fb.ringRadius ?? 0.98);

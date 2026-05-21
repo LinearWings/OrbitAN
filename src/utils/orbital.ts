@@ -78,7 +78,7 @@ export function computeOverlapAwareCometPositions(
     if (assignedRing === -1) assignedRing = 5;
 
     const ringRadius = ORBIT_RING_RADII_FRACTIONS[assignedRing] * maxRadius;
-    const dialRadius = maxRadius * 0.62;
+    const _dialRadius = maxRadius * 0.62;
 
     const startAngle = timeToAngle(task.startTime);
     const endAngle = timeToAngle(task.endTime);

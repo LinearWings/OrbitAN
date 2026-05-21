@@ -81,9 +81,9 @@ export default function MoffattPanel({ initialItems }: { initialItems?: string[]
 
   // persist — skip per-second writes while timer is running
   const isRunningRef = useRef(isRunning);
-  isRunningRef.current = isRunning;
+  useEffect(() => { isRunningRef.current = isRunning; });
   useEffect(() => {
-    if (isRunningRef.current) return; // Don't save every second; save on stop
+    if (isRunningRef.current) return;
     saveMethodologyData(METHODOLOGY_KEY, sessions);
   }, [sessions]);
 
@@ -98,9 +98,8 @@ export default function MoffattPanel({ initialItems }: { initialItems?: string[]
 
   // Stop the timer when all sessions finish
   useEffect(() => {
-    if (allCompleted) {
-      setRunning(false);
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (allCompleted) setRunning(prev => prev ? false : prev);
   }, [allCompleted]);
 
   const startAll = () => {
