@@ -10,9 +10,12 @@ export default function TitleHeader({ onOpenDocs }: { onOpenDocs?: () => void })
     <div className={`absolute ${isMobile ? 'top-1 left-4' : 'top-4 left-8'} z-40 select-none flex items-center gap-3`}>
       <Link
         href="/"
-        className="flex items-center gap-3 cursor-pointer"
+        className="flex items-center gap-2 cursor-pointer group"
         aria-label="Back to home"
       >
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-white/20 group-hover:text-white/50 transition-colors">
+          <polyline points="8,2 4,6 8,10" />
+        </svg>
         <OrbitanLogo variant="nav" />
       </Link>
       {onOpenDocs && (

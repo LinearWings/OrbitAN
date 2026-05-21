@@ -15,6 +15,7 @@ import LegendBar from "@/components/layout/LegendBar";
 import EditPanel from "@/components/editor/EditPanel";
 import InlineTaskCreator from "@/components/editor/InlineTaskCreator";
 import DailyReminderList from "@/components/schedule/DailyReminderList";
+import ReminderDetailView from "@/components/schedule/ReminderDetailView";
 import DeleteBubble from "@/components/editor/DeleteBubble";
 import OrbitModeTransition from "@/components/orbital/OrbitModeTransition";
 import FocusTimelineOverlay from "@/components/focus/FocusTimelineOverlay";
@@ -273,7 +274,9 @@ export default function Home() {
   const undoStackRef = useRef<Array<{ type: "task" | "focus"; data: Task | FocusBlock; date: string }>>([]);
   const [isMethodologyDrawerOpen, setIsMethodologyDrawerOpen] = useState(false);
   const [methodologyDrawerMethod, setMethodologyDrawerMethod] = useState<FocusMethodId | null>(null);
+  const [methodologyInitialItems, setMethodologyInitialItems] = useState<string[] | undefined>(undefined);
   const [isDocsOverlayOpen, setIsDocsOverlayOpen] = useState(false);
+  const [isReminderDetailOpen, setIsReminderDetailOpen] = useState(false);
   const [isFocusCreating, setIsFocusCreating] = useState(false);
   const [focusCreatePhase, setFocusCreatePhase] = useState<"idle" | "start" | "end">("idle");
   const [pendingFocusStartTime, setPendingFocusStartTime] = useState<string | null>(null);
@@ -822,7 +825,6 @@ export default function Home() {
     <main className="relative flex h-dvh w-full flex-col overflow-hidden">
       {!isTouchDevice && <OrbitalCursor />}
       {viewMode === "day" && !(isMobile && isTouchDevice) && <ConnectorArrows />}
-      {!isTouchDevice && <NoiseOverlay />}
       <TitleHeader onOpenDocs={() => setIsDocsOverlayOpen(true)} />
       <DateNav />
 
@@ -941,7 +943,7 @@ export default function Home() {
         <div className={`relative z-10 mx-auto ${isMobile ? 'w-full px-4' : 'w-[min(62vw,68vh)]'}`}
           style={{ marginTop: isMobile ? "0.25rem" : "max(0.5rem, 1vh)" }}
         >
-          <DailyReminderList isOrbitMode={isOrbitModeOpen} />
+          <DailyReminderList isOrbitMode={isOrbitModeOpen} onViewAll={() => setIsReminderDetailOpen(true)} />
         </div>
       )}
 
@@ -1232,14 +1234,29 @@ export default function Home() {
       onClose={() => {
         setIsMethodologyDrawerOpen(false);
         setMethodologyDrawerMethod(null);
+        setMethodologyInitialItems(undefined);
       }}
       methodId={methodologyDrawerMethod}
       onSelectMethod={(id) => setMethodologyDrawerMethod(id)}
+      initialItems={methodologyInitialItems}
     />
 
     {/* Docs Overlay — fullscreen knowledge wiki */}
     {isDocsOverlayOpen && (
       <DocsOverlay onClose={() => setIsDocsOverlayOpen(false)} />
+    )}
+
+    {/* Reminder Detail View */}
+    {isReminderDetailOpen && (
+      <ReminderDetailView
+        onClose={() => setIsReminderDetailOpen(false)}
+        onMethodologySelect={(method, reminders) => {
+          setIsReminderDetailOpen(false);
+          setMethodologyInitialItems(reminders.map(r => r.name));
+          setMethodologyDrawerMethod(method);
+          setIsMethodologyDrawerOpen(true);
+        }}
+      />
     )}
 
     {/* Method picker after focus draw */}

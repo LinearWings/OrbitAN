@@ -115,31 +115,7 @@ export function drawConstructivistGeometry(
   ctx.arc(cx, cy, maxRadius * 0.72 * 0.35, 0, Math.PI * 2);
   ctx.stroke();
 
-  // ── Geometric rectangle block (blue) at upper-left ──
-  ctx.strokeStyle = CONSTRUCTIVIST_BLUE;
-  ctx.globalAlpha = CONSTRUCTIVIST_RECT_OPACITY;
-  ctx.lineWidth = 2;
-  const rectSize = maxRadius * 0.18;
-  const rx = cx - maxRadius * 0.4;
-  const ry = cy - maxRadius * 0.45;
-  ctx.strokeRect(rx, ry, rectSize, rectSize);
-
-  // Inner rect
-  ctx.lineWidth = 1;
-  ctx.globalAlpha = CONSTRUCTIVIST_RECT_OPACITY * 0.7;
-  ctx.strokeRect(rx + rectSize * 0.2, ry + rectSize * 0.2, rectSize * 0.6, rectSize * 0.6);
-
-  // ── Rotated rectangle accent (yellow) at lower-right of clock ──
-  ctx.save();
-  ctx.translate(cx + maxRadius * 0.35, cy + maxRadius * 0.4);
-  ctx.rotate(0.35);
-  ctx.strokeStyle = CONSTRUCTIVIST_YELLOW;
-  ctx.globalAlpha = CONSTRUCTIVIST_RECT_OPACITY * 0.8;
-  ctx.lineWidth = 1.5;
-  const rw = rectSize * 0.7;
-  const rh = rectSize * 0.5;
-  ctx.strokeRect(-rw / 2, -rh / 2, rw, rh);
-  ctx.restore();
+  // Rectangles and diagonals removed for cleaner clock face
 
   ctx.restore();
 }
@@ -158,11 +134,11 @@ export function drawClock24hTicks(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // ── Day/Night zone shading — smooth radial gradient ──
+  // ── Day/Night zone shading — very subtle radial gradient ──
   const zoneGrad = ctx.createRadialGradient(cx, cy, innerR, cx, cy, outerR);
-  zoneGrad.addColorStop(0, "rgba(37, 99, 235, 0.015)");
-  zoneGrad.addColorStop(0.5, "rgba(234, 179, 8, 0.02)");
-  zoneGrad.addColorStop(1, "rgba(37, 99, 235, 0.015)");
+  zoneGrad.addColorStop(0, "rgba(37, 99, 235, 0.008)");
+  zoneGrad.addColorStop(0.5, "rgba(234, 179, 8, 0.010)");
+  zoneGrad.addColorStop(1, "rgba(37, 99, 235, 0.008)");
   ctx.fillStyle = zoneGrad;
   ctx.beginPath();
   ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
@@ -400,11 +376,26 @@ export function drawCometTrail(
   // Normalize end angle for overnight tasks so arc always sweeps clockwise
   if (cEnd <= cStart) cEnd += Math.PI * 2;
 
+  const arcSpan = cEnd - cStart;
+  const isAllDay = arcSpan > 6.1; // ~350°
+
   const trailW = headRadius * 1.2;
   // Segmented arc trail: opacity increases from tail to head along the arc
   const segments = 24;
   ctx.save();
   ctx.lineCap = "butt";
+
+  if (isAllDay) {
+    // All-day: render as a full ring with low opacity
+    ctx.strokeStyle = `rgba(${cr},${cg},${cb},0.18)`;
+    ctx.lineWidth = trailW * 0.6;
+    ctx.beginPath();
+    ctx.arc(cx, cy, orbitRadius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    return;
+  }
+
   for (let s = 0; s < segments; s++) {
     const t0 = s / segments;
     const t1 = (s + 1) / segments;

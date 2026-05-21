@@ -9,7 +9,7 @@ const KEYBOARD_SHORTCUTS = [
   { keys: ["←", "→"], label: { zh: "前一天/后一天", en: "Prev/Next Day" } },
   { keys: ["T"], label: { zh: "今天", en: "Today" } },
   { keys: ["N"], label: { zh: "新建任务", en: "New Task" } },
-  { keys: ["O"], label: { zh: "轨道模式", en: "Orbit Mode" } },
+  { keys: ["O"], label: { zh: "Orbit Mode", en: "Orbit Mode" } },
   { keys: ["Delete"], label: { zh: "删除选中", en: "Delete Selected" } },
   { keys: ["1", "2", "3", "4"], label: { zh: "类型筛选", en: "Filter by Type" } },
   { keys: ["0"], label: { zh: "清除筛选", en: "Clear Filter" } },
@@ -28,12 +28,12 @@ const TOUCH_GESTURES = [
 export function KeyboardNav() {
   const lang = useLanguage();
   const { ref: cinematicRef } = useCinematicScroll();
-  const isMobile = useMediaQuery("(max-width: 768px)");
-  const items = isMobile ? TOUCH_GESTURES : KEYBOARD_SHORTCUTS;
-  const title = isMobile
+  const isTouchDevice = useMediaQuery("(hover: none) and (pointer: coarse)");
+  const items = isTouchDevice ? TOUCH_GESTURES : KEYBOARD_SHORTCUTS;
+  const title = isTouchDevice
     ? (lang === "zh" ? "触控手势" : "Touch Gestures")
     : (lang === "zh" ? "全键盘操作" : "Full Keyboard Navigation");
-  const subtitle = isMobile
+  const subtitle = isTouchDevice
     ? (lang === "zh" ? "每个操作，一次触控。" : "Every action, one touch away.")
     : (lang === "zh" ? "每个操作，一次按键。" : "Every action, one keystroke away.");
 
@@ -51,7 +51,7 @@ export function KeyboardNav() {
           {items.map((s, i) => (
             <div key={i} className="l-keys-card">
               <div className="l-keys-keys">
-                {isMobile ? (
+                {isTouchDevice ? (
                   <span className="l-keys-kbd text-sm">{(s as typeof TOUCH_GESTURES[0]).icon}</span>
                 ) : (
                   (s as typeof KEYBOARD_SHORTCUTS[0]).keys.map((k) => (

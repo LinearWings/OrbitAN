@@ -16,10 +16,17 @@ const glassStyle: React.CSSProperties = {
   WebkitBackdropFilter: "blur(16px)",
 };
 
-export default function ParetoPanel() {
+export default function ParetoPanel({ initialItems }: { initialItems?: string[] }) {
   const [items, setItems] = useState<ParetoItem[]>(() => {
     const saved = loadMethodologyData<ParetoItem[]>("pareto");
-    return saved ?? [];
+    if (saved && saved.length > 0) return saved;
+    if (initialItems && initialItems.length > 0) {
+      return initialItems.map(name => {
+        const base = { id: uid(), content: name, impact: 50, effort: 50 };
+        return calculateParetoScores([base])[0];
+      });
+    }
+    return [];
   });
   const [name, setName] = useState("");
   const [impact, setImpact] = useState(50);

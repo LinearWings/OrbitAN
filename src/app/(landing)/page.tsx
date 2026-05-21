@@ -12,10 +12,10 @@ import { LandingFooter } from "@/components/landing/LandingFooter";
 import { LandingLightEffects } from "@/components/landing/LandingLightEffects";
 import { ScrollProgressBar } from "@/components/landing/ScrollProgressBar";
 
-function LightBeamTrack({ color = "rgba(59,130,246,.12)" }: { color?: string }) {
+function LightBeamTrack({ color = "rgba(59,130,246,.06)" }: { color?: string }) {
   return (
     <div className="l-beam-track" aria-hidden="true">
-      <div className="l-beam-track-line" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
+      <div className="l-beam-track-line" style={{ background: `linear-gradient(90deg, transparent 10%, ${color} 50%, transparent 90%)` }} />
     </div>
   );
 }
@@ -52,6 +52,10 @@ export default function LandingPage() {
     <div className="landing">
       <ScrollProgressBar />
       <LandingLightEffects sectionIndex={sectionIndex} />
+      {/* Tyndall light beams */}
+      <div className="l-tyndall" style={{ left: "15%", animationDelay: "0s" }} />
+      <div className="l-tyndall" style={{ left: "45%", animationDelay: "7s", background: "linear-gradient(180deg,transparent,rgba(245,158,11,.03),rgba(99,102,241,.02),transparent)" }} />
+      <div className="l-tyndall" style={{ left: "78%", animationDelay: "13s" }} />
       <LandingNav />
 
       <div id="hero" className="l-section-wrap"><HeroSection /></div>
@@ -59,19 +63,19 @@ export default function LandingPage() {
       <LightBeamTrack />
       <div id="features" className="l-section-wrap"><OrbitEngineDemo /></div>
 
-      <LightBeamTrack color="rgba(99,102,241,.10)" />
+      <LightBeamTrack color="rgba(99,102,241,.05)" />
       <div id="methods" className="l-section-wrap"><MethodologyCards /></div>
 
-      <LightBeamTrack color="rgba(245,158,11,.08)" />
+      <LightBeamTrack color="rgba(245,158,11,.04)" />
       <div id="focus" className="l-section-wrap"><FocusBlocksDemo /></div>
 
-      <LightBeamTrack color="rgba(59,130,246,.10)" />
+      <LightBeamTrack color="rgba(59,130,246,.05)" />
       <div id="keyboard" className="l-section-wrap"><KeyboardNav /></div>
 
-      <LightBeamTrack color="rgba(99,102,241,.08)" />
+      <LightBeamTrack color="rgba(99,102,241,.04)" />
       <div id="cta" className="l-section-wrap"><CTASection /></div>
 
-      <LightBeamTrack color="rgba(245,158,11,.06)" />
+      <LightBeamTrack color="rgba(245,158,11,.03)" />
       <LandingFooter />
     </div>
   );

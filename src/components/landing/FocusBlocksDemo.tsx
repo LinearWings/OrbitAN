@@ -21,8 +21,7 @@ export function FocusBlocksDemo() {
     <section className="l-focus cinematic-fade" ref={cinematicRef}>
       <SectionParticles count={12} color="rgba(245,158,11,.7)" />
       <div className="l-grid-overlay" style={{ backgroundImage: "radial-gradient(circle 1px at 50% 50%,rgba(245,158,11,.07) 0%,transparent 1px)", backgroundSize: "28px 28px" }} />
-      <div className="l-section-border-animated" style={{ "--border-color": "rgba(245,158,11,.35)" } as React.CSSProperties} />
-      <div className="l-section-glow" style={{ top: "30%", left: "50%", width: 400, height: 400, background: "rgba(245,158,11,.2)", transform: "translateX(-50%)" }} />
+      <div className="l-section-glow" style={{ top: "30%", left: "50%", width: 400, height: 400, background: "rgba(245,158,11,.12)", transform: "translateX(-50%)" }} />
       <div className="l-focus-inner">
         <div className="l-focus-clock">
           <svg viewBox="0 0 220 220" className="l-focus-clock-svg">

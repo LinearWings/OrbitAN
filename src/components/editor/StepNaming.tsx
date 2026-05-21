@@ -79,7 +79,7 @@ export function StepNaming({
             className="text-[0.6rem] font-mono tracking-[0.2em] uppercase mb-2"
             style={{ color: `${typeColor}99` }}
           >
-            轨道发射向导 · Step 01
+            Orbit Launch Wizard · Step 01
           </div>
           <h2
             className="text-white/70 text-sm font-mono font-light"

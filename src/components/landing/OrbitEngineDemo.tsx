@@ -20,9 +20,8 @@ export function OrbitEngineDemo() {
     <section className="l-engine cinematic-fade" ref={cinematicRef}>
       <SectionParticles count={12} color="rgba(99,102,241,.7)" />
       <div className="l-grid-overlay" style={{ backgroundImage: "radial-gradient(circle 1px at 50% 50%,rgba(255,255,255,.08) 0%,transparent 1px)", backgroundSize: "24px 24px" }} />
-      <div className="l-section-border-animated" style={{ "--border-color": "rgba(99,102,241,.4)" } as React.CSSProperties} />
-      <div className="l-section-glow" style={{ top: "20%", left: "70%", width: 350, height: 350, background: "rgba(99,102,241,.2)" }} />
-      <div className="l-section-glow" style={{ bottom: "10%", left: "20%", width: 250, height: 250, background: "rgba(59,130,246,.15)", animationDelay: "3s" }} />
+      <div className="l-section-glow" style={{ top: "20%", left: "70%", width: 350, height: 350, background: "rgba(99,102,241,.12)" }} />
+      <div className="l-section-glow" style={{ bottom: "10%", left: "20%", width: 250, height: 250, background: "rgba(59,130,246,.08)", animationDelay: "3s" }} />
       <div className="l-engine-inner">
         <div className="l-engine-deck">
           {PANELS.map((panel) => (

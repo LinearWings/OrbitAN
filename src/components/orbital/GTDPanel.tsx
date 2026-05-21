@@ -80,10 +80,20 @@ function Card({ item, onMove, onDelete, onDragStart, onDragEnd, isDragging, onTo
   );
 }
 
-export default function GTDPanel() {
+export default function GTDPanel({ initialItems }: { initialItems?: string[] }) {
   const [state, setState] = useState<GTDState>(() => {
     const saved = loadMethodologyData<GTDState>(METHODOLOGY_KEY);
-    if (saved?.items) return saved;
+    if (saved?.items) {
+      // Merge initialItems into inbox if provided
+      if (initialItems && initialItems.length > 0) {
+        const existing = saved.items;
+        const newItems: GTDItem[] = initialItems
+          .filter(name => !existing.some(e => e.content === name))
+          .map(name => ({ id: uid(), content: name, stage: "inbox" as const, createdAt: new Date().toISOString() }));
+        return { items: [...existing, ...newItems] };
+      }
+      return saved;
+    }
     return initialState();
   });
 

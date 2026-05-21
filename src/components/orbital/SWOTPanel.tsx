@@ -134,11 +134,13 @@ function Quad({
   );
 }
 
-export default function SWOTPanel() {
+export default function SWOTPanel({ initialItems }: { initialItems?: string[] }) {
   const [data, setData] = useState<SWOTData>(() => {
     const saved = loadMethodologyData<SWOTData>(METHODOLOGY_KEY);
-    return saved ?? { strengths: [], weaknesses: [], opportunities: [], threats: [] };
+    if (saved && (saved.strengths.length > 0 || saved.weaknesses.length > 0 || saved.opportunities.length > 0 || saved.threats.length > 0)) return saved;
+    return { strengths: [], weaknesses: [], opportunities: [], threats: [] };
   });
+  const [unassigned, setUnassigned] = useState<string[]>(initialItems ?? []);
 
   useEffect(() => {
     saveMethodologyData(METHODOLOGY_KEY, data);
@@ -179,21 +181,47 @@ export default function SWOTPanel() {
   ];
 
   return (
-    <div
-      className="orbit-panel swot grid grid-cols-2 gap-3 p-4 rounded-2xl"
-      style={glassStyle}
-    >
-      {panels.map((p) => (
-        <Quad
-          key={p.key}
-          title={p.title}
-          color={p.hex}
-          label={p.label}
-          items={data[p.key]}
-          onAdd={(c) => add(p.key, c)}
-          onDelete={(id) => remove(p.key, id)}
-        />
-      ))}
+    <div className="space-y-3">
+      {/* Unassigned reminders */}
+      {unassigned.length > 0 && (
+        <div className="p-3 rounded-xl" style={{ background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.1)" }}>
+          <p className="text-[0.6rem] text-amber-500/40 mb-2 font-mono">待分类提醒 · 拖入象限</p>
+          <div className="flex flex-wrap gap-1.5">
+            {unassigned.map((name, i) => (
+              <div
+                key={i}
+                className="px-2 py-1 rounded text-xs text-white/50 cursor-grab"
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData("text/plain", name);
+                }}
+              >
+                {name}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div
+        className="orbit-panel swot grid grid-cols-2 gap-3 p-4 rounded-2xl"
+        style={glassStyle}
+      >
+        {panels.map((p) => (
+          <Quad
+            key={p.key}
+            title={p.title}
+            color={p.hex}
+            label={p.label}
+            items={data[p.key]}
+            onAdd={(c) => {
+              add(p.key, c);
+              setUnassigned(prev => prev.filter(u => u !== c));
+            }}
+            onDelete={(id) => remove(p.key, id)}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -162,6 +162,9 @@ export default function InlineTaskCreator({
   }, [onTypeChange]);
   const [customTypes, setCustomTypes] = useState<CustomTypeDef[]>([]);
   const [showCustomForm, setShowCustomForm] = useState(false);
+  const [renamingType, setRenamingType] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const renameInputRef = useRef<HTMLInputElement>(null);
   const [newCustomName, setNewCustomName] = useState("");
   const [newCustomColor, setNewCustomColor] = useState(CUSTOM_TYPE_PALETTE[0] ?? "#EC4899");
   const [customTypeError, setCustomTypeError] = useState("");
@@ -269,6 +272,25 @@ export default function InlineTaskCreator({
     setTimeout(() => customNameRef.current?.focus(), 100);
   }, [getNextColor]);
 
+  const handleStartRename = useCallback((typeName: string) => {
+    setRenamingType(typeName);
+    setRenameValue(typeName);
+    setTimeout(() => renameInputRef.current?.focus(), 50);
+  }, []);
+
+  const handleConfirmRename = useCallback(() => {
+    if (!renamingType) return;
+    const newName = renameValue.trim();
+    if (!newName || newName === renamingType) { setRenamingType(null); return; }
+    if (allTypes.some(t => t.trim().toLowerCase() === newName.toLowerCase() && t !== renamingType)) { setRenamingType(null); return; }
+    const updated = customTypes.map(ct => ct.name === renamingType ? { ...ct, name: newName } : ct);
+    setCustomTypes(updated);
+    saveCustomTypes(updated);
+    setCustomTypeCache(updated);
+    if (type === renamingType) handleTypeChange(newName);
+    setRenamingType(null);
+  }, [renamingType, renameValue, customTypes, allTypes, type, handleTypeChange]);
+
   if (!isOpen) return null;
 
   return (
@@ -340,7 +362,7 @@ export default function InlineTaskCreator({
 
             {/* Category selector — Apple Calendar-like horizontal scrollable row */}
             <div>
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin" style={{ scrollbarWidth: "thin", maskImage: "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)" }}>
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin tag-scroll-row" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,0.12) transparent", maskImage: "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)", WebkitMaskImage: "linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)" }}>
                 {allTypes.map((t) => {
                   const color = getTaskColor(t);
                   const label = getTaskLabel(t);
@@ -368,9 +390,25 @@ export default function InlineTaskCreator({
                         ) : (
                           <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: dotColor, boxShadow: sel ? `0 0 6px ${dotColor}` : "none" }} />
                         )}
-                        <span className="text-[0.6rem] font-medium whitespace-nowrap" style={{ color: sel ? dotColor : "rgba(255,255,255,0.45)" }}>
-                          {label.zh}
-                        </span>
+                        {isCustom && renamingType === t ? (
+                          <input
+                            ref={renameInputRef}
+                            value={renameValue}
+                            onChange={(e) => setRenameValue(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === "Enter") handleConfirmRename(); if (e.key === "Escape") setRenamingType(null); }}
+                            onBlur={handleConfirmRename}
+                            className="bg-transparent outline-none text-[0.6rem] font-medium w-16 text-white/80 border-b border-white/20"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <span
+                            className="text-[0.6rem] font-medium whitespace-nowrap"
+                            style={{ color: sel ? dotColor : "rgba(255,255,255,0.45)" }}
+                            onDoubleClick={isCustom ? (e) => { e.stopPropagation(); handleStartRename(t); } : undefined}
+                          >
+                            {label.zh}
+                          </span>
+                        )}
                       </button>
                       {/* Delete button for custom types */}
                       {isCustom && (

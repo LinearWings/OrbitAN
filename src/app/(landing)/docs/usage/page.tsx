@@ -3,13 +3,8 @@
 import Link from "next/link";
 import { useLanguage } from "@/hooks/useLanguage";
 import { getT } from "@/lib/i18n";
-
-const SHORTCUTS = [
-  ["N", "New Task / 新建任务"], ["O", "Toggle Orbit Mode / 切换轨道模式"], ["T", "Go to Today / 回到今天"],
-  ["1-4", "Filter by type / 按类型筛选"], ["0", "Clear filter / 清除筛选"], ["Delete", "Delete selected / 删除选中"],
-  ["Escape", "Close / Cancel / 关闭取消"], ["Ctrl+Z", "Undo delete / 撤销删除"], ["Shift+Drag", "Reposition card / 移动卡片"],
-  ["Z+Scroll", "Zoom week view / 缩放周视图"], ["←/→", "Previous/Next day / 前后日"],
-];
+import { docsChapters } from "@/data/docs-content";
+import DocsContent from "@/components/docs/DocsContent";
 
 const INTERACTIONS_EN = [
   ["Click card", "Select / deselect"],
@@ -39,35 +34,28 @@ export default function UsagePage() {
   const lang = useLanguage();
   const t = getT(lang);
   const interactions = lang === "zh" ? INTERACTIONS_ZH : INTERACTIONS_EN;
+  const keyboardChapter = docsChapters.find(ch => ch.id === "keyboard");
 
   return (
     <div className="max-w-3xl mx-auto px-8 py-16 docs-prose">
-      <Link href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors mb-8 inline-block">{t.back_docs}</Link>
-      <h1 className="text-4xl font-semibold tracking-tight mb-2 text-white/85" style={{ fontFamily: "'Clash Display', sans-serif" }}>{t.usage_title}</h1>
-      <p className="text-white/30 mb-12">{t.usage_desc}</p>
-
-      <div className="space-y-10">
-        <section>
-          <h3 className="text-lg font-semibold mb-4 text-white/70" style={{ fontFamily: "'Clash Display', sans-serif" }}>{t.usage_shortcuts}</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {SHORTCUTS.map(([key, label]) => (
-              <div key={key} className="flex items-center gap-3 text-sm">
-                <kbd className="px-2 py-0.5 rounded text-[0.65rem] font-mono bg-white/[0.06] text-white/35 border border-white/[0.08]">{key}</kbd>
-                <span className="text-white/35">{lang === "zh" ? label.split(" / ")[1] : label.split(" / ")[0]}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-lg font-semibold mb-4 text-white/70" style={{ fontFamily: "'Clash Display', sans-serif" }}>{t.usage_mouse}</h3>
-          <div className="space-y-3 text-sm text-white/30 leading-relaxed">
-            {interactions.map(([action, desc]) => (
-              <p key={action}><strong className="text-white/50">{action}</strong> &mdash; {desc}</p>
-            ))}
-          </div>
-        </section>
+      <div className="flex items-center gap-4 mb-8">
+        <Link href="/" className="text-xs text-white/20 hover:text-white/40 transition-colors">← {lang === "zh" ? "首页" : "Home"}</Link>
+        <span className="text-white/10">·</span>
+        <Link href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors">{t.back_docs}</Link>
       </div>
+
+      {/* Keyboard shortcuts from docsChapters */}
+      {keyboardChapter && <DocsContent markdown={keyboardChapter.content} />}
+
+      {/* Interactions section */}
+      <section className="mt-10">
+        <h3 className="text-lg font-semibold mb-4 text-white/70 pl-3 border-l-2 border-amber-500/40" style={{ fontFamily: "'Clash Display', sans-serif" }}>{t.usage_mouse}</h3>
+        <div className="space-y-3 text-[0.875rem] text-white/50 leading-relaxed">
+          {interactions.map(([action, desc]) => (
+            <p key={action}><strong className="text-white/60">{action}</strong> &mdash; {desc}</p>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

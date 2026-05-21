@@ -184,16 +184,18 @@ function QuadrantCard({
   );
 }
 
-export default function HowellMatrix() {
+export default function HowellMatrix({ initialItems }: { initialItems?: string[] }) {
   const [data, setData] = useState<HowellMatrixData>(() => {
     const saved = loadMethodologyData<HowellMatrixData>(METHODOLOGY_KEY);
-    return saved ?? {
+    if (saved && (saved.urgentImportant.length > 0 || saved.urgentNotImportant.length > 0 || saved.notUrgentImportant.length > 0 || saved.notUrgentNotImportant.length > 0)) return saved;
+    return {
       urgentImportant: [],
       urgentNotImportant: [],
       notUrgentImportant: [],
       notUrgentNotImportant: [],
     };
   });
+  const [unassigned, setUnassigned] = useState<string[]>(initialItems ?? []);
 
   useEffect(() => {
     saveMethodologyData(METHODOLOGY_KEY, data);
@@ -246,21 +248,47 @@ export default function HowellMatrix() {
   ];
 
   return (
-    <div
-      className="orbit-panel howell matrix grid grid-cols-2 gap-3 p-4 rounded-2xl"
-      style={glassStyle}
-    >
-      {quadrants.map((q) => (
-        <QuadrantCard
-          key={q.key}
-          title={q.title}
-          items={data[q.key] ?? []}
-          onAdd={(t) => addItem(q.key, t)}
-          onMove={moveItem}
-          onDelete={(id) => removeItem(q.key, id)}
-          keyName={q.key}
-        />
-      ))}
+    <div className="space-y-3">
+      {/* Unassigned reminders */}
+      {unassigned.length > 0 && (
+        <div className="p-3 rounded-xl" style={{ background: "rgba(245,158,11,0.04)", border: "1px solid rgba(245,158,11,0.1)" }}>
+          <p className="text-[0.6rem] text-amber-500/40 mb-2 font-mono">待分配提醒 · 拖入象限</p>
+          <div className="flex flex-wrap gap-1.5">
+            {unassigned.map((name, i) => (
+              <div
+                key={i}
+                className="px-2 py-1 rounded text-xs text-white/50 cursor-grab"
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
+                draggable
+                onDragStart={(e) => {
+                  e.dataTransfer.setData("text/plain", name);
+                }}
+              >
+                {name}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <div
+        className="orbit-panel howell matrix grid grid-cols-2 gap-3 p-4 rounded-2xl"
+        style={glassStyle}
+      >
+        {quadrants.map((q) => (
+          <QuadrantCard
+            key={q.key}
+            title={q.title}
+            items={data[q.key] ?? []}
+            onAdd={(t) => {
+              addItem(q.key, t);
+              setUnassigned(prev => prev.filter(u => u !== t));
+            }}
+            onMove={moveItem}
+            onDelete={(id) => removeItem(q.key, id)}
+            keyName={q.key}
+          />
+        ))}
+      </div>
     </div>
   );
 }

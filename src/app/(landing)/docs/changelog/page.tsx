@@ -103,7 +103,11 @@ export default function ChangelogPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-8 py-16 docs-prose">
-      <Link href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors mb-8 inline-block">{t.back_docs}</Link>
+      <div className="flex items-center gap-4 mb-8">
+        <Link href="/" className="text-xs text-white/20 hover:text-white/40 transition-colors">← {lang === "zh" ? "首页" : "Home"}</Link>
+        <span className="text-white/10">·</span>
+        <Link href="/docs" className="text-xs text-white/20 hover:text-white/40 transition-colors">{t.back_docs}</Link>
+      </div>
       <h1 className="text-4xl font-semibold tracking-tight mb-2 text-white/85" style={{ fontFamily: "'Clash Display', sans-serif" }}>{t.changelog_title}</h1>
       <p className="text-white/30 mb-12">{t.changelog_desc}</p>
 

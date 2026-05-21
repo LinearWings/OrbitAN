@@ -17,22 +17,26 @@ interface MethodologyDrawerProps {
   onClose: () => void;
   methodId: FocusMethodId | null;
   onSelectMethod?: (id: FocusMethodId | null) => void;
+  initialItems?: string[];
 }
 
-const panels: Record<FocusMethodId, React.ReactNode> = {
-  gtd: <GTDPanel />,
-  pomodoro: <PomodoroPanel />,
-  pareto: <ParetoPanel />,
-  moffatt: <MoffattPanel />,
-  howell: <HowellMatrix />,
-  swot: <SWOTPanel />,
-};
+function renderPanel(methodId: FocusMethodId, initialItems?: string[]) {
+  switch (methodId) {
+    case "gtd": return <GTDPanel initialItems={initialItems} />;
+    case "pomodoro": return <PomodoroPanel initialItems={initialItems} />;
+    case "pareto": return <ParetoPanel initialItems={initialItems} />;
+    case "moffatt": return <MoffattPanel initialItems={initialItems} />;
+    case "howell": return <HowellMatrix initialItems={initialItems} />;
+    case "swot": return <SWOTPanel initialItems={initialItems} />;
+  }
+}
 
 export default function MethodologyDrawer({
   isOpen,
   onClose,
   methodId,
   onSelectMethod,
+  initialItems,
 }: MethodologyDrawerProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -162,6 +166,20 @@ export default function MethodologyDrawer({
             </button>
           </div>
           <div className="flex-1 overflow-y-auto p-6">
+            {/* Reminder items banner */}
+            {initialItems && initialItems.length > 0 && (
+              <div className="mb-4 p-3 rounded-xl" style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.12)" }}>
+                <p className="text-[0.65rem] text-amber-500/50 mb-2 font-mono">今日提醒 · {initialItems.length}项</p>
+                <div className="space-y-1">
+                  {initialItems.map((name, i) => (
+                    <div key={i} className="flex items-center gap-2 text-xs text-white/50">
+                      <span className="w-1 h-1 rounded-full bg-amber-500/40" />
+                      {name}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             {showMethodSelector ? (
               <MethodSelector onSelect={(id) => onSelectMethod?.(id as FocusMethodId)} />
             ) : (
@@ -172,7 +190,7 @@ export default function MethodologyDrawer({
                 >
                   <ArrowLeftIcon size={12} className="inline-block mr-0.5" /> 返回方法论列表
                 </button>
-                {methodId && (panels[methodId] ?? (
+                {methodId && (renderPanel(methodId, initialItems) ?? (
                   <div className="text-white/40 text-sm">该方法论尚未实现</div>
                 ))}
               </div>

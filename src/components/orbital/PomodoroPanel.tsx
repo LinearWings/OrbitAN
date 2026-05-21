@@ -52,7 +52,8 @@ function useBeep() {
   return { beep };
 }
 
-export default function PomodoroPanel() {
+export default function PomodoroPanel({ initialItems }: { initialItems?: string[] }) {
+  const [activeReminder, setActiveReminder] = useState<string | null>(initialItems?.[0] ?? null);
   const beeper = useBeep();
   const [phase, setPhase] = useState<Phase>(() => {
     const saved = loadMethodologyData<PomodoroState>(METHODOLOGY_KEY);
@@ -150,7 +151,29 @@ export default function PomodoroPanel() {
   const strokeDashoffset = circumference * (1 - progress);
 
   return (
-    <div className="flex items-center justify-center h-full select-none">
+    <div className="flex flex-col items-center justify-center h-full select-none gap-4">
+      {/* Active reminder indicator */}
+      {initialItems && initialItems.length > 0 && (
+        <div className="w-full max-w-xs">
+          <p className="text-[0.6rem] text-white/25 mb-2 text-center font-mono">当前专注</p>
+          <div className="space-y-1">
+            {initialItems.map((name, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveReminder(name)}
+                className="w-full text-left px-3 py-1.5 rounded-lg text-xs transition-all"
+                style={{
+                  background: activeReminder === name ? "rgba(37,99,235,0.12)" : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${activeReminder === name ? "rgba(37,99,235,0.25)" : "rgba(255,255,255,0.04)"}`,
+                  color: activeReminder === name ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.35)",
+                }}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="text-center">
         <svg width={220} height={220} viewBox="0 0 220 220" aria-label="Pomodoro Timer" role="img">
           <circle cx={110} cy={110} r={radius} stroke="#ffffff33" strokeWidth={4} fill="none" />

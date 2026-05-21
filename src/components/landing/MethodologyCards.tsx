@@ -85,9 +85,8 @@ export function MethodologyCards() {
     <section className="l-methods cinematic-fade" ref={(el) => { cinematicRef(el); sectionRef.current = el; }}>
       <SectionParticles count={14} color="rgba(59,130,246,.65)" />
       <div className="l-grid-overlay" style={{ backgroundImage: "radial-gradient(circle 1px at 50% 50%,rgba(255,255,255,.07) 0%,transparent 1px)", backgroundSize: "20px 20px" }} />
-      <div className="l-section-border-animated" style={{ "--border-color": "rgba(59,130,246,.35)" } as React.CSSProperties} />
-      <div className="l-section-glow" style={{ top: "10%", left: "50%", width: 400, height: 400, background: "rgba(59,130,246,.18)", transform: "translateX(-50%)" }} />
-      <div className="l-section-glow" style={{ bottom: "5%", left: "15%", width: 300, height: 300, background: "rgba(99,102,241,.15)", animationDelay: "3s" }} />
+      <div className="l-section-glow" style={{ top: "10%", left: "50%", width: 400, height: 400, background: "rgba(59,130,246,.10)", transform: "translateX(-50%)" }} />
+      <div className="l-section-glow" style={{ bottom: "5%", left: "15%", width: 300, height: 300, background: "rgba(99,102,241,.08)", animationDelay: "3s" }} />
       <div className="l-methods-inner">
         <div className="l-methods-top">
           <h2 className="l-methods-h2">

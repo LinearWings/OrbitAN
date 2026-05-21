@@ -3,15 +3,15 @@
 /* ===== Design Tokens ===== */
 :root {
   /* Void palette — refined */
-  --color-void-black: #0A0A0F;
-  --color-void-deep: #08080C;
-  --color-surface: rgba(255, 255, 255, 0.03);
-  --color-surface-hover: rgba(255, 255, 255, 0.06);
-  --color-border: rgba(255, 255, 255, 0.06);
-  --color-border-active: rgba(255, 255, 255, 0.12);
+  --color-void-black: #060609;
+  --color-void-deep: #040407;
+  --color-surface: rgba(255, 255, 255, 0.025);
+  --color-surface-hover: rgba(255, 255, 255, 0.05);
+  --color-border: rgba(255, 255, 255, 0.05);
+  --color-border-active: rgba(255, 255, 255, 0.10);
   --color-cosmic-white: #F0EFEC;
-  --color-text-muted: rgba(255, 255, 255, 0.28);
-  --color-text-dim: rgba(255, 255, 255, 0.16);
+  --color-text-muted: rgba(255, 255, 255, 0.22);
+  --color-text-dim: rgba(255, 255, 255, 0.12);
 
   /* Task type colors */
   --color-work: #3B82F6;
@@ -126,6 +126,12 @@ body::after {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
 }
+
+/* Tag row scrollbar — nearly invisible */
+.tag-scroll-row::-webkit-scrollbar { height: 2px; }
+.tag-scroll-row::-webkit-scrollbar-track { background: transparent; }
+.tag-scroll-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 1px; }
+.tag-scroll-row::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
 /* ===== Animations ===== */
 
@@ -569,6 +575,29 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   color:rgba(255,255,255,.25);display:none;
 }
 @media(min-width:768px){.l-nav-tagline{display:block}}
+.l-nav-methods{
+  display:none;align-items:center;gap:6px;
+}
+@media(min-width:768px){.l-nav-methods{display:flex}}
+.l-nav-method-dot{
+  display:flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  transition:all .2s ease;cursor:pointer;text-decoration:none;
+}
+.l-nav-method-dot:hover{
+  background:rgba(255,255,255,.08);
+  border-color:var(--dot-color,rgba(255,255,255,.15));
+  box-shadow:0 0 8px color-mix(in srgb,var(--dot-color,transparent) 30%,transparent);
+  transform:scale(1.15);
+}
+.l-nav-method-dot-inner{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--dot-color,rgba(255,255,255,.3));
+  opacity:.7;transition:opacity .2s ease;
+}
+.l-nav-method-dot:hover .l-nav-method-dot-inner{opacity:1}
 .l-nav-actions{display:flex;align-items:center;gap:8px}
 .l-nav-btn{
   display:inline-flex;align-items:center;gap:6px;
@@ -756,7 +785,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-methods{
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
-  background:#06080F;
+  background:#040609;
   background-image:
     radial-gradient(ellipse 80% 60% at 50% 0%,rgba(59,130,246,.07),transparent),
     radial-gradient(ellipse 60% 50% at 20% 100%,rgba(99,102,241,.05),transparent),
@@ -865,7 +894,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-focus{
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
-  background-color:#06080F;
+  background-color:#040609;
   background-image:
     radial-gradient(ellipse 70% 60% at 50% 50%,rgba(245,158,11,.06),transparent),
     radial-gradient(ellipse 50% 40% at 30% 20%,rgba(239,68,68,.03),transparent),
@@ -923,7 +952,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-keys-section{
   position:relative;z-index:1;
   padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
-  background:#06080F;
+  background:#040609;
   background-image:
     radial-gradient(ellipse 70% 60% at 80% 20%,rgba(245,158,11,.06),transparent),
     radial-gradient(ellipse 60% 50% at 10% 80%,rgba(59,130,246,.05),transparent),
@@ -960,24 +989,25 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 .l-keys-grid{
   display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
 }
-@media(min-width:640px){.l-keys-grid{grid-template-columns:repeat(4,1fr)}}
+@media(min-width:640px){.l-keys-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1024px){.l-keys-grid{grid-template-columns:repeat(4,1fr)}}
 .l-keys-card{
   display:flex;flex-direction:column;align-items:center;gap:10px;
   padding:clamp(1rem,2vw,1.5rem);
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
   border-radius:12px;transition:background .2s ease,border-color .2s ease;
 }
-.l-keys-card:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12)}.l-keys-card:hover .l-keys-kbd{color:rgba(255,255,255,.45);border-color:rgba(255,255,255,.2)}
+.l-keys-card:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.14)}.l-keys-card:hover .l-keys-kbd{color:rgba(255,255,255,.55);border-color:rgba(255,255,255,.25)}
 .l-keys-keys{display:flex;gap:4px;align-items:center}
 .l-keys-kbd{
   font-family:"JetBrains Mono",monospace;font-size:.625rem;
-  padding:4px 8px;border:1px solid rgba(255,255,255,.08);
-  border-radius:4px;color:rgba(255,255,255,.25);
-  background:rgba(255,255,255,.02);
+  padding:4px 8px;border:1px solid rgba(255,255,255,.12);
+  border-radius:4px;color:rgba(255,255,255,.4);
+  background:rgba(255,255,255,.04);
 }
 .l-keys-label{
   font-family:"Satoshi",sans-serif;font-size:.75rem;
-  color:rgba(255,255,255,.16);
+  color:rgba(255,255,255,.3);
 }
 
 /* ── CTA Section v2 ── */
@@ -985,7 +1015,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   position:relative;z-index:1;
   min-height:80vh;display:flex;align-items:center;justify-content:center;
   padding:clamp(4rem,12vh,8rem) clamp(1rem,3vw,2rem);
-  background-color:#06080F;
+  background-color:#040609;
   background-image:
     radial-gradient(ellipse 60% 70% at 50% 30%,rgba(59,130,246,.08),transparent),
     radial-gradient(ellipse 50% 50% at 30% 70%,rgba(245,158,11,.05),transparent),
@@ -1090,10 +1120,11 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   pointer-events:none;
 }
 .l-beam-track-line{
-  width:clamp(120px,40vw,500px);height:1px;
-  opacity:0.25;
-  box-shadow:0 0 6px currentColor;
-  animation:l-beam-pulse 6s ease-in-out infinite alternate;
+  width:clamp(200px,60vw,700px);height:1px;
+  opacity:0.15;
+  box-shadow:0 0 12px currentColor;
+  filter:blur(0.5px);
+  animation:l-beam-pulse 8s ease-in-out infinite alternate;
 }
 @keyframes l-beam-pulse{
   0%{opacity:.4;filter:blur(0px)}
@@ -1187,6 +1218,25 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
   animation:l-grid-shimmer 6s ease-in-out infinite;
 }
 
+/* ── Tyndall Light Beams ── */
+@keyframes l-tyndall-drift{
+  0%{transform:translateX(0) translateY(0)}
+  50%{transform:translateX(20px) translateY(-10px)}
+  100%{transform:translateX(0) translateY(0)}
+}
+.l-tyndall{
+  position:absolute;pointer-events:none;z-index:0;
+  width:2px;height:100%;
+  background:linear-gradient(180deg,transparent,rgba(59,130,246,.04),rgba(245,158,11,.03),transparent);
+  filter:blur(3px);
+  animation:l-tyndall-drift 20s ease-in-out infinite;
+}
+.l-tyndall::after{
+  content:"";position:absolute;top:20%;left:-20px;width:40px;height:60%;
+  background:linear-gradient(180deg,transparent,rgba(59,130,246,.02),transparent);
+  filter:blur(15px);
+}
+
 /* ── Section Heading Float ── */
 @keyframes l-heading-float{
   0%,100%{transform:translateY(0)}
@@ -1218,7 +1268,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 	.l-engine{
 	  position:relative;z-index:1;
 	  padding:clamp(6rem,16vh,12rem) clamp(1.5rem,5vw,4rem);
-	  background-color:#06080F;
+	  background-color:#040609;
 	  background-image:
 	    radial-gradient(ellipse 80% 60% at 70% 20%,rgba(99,102,241,.06),transparent),
 	    radial-gradient(ellipse 50% 50% at 20% 80%,rgba(59,130,246,.04),transparent),
@@ -1469,17 +1519,7 @@ html:has(.landing),body:has(.landing){overflow:auto!important;overflow-x:hidden!
 
 	/* ── Focus Clock — Arc Rotation + Pulse ── */
 	.l-focus-clock-svg .l-focus-arc{
-	  animation:l-focus-arc-pulse 4s ease-in-out infinite;
-	}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(1){animation-duration:4s}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(2){animation-duration:4.5s}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(3){animation-duration:5s}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(4){animation-duration:3.5s}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(5){animation-duration:5.5s}
-	.l-focus-clock-svg .l-focus-arc:nth-of-type(6){animation-duration:4s}
-	@keyframes l-focus-arc-pulse{
-	  0%,100%{opacity:.55}
-	  50%{opacity:.85}
+	  /* Static — no animation */
 	}
 	.l-focus-hub{
 	  animation:l-focus-hub-glow 3s ease-in-out infinite;

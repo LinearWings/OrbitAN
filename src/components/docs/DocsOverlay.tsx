@@ -16,7 +16,7 @@ export default function DocsOverlay({ onClose }: DocsOverlayProps) {
           background: `
             radial-gradient(circle 50% at 10% 80%, rgba(234,179,8,0.06) 0%, transparent 55%),
             radial-gradient(circle 30% at 30% 65%, rgba(37,99,235,0.04) 0%, transparent 50%),
-            rgba(17,17,17,0.88)
+            rgba(12,12,16,0.92)
           `,
         }}
       />
@@ -27,12 +27,12 @@ export default function DocsOverlay({ onClose }: DocsOverlayProps) {
           </h2>
           <button
             onClick={onClose}
-            className="text-white/40 hover:text-white/70 text-sm"
+            className="text-white/40 hover:text-white/70 text-sm flex items-center gap-1"
           >
             <CloseIcon size={14} /> 关闭
           </button>
         </div>
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-y-auto overscroll-contain" style={{ scrollBehavior: "smooth" }}>
           <DocsPage />
         </div>
       </div>

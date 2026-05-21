@@ -343,10 +343,10 @@ export function StepPositioning({
             className="text-[0.6rem] font-mono tracking-[0.2em] uppercase mb-2"
             style={{ color: `${typeColor}99` }}
           >
-            轨道发射向导 · Step 02
+            Orbit Launch Wizard · Step 02
           </div>
           <h2 className="text-white/70 text-sm font-mono font-light">
-            在轨道上定位你的任务
+            在时钟上定位你的任务
           </h2>
         </div>
 
@@ -360,9 +360,9 @@ export function StepPositioning({
           }}
         >
           {clickPhase === "end"
-            ? "⦿ 点击轨道完成终点 · 移动鼠标预览弧线"
+            ? "⦿ 点击时钟完成终点 · 移动鼠标预览弧线"
             : clickPhase === "start"
-              ? "⦿ 点击轨道选择新起点"
+              ? "⦿ 点击时钟选择新起点"
               : "⦿ 点击端点微调 · 点击空白区重新选择"}
         </div>
 

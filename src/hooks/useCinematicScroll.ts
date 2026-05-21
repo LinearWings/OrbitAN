@@ -21,18 +21,19 @@ export function useCinematicScroll(threshold = 0.15) {
           if (entry.isIntersecting) {
             const ratio = entry.intersectionRatio;
             const opacity = Math.min(1, ratio / threshold);
-            const translateY = (1 - opacity) * 30;
+            const translateY = (1 - opacity) * 40;
+            const scale = 0.98 + opacity * 0.02;
             el.style.opacity = String(opacity);
-            el.style.transform = `translateY(${translateY}px)`;
-            el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+            el.style.transform = `translateY(${translateY}px) scale(${scale})`;
+            el.style.transition = "opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)";
           } else {
             el.style.opacity = "0";
-            el.style.transform = "translateY(40px)";
-            el.style.transition = "none";
+            el.style.transform = "translateY(50px) scale(0.97)";
+            el.style.transition = "opacity 0.4s ease-in, transform 0.4s ease-in";
           }
         }
       },
-      { threshold: Array.from({ length: 20 }, (_, i) => i / 20) }
+      { threshold: Array.from({ length: 30 }, (_, i) => i / 30) }
     );
 
     observer.observe(el);

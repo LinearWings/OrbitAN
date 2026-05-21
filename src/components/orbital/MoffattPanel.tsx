@@ -20,7 +20,7 @@ function formatMinutes(sec: number) {
   return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 }
 
-export default function MoffattPanel() {
+export default function MoffattPanel({ initialItems }: { initialItems?: string[] }) {
   const [sessions, setSessions] = useState<MoffattSession[]>(() => {
     const defaultLabels = [
       "深度工作",
@@ -33,10 +33,14 @@ export default function MoffattPanel() {
       "工具优化",
     ];
     const loaded = loadMethodologyData<MoffattSession[]>(METHODOLOGY_KEY);
-    if (loaded) {
+    if (loaded && loaded.length > 0) {
       return loaded;
     }
-    const init: MoffattSession[] = defaultLabels.map((label, idx) => ({
+    // Use initialItems if provided, otherwise use defaults
+    const labels = initialItems && initialItems.length > 0
+      ? initialItems
+      : defaultLabels;
+    const init: MoffattSession[] = labels.map((label, idx) => ({
       id: `${idx}`,
       label,
       duration: MOFFATT_DEFAULTS.defaultSessionDuration,

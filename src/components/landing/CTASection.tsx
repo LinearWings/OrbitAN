@@ -17,10 +17,9 @@ export function CTASection() {
     <section className="l-cta cinematic-fade" ref={cinematicRef}>
       <SectionParticles count={14} color="rgba(59,130,246,.65)" />
       <div className="l-grid-overlay" style={{ backgroundImage: "radial-gradient(circle 1px at 50% 50%,rgba(255,255,255,.06) 0%,transparent 1px)", backgroundSize: "32px 32px" }} />
-      <div className="l-section-border-animated" style={{ "--border-color": "rgba(59,130,246,.4)" } as React.CSSProperties} />
-      <div className="l-section-glow" style={{ top: "20%", left: "50%", width: 450, height: 450, background: "rgba(59,130,246,.2)", transform: "translateX(-50%)" }} />
-      <div className="l-section-glow" style={{ bottom: "10%", left: "30%", width: 300, height: 300, background: "rgba(245,158,11,.15)", animationDelay: "3s" }} />
-      <div className="l-section-glow" style={{ bottom: "10%", right: "30%", width: 250, height: 250, background: "rgba(99,102,241,.12)", animationDelay: "5s" }} />
+      <div className="l-section-glow" style={{ top: "20%", left: "50%", width: 450, height: 450, background: "rgba(59,130,246,.12)", transform: "translateX(-50%)" }} />
+      <div className="l-section-glow" style={{ bottom: "10%", left: "30%", width: 300, height: 300, background: "rgba(245,158,11,.08)", animationDelay: "3s" }} />
+      <div className="l-section-glow" style={{ bottom: "10%", right: "30%", width: 250, height: 250, background: "rgba(99,102,241,.06)", animationDelay: "5s" }} />
       <div className="l-cta-beams" aria-hidden="true">
         {["top-left", "top-right", "bottom-left", "bottom-right"].map((corner, i) => {
           const angle = [225, 315, 135, 45][i];
